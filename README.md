@@ -26,6 +26,7 @@ Do not start by reading archive or old benchmark reports. Start here:
 - Active demo ESP32 firmware: `firmware/esp32_eye_uart_firmware/`
 - Optional wireless ESP32 firmware: `firmware/esp32_eye_ws_firmware/`
 - Raspberry Pi 5 deployment spec: `docs/DEPLOYMENT_PI5.md`
+- Prior art & verified facts (de-noised research): `docs/PRIOR_ART.md`
 
 ## Quick verify
 
