@@ -3,8 +3,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FIRMWARE = ROOT / "esp32_eye_ws_firmware" / "main.py"
-SECRETS = ROOT / "esp32_eye_ws_firmware" / "secrets_example.py"
+FIRMWARE = ROOT / "firmware" / "esp32_eye_ws_firmware" / "main.py"
+SECRETS = ROOT / "firmware" / "esp32_eye_ws_firmware" / "secrets_example.py"
 
 
 class ESP32WebSocketFirmwarePackageTests(unittest.TestCase):

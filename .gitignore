@@ -11,7 +11,7 @@ env/
 
 # Secrets — never commit real credentials
 secrets.py
-esp32_eye_ws_firmware/secrets.py
+firmware/esp32_eye_ws_firmware/secrets.py
 
 # Generated benchmark data (large, reproducible)
 benchmark_data/

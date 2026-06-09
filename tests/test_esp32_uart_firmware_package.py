@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FIRMWARE_DIR = ROOT / "esp32_eye_uart_firmware"
+FIRMWARE_DIR = ROOT / "firmware" / "esp32_eye_uart_firmware"
 FIRMWARE = FIRMWARE_DIR / "main.py"
 README = FIRMWARE_DIR / "README.md"
 

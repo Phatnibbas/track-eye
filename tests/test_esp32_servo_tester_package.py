@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PACKAGE = ROOT / "esp32_servo_tester"
+PACKAGE = ROOT / "firmware" / "esp32_servo_tester"
 
 
 class ESP32ServoTesterPackageTests(unittest.TestCase):

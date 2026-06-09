@@ -1,6 +1,6 @@
 # Track Eye — Current Runtime Entry Point
 
-Read `AGENT_CONTEXT.md` first.
+Read `docs/AGENT_CONTEXT.md` first.
 
 This repo is currently a **laptop-first webcam gaze tracking + single-eye ESP32 servo prototype**. The current demo/debug connection is **USB UART** to a four-servo 180-degree eye mechanism. WiFi/WebSocket remains available for later wireless demos. Older research plans, stale docs, and legacy firmware were moved to `archive/legacy_2026-05-13/` so future agents do not anchor on outdated context.
 
@@ -8,7 +8,7 @@ This repo is currently a **laptop-first webcam gaze tracking + single-eye ESP32 
 
 Do not start by reading archive or old benchmark reports. Start here:
 
-1. `AGENT_CONTEXT.md`
+1. `docs/AGENT_CONTEXT.md`
 2. `config.yaml`
 3. `main.py`
 4. the active module relevant to the task
@@ -23,8 +23,9 @@ Do not start by reading archive or old benchmark reports. Start here:
 - USB UART output: `servo_serial.py`
 - WebSocket output: `servo_ws.py`
 - Browser UI: `web_ui_server.py`
-- Active demo ESP32 firmware: `esp32_eye_uart_firmware/`
-- Optional wireless ESP32 firmware: `esp32_eye_ws_firmware/`
+- Active demo ESP32 firmware: `firmware/esp32_eye_uart_firmware/`
+- Optional wireless ESP32 firmware: `firmware/esp32_eye_ws_firmware/`
+- Raspberry Pi 5 deployment spec: `docs/DEPLOYMENT_PI5.md`
 
 ## Quick verify
 
