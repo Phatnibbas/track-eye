@@ -13,7 +13,7 @@ This is the first file future agents should read. It is a **current working map*
 2. **Newest active files beat archived/history files.** Do not anchor on old Problem A docs or old phase plans.
 3. **Small verified changes only.** This repo has manual tuning; avoid broad rewrites unless explicitly requested.
 4. **No “done/fixed” without runtime evidence.** At minimum run the relevant tests. For UI/servo/camera changes, say clearly what hardware/UI was or was not verified.
-5. **Do not read secrets by default.** Especially `esp32_eye_ws_firmware/secrets.py`.
+5. **Do not read secrets by default.** Especially `firmware/esp32_eye_ws_firmware/secrets.py`.
 6. **Do not use `.venv/` as project source.** It is dependency state only.
 7. **Archive, do not delete, unless user explicitly asks.** Historical files may still be useful for recovery.
 
@@ -52,8 +52,8 @@ Read only when relevant:
 
 - `calibration.py`, `calibration_coupled.py`, `calibration_quality.py` for calibration changes.
 - `benchmark_utils.py` and `tools/analyze_raw_signals.py` for benchmark/log/report work.
-- `esp32_eye_uart_firmware/README.md` and `esp32_eye_uart_firmware/main.py` for current USB UART board firmware work.
-- `esp32_eye_ws_firmware/README.md` and `esp32_eye_ws_firmware/main.py` only for later wireless/WebSocket work.
+- `firmware/esp32_eye_uart_firmware/README.md` and `firmware/esp32_eye_uart_firmware/main.py` for current USB UART board firmware work.
+- `firmware/esp32_eye_ws_firmware/README.md` and `firmware/esp32_eye_ws_firmware/main.py` only for later wireless/WebSocket work.
 - `draw_utils.py` for OpenCV overlay changes.
 - `tools/` for offline analysis/export utilities.
 
@@ -63,7 +63,7 @@ Avoid by default:
 - `__pycache__/`
 - `archive/legacy_2026-05-13/`
 - old `benchmark_data/` sessions unless doing benchmark analysis
-- `esp32_eye_ws_firmware/secrets.py`
+- `firmware/esp32_eye_ws_firmware/secrets.py`
 
 ---
 
@@ -174,7 +174,7 @@ Active single-eye config:
 Current active demo/debug ESP32 path:
 
 ```text
-esp32_eye_uart_firmware/
+firmware/esp32_eye_uart_firmware/
 ```
 
 Architecture:
@@ -205,7 +205,7 @@ Vertical axis servos   -> GPIO41, GPIO38, neutral 0,  range 0..50
 Current wireless ESP32 path for later demo work:
 
 ```text
-esp32_eye_ws_firmware/
+firmware/esp32_eye_ws_firmware/
 ```
 
 Wireless architecture:
@@ -237,7 +237,7 @@ Older USB-serial firmware was archived here:
 archive/legacy_2026-05-13/esp32_eye_firmware_serial_legacy/
 ```
 
-Do not use archived serial firmware as current architecture. Use `esp32_eye_uart_firmware/` instead.
+Do not use archived serial firmware as current architecture. Use `firmware/esp32_eye_uart_firmware/` instead.
 
 ---
 
@@ -423,14 +423,14 @@ Maintenance rules:
 - For the current demo, keep laptop UART packet contract and ESP32 UART parser in sync.
 - If UART packet changes, update:
   - `servo_serial.py`
-  - `esp32_eye_uart_firmware/main.py`
-  - `esp32_eye_uart_firmware/README.md`
+  - `firmware/esp32_eye_uart_firmware/main.py`
+  - `firmware/esp32_eye_uart_firmware/README.md`
   - tests
   - this file
 - If WebSocket payload changes later, update:
   - `servo_ws.py`
-  - `esp32_eye_ws_firmware/main.py`
-  - `esp32_eye_ws_firmware/README.md`
+  - `firmware/esp32_eye_ws_firmware/main.py`
+  - `firmware/esp32_eye_ws_firmware/README.md`
   - tests
   - this file
 
@@ -523,7 +523,7 @@ Rules:
 - Do not put real WiFi credentials in committed files.
 - Update `secrets_example.py`, not `secrets.py`, for examples.
 - Keep watchdog/fail-safe behavior.
-- Current demo-first firmware is USB UART in `esp32_eye_uart_firmware/`.
+- Current demo-first firmware is USB UART in `firmware/esp32_eye_uart_firmware/`.
 - WiFi/WebSocket firmware remains available but should not be the default debug path.
 
 Verification:
