@@ -1,0 +1,131 @@
+camera_index: 0
+camera_fallback_indices: [0, 1, 2, 3]
+camera_backends:
+  - default
+  - dshow
+  - msmf
+frame_width: 1280
+frame_height: 720
+mirror: true
+window_name: "Gaze Control"
+
+min_detection_confidence: 0.5
+min_tracking_confidence: 0.5
+smoothing_alpha: 0.55
+smoothing_alpha_y: 0.42
+dead_zone: 0.03
+dead_zone_y: 0.05
+control_scale_x: 1.6
+control_scale_y: 1.8
+min_confidence_for_update: 0.35
+min_confidence_for_update_y: 0.45
+partial_confidence_threshold: 0.20
+partial_confidence_threshold_y: 0.28
+partial_blend_min: 0.25
+partial_blend_min_y: 0.18
+low_conf_hold_frames: 6
+low_conf_decay: 0.92
+calibration_output_floor: 0.05
+calibration_raw_fallback_threshold: 0.12
+calibration_min_training_range_x: 0.05
+calibration_min_training_range_y: 0.06
+head_pose_enabled: false
+head_pose_gain_x: 0.18
+head_pose_gain_y: 0.12
+head_pose_yaw_norm_deg: 20.0
+head_pose_pitch_norm_deg: 16.0
+max_head_pose_yaw_deg: 45.0
+max_head_pose_pitch_deg: 35.0
+raw_recenter_alpha: 0.85
+raw_recenter_min_confidence: 0.35
+fusion_disagreement_threshold_x: 0.18
+fusion_disagreement_threshold_y: 0.16
+fusion_dominance_gap: 0.08
+fusion_strategy: "weighted"
+disagreement_outlier_weight: 0.08
+mono_fallback_quality: 0.56
+mono_confidence_penalty: 0.78
+mono_vertical_penalty: 0.78
+vertical_soft_disagreement_y: 0.10
+vertical_hard_disagreement_y: 0.28
+vertical_min_reliability: 0.22
+vertical_clearance_soft_floor: -0.10
+vertical_clearance_hard_floor: -0.26
+vertical_openness_soft_floor: 0.11
+vertical_openness_hard_floor: 0.06
+vertical_feature_mode: "current"
+vertical_orbital_norm_gain: 0.5
+vertical_width_norm_gain: 0.30
+
+session_acquire_frames: 10
+session_baseline_hold_s: 1.5
+session_lost_face_timeout_s: 1.0
+session_min_confidence: 0.35
+session_drift_threshold: 0.25
+kiosk_quick_calibration_enabled: true
+
+debug: true
+autoload_calibration: true
+benchmark_protocol_settle_seconds: 0.0
+benchmark_protocol_collect_seconds: 7.0
+benchmark_autosave: true
+benchmark_autosave_dir: "benchmark_data"
+
+servo:
+  confidence_min: 0.45
+  session_required: true
+  smoothing_alpha: 0.20
+  max_step_deg: 3.0
+  single_eye:
+    pan_slot: "lt"
+    pan_pin: 42
+    pan_neutral_deg: 90
+    pan_min_deg: 50
+    pan_max_deg: 130
+    pan_gain_deg: 40
+    pan_invert: true
+    tilt_slot: "lp"
+    tilt_pin: 41
+    tilt_neutral_deg: 0
+    tilt_min_deg: 0
+    tilt_max_deg: 50
+    tilt_gain_deg: 50
+    tilt_invert: true
+
+calibration:
+  model_path: "calibration_data/calibration.json"
+  settle_seconds: 0.8
+  sample_seconds: 1.5
+  min_confidence: 0.20
+  min_samples_per_point: 5
+  kiosk_quick_settle_seconds: 0.9
+  kiosk_quick_sample_seconds: 1.6
+  kiosk_quick_min_samples_per_point: 8
+  min_stable_streak_frames: 1
+  max_eye_disagreement_x: 0.50
+  max_eye_disagreement_y: 0.50
+  min_axis_separation_x: 0.03
+  min_axis_separation_y: 0.03
+  y_fusion_mode: weighted  # mean | weighted | dominant_left | dominant_right
+  quality_target_spread_x: 0.08
+  quality_target_spread_y: 0.06
+  recenter_alpha: 0.85
+  recenter_min_confidence: 0.25
+  ridge_alpha: 0.05  # Reduced from 1.0 to allow meaningful coefficients
+  
+  # Phase 3 coupled calibration options
+  mode: axis5  # axis5 | auto | coupled_only
+  points: axis5  # axis5 | grid9
+  coupled_basis: affine  # affine | quadratic
+  
+  quality:
+    loo_rmse_max: 0.75
+    diagonal_rmse_max: 0.70
+    vertical_rmse_max: 0.75
+    axis_leakage_max: 0.40
+    monotonicity_required: false
+  
+  selection:
+    min_score_margin: 0.05
+    min_rmse_delta: 0.03
+    rmse_floor: 0.10

@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment (dependency state only)
+.venv/
+venv/
+env/
+
+# Secrets — never commit real credentials
+secrets.py
+esp32_eye_ws_firmware/secrets.py
+
+# Generated benchmark data (large, reproducible)
+benchmark_data/
+
+# Archived legacy material (kept locally, not in repo)
+archive/
+
+# Empty planning scratch dir
+.planning/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
