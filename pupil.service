@@ -1,0 +1,17 @@
+[Unit]
+Description=Track Eye - per-eye pupil tracking demo
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi5
+WorkingDirectory=/home/pi5/track-eye
+# USB camera can take a few seconds to enumerate after power-on: wait for it.
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 30); do [ -e /dev/video0 ] && exit 0; sleep 1; done'
+ExecStart=/home/pi5/track-eye/run_pupil.sh
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

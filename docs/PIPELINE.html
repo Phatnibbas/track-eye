@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Track Eye — Pipeline & Thuật toán chi tiết</title>
+<style>
+  :root{
+    --bg:#0b0e12; --bg2:#0f141a; --panel:#131a22; --panel2:#171f29;
+    --ink:#e7edf3; --muted:#93a1b0; --line:#243141;
+    --acc:#6ee7ff; --acc2:#c084fc; --ok:#34d399; --warn:#fbbf24; --hot:#fb7185;
+    --code:#0a0d11; --kw:#c084fc; --num:#fca5a5; --str:#86efac; --com:#5b6b7a;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:linear-gradient(180deg,#0a0d11,#0b0e12 40%); color:var(--ink);
+    font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 22px 120px}
+  header.hero{
+    padding:56px 22px 40px; text-align:center; border-bottom:1px solid var(--line);
+    background:radial-gradient(60% 120% at 50% -10%, #1a2a3a55, transparent 60%);
+  }
+  .kicker{letter-spacing:.28em; text-transform:uppercase; font-size:12px; color:var(--acc); margin-bottom:14px}
+  h1{margin:0; font-size:38px; line-height:1.15; font-weight:750; letter-spacing:-.01em}
+  h1 .sub{display:block; font-size:17px; font-weight:450; color:var(--muted); margin-top:14px; letter-spacing:0}
+  .pills{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:24px}
+  .pill{font-size:12px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; color:var(--muted); background:#0e141b}
+  .pill b{color:var(--ink); font-weight:600}
+
+  nav.toc{
+    position:sticky; top:0; z-index:20; backdrop-filter:blur(10px);
+    background:#0b0e12cc; border-bottom:1px solid var(--line);
+    display:flex; gap:4px; flex-wrap:wrap; padding:10px 22px; justify-content:center;
+  }
+  nav.toc a{font-size:12.5px; color:var(--muted); text-decoration:none; padding:5px 10px; border-radius:8px}
+  nav.toc a:hover{color:var(--ink); background:#1a2330}
+
+  section{margin-top:52px; scroll-margin-top:60px}
+  h2{font-size:25px; margin:0 0 6px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:12px}
+  h2 .n{font:600 14px/1 ui-monospace,monospace; color:var(--acc); background:#0e1b22; border:1px solid #1d3642; padding:6px 8px; border-radius:8px}
+  h3{font-size:17px; margin:26px 0 8px; color:var(--ink)}
+  .lead{color:var(--muted); font-size:16px; margin:0 0 18px}
+  p{margin:12px 0}
+  .muted{color:var(--muted)}
+
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin:16px 0}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.9em; background:#0e141b; border:1px solid var(--line); padding:1px 6px; border-radius:6px; color:#cbd5e1}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:12px; padding:16px 18px; overflow-x:auto; margin:14px 0; font:13px/1.6 ui-monospace,Consolas,monospace}
+  pre .kw{color:var(--kw)} pre .num{color:var(--num)} pre .str{color:var(--str)} pre .com{color:var(--com)} pre .fn{color:var(--acc)}
+
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{color:var(--acc); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.05em}
+  td code{background:transparent; border:0; padding:0; color:#a5b4fc}
+  tbody tr:hover{background:#0f1620}
+
+  /* pipeline flow */
+  .flow{display:flex; flex-direction:column; gap:0; margin:20px 0}
+  .stage{display:grid; grid-template-columns:44px 1fr; gap:16px; align-items:stretch}
+  .rail{display:flex; flex-direction:column; align-items:center}
+  .dot{width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font:700 13px/1 ui-monospace,monospace; color:#04121a; background:linear-gradient(135deg,var(--acc),var(--acc2)); flex:0 0 auto}
+  .wire{width:2px; flex:1; background:linear-gradient(180deg,var(--acc2),var(--acc)); opacity:.35; min-height:14px}
+  .sbody{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin-bottom:14px; flex:1}
+  .sbody h4{margin:0 0 4px; font-size:15.5px}
+  .sbody .io{font:11.5px/1.5 ui-monospace,monospace; color:var(--muted); margin-top:8px}
+  .sbody .io b{color:var(--ok)}
+  .tag{display:inline-block; font:11px/1 ui-monospace,monospace; padding:4px 7px; border-radius:6px; border:1px solid var(--line); color:var(--muted); margin-right:6px}
+
+  .note{border-left:3px solid var(--acc); background:#0d1620; padding:12px 16px; border-radius:0 10px 10px 0; margin:16px 0}
+  .warn{border-left-color:var(--warn); background:#1a150a}
+  .ok{border-left-color:var(--ok); background:#0a1712}
+  .note b{color:var(--ink)}
+
+  .math{background:#0a0f14; border:1px solid var(--line); border-radius:10px; padding:14px 18px; margin:12px 0; font:14px/2 ui-monospace,Consolas,monospace; color:#dbe4ee; overflow-x:auto}
+  .math .lbl{color:var(--acc2)}
+  .math .cm{color:var(--com)}
+
+  footer{margin-top:70px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; text-align:center}
+  .eyeviz{display:flex; gap:22px; align-items:center; flex-wrap:wrap; justify-content:center; margin:8px 0}
+  svg{max-width:100%}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">Track Eye · Per-eye Pupil Tracking</div>
+  <h1>Pipeline &amp; Thuật toán chi tiết
+    <span class="sub">Bám con ngươi từng mắt độc lập bằng USB cam trên Raspberry Pi 5 — không calibration, head-robust</span>
+  </h1>
+  <div class="pills">
+    <span class="pill"><b>MediaPipe</b> FaceMesh 478</span>
+    <span class="pill"><b>OpenCV</b> capture + render</span>
+    <span class="pill"><b>Pi 5</b> · Debian Trixie · Py 3.11</span>
+    <span class="pill"><b>UGREEN</b> USB cam · MJPG 1280×720</span>
+    <span class="pill">Stream <b>MJPEG</b> :8080</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#tongquan">Tổng quan</a>
+  <a href="#kientruc">Kiến trúc</a>
+  <a href="#core">Thuật toán lõi</a>
+  <a href="#landmark">Landmark</a>
+  <a href="#smooth">Smoothing &amp; Down-gain</a>
+  <a href="#ui">Gauge &amp; Web UI</a>
+  <a href="#loop">Vòng inference</a>
+  <a href="#deploy">Deploy Pi5</a>
+  <a href="#limit">Giới hạn</a>
+</nav>
+
+<div class="wrap">
+
+<section id="tongquan">
+  <h2><span class="n">01</span> Tổng quan</h2>
+  <p class="lead">Mục tiêu: một camera trong hộp bám <b>vị trí con ngươi (pupil) của từng mắt</b> theo thời gian thực, kể cả khi <b>đầu di chuyển</b>. Về sau hai mắt này sẽ điều khiển servo (pan/tilt mỗi mắt) để "gương" lại chuyển động — nhưng phần servo/triển khai đang <span class="muted">out of scope</span>, bản này chỉ lo phần <b>perception + hiển thị</b>.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Ý tưởng cốt lõi</h3>
+      <p>Đọc <b>trực tiếp</b> landmark mống mắt (iris) từ MediaPipe FaceMesh. Khi có mặt trong khung hình thì <b>luôn có đủ 2 iris</b> — không dùng "quality-gate" để loại từng mắt, nên không bị rớt tracking một bên.</p>
+      <p>Vị trí pupil được đo <b>trong hệ toạ độ của chính hốc mắt</b> (dựa trên 2 khoé mắt), nên tín hiệu <b>không phụ thuộc đầu ở đâu / to nhỏ / nghiêng</b>.</p>
+    </div>
+    <div class="card">
+      <h3>Đặc điểm thiết kế</h3>
+      <ul style="margin:6px 0 0; padding-left:18px; color:var(--muted)">
+        <li><b style="color:var(--ink)">No calibration</b> — chạy là ra, không bắt user nhìn 5–9 điểm.</li>
+        <li><b style="color:var(--ink)">Head-normalized</b> — chuẩn hoá theo khoé mắt.</li>
+        <li><b style="color:var(--ink)">Per-eye</b> — 2 mắt đo &amp; smooth &amp; hiển thị riêng.</li>
+        <li><b style="color:var(--ink)">Down-gain 1.5×</b> — bù việc nhìn xuống bị đọc thiếu.</li>
+        <li><b style="color:var(--ink)">Web-only</b> — xem qua browser, không cần màn hình gắn Pi.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Các file trong runtime</h3>
+  <table>
+    <thead><tr><th>File</th><th>Vai trò</th></tr></thead>
+    <tbody>
+      <tr><td><code>tools/pupil_spike.py</code></td><td>Toàn bộ runtime: capture → đo pupil → smooth → vẽ → stream. Điểm vào duy nhất.</td></tr>
+      <tr><td><code>constants.py</code></td><td>Chỉ số landmark của 2 mắt (<code>EYE_DEFINITIONS</code>) và 2 vòng iris (<code>IRIS_GROUPS</code>).</td></tr>
+      <tr><td><code>filters.py</code></td><td>Tiện ích tín hiệu — bản này chỉ dùng <code>clamp()</code>.</td></tr>
+      <tr><td><code>web_ui_server.py</code></td><td><code>FrameHub</code> (encode JPEG) + <code>WebUIServer</code> (HTTP server phát MJPEG :8080).</td></tr>
+      <tr><td><code>run_pupil.sh</code></td><td>Launcher: <code>cd</code> vào repo → chạy <code>.venv</code> python với <code>--web-ui-host 0.0.0.0</code>.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="kientruc">
+  <h2><span class="n">02</span> Kiến trúc pipeline</h2>
+  <p class="lead">Một vòng lặp đồng bộ xử lý từng frame; một luồng HTTP riêng phát stream ra browser. Không có model học sâu tự train — toàn bộ "AI" nằm ở MediaPipe FaceMesh.</p>
+
+  <div class="flow">
+    <div class="stage"><div class="rail"><div class="dot">1</div><div class="wire"></div></div>
+      <div class="sbody"><h4>Capture — camera USB</h4>
+        <span class="tag">OpenCV VideoCapture</span><span class="tag">MJPG 1280×720</span><span class="tag">BUFFERSIZE=1</span>
+        <div class="io">out: <b>frame</b> BGR (H×W×3) · thử lần lượt index [cam,0,1,2,3]</div>
+      </div>
+    </div>
+    <div class="stage"><div class="rail"><div class="dot">2</div><div class="wire"></div></div>
+      <div class="sbody"><h4>Preprocess</h4>
+        <span class="tag">flip ngang (mirror)</span><span class="tag">BGR → RGB</span>
+        <div class="io">Mirror để trái/phải trên màn giống như soi gương. RGB vì MediaPipe cần RGB.</div>
+      </div>
+    </div>
+    <div class="stage"><div class="rail"><div class="dot">3</div><div class="wire"></div></div>
+      <div class="sbody"><h4>FaceMesh inference</h4>
+        <span class="tag">refine_landmarks=True</span><span class="tag">max_num_faces=1</span><span class="tag">478 điểm</span>
+        <div class="io">out: <b>478 landmark</b> chuẩn hoá (x,y ∈ 0..1) → nhân W,H thành pixel. Iris nằm ở nhóm 468–477.</div>
+      </div>
+    </div>
+    <div class="stage"><div class="rail"><div class="dot">4</div><div class="wire"></div></div>
+      <div class="sbody"><h4>Đo pupil từng mắt — <code>measure_eye()</code></h4>
+        <span class="tag">head-normalized</span><span class="tag">×2 mắt</span>
+        <div class="io">out: <b>h, v ∈ [−1,1]</b> — độ lệch pupil trong hốc mắt theo trục khoé mắt.</div>
+      </div>
+    </div>
+    <div class="stage"><div class="rail"><div class="dot">5</div><div class="wire"></div></div>
+      <div class="sbody"><h4>Temporal smoothing — EMA</h4>
+        <span class="tag">alpha = 0.45</span><span class="tag">1 bộ lọc / mắt</span>
+        <div class="io">Giảm rung landmark giữa các frame; giữ độ trễ thấp.</div>
+      </div>
+    </div>
+    <div class="stage"><div class="rail"><div class="dot">6</div><div class="wire"></div></div>
+      <div class="sbody"><h4>Down-gain — bù nhìn xuống</h4>
+        <span class="tag">×1.5 chỉ chiều xuống</span>
+        <div class="io">Nhìn xuống bị mí che nên landmark đọc thiếu → khuếch đại riêng thành phần đi xuống.</div>
+      </div>
+    </div>
+    <div class="stage"><div class="rail"><div class="dot">7</div><div class="wire"></div></div>
+      <div class="sbody"><h4>Render overlay</h4>
+        <span class="tag">iris marker + arrow</span><span class="tag">2 Rinnegan gauge</span><span class="tag">HUD/FPS</span>
+        <div class="io">Vẽ lên chính frame BGR: mống mắt thật + mũi tên hướng + 2 đồng hồ Rinnegan góc phải dưới.</div>
+      </div>
+    </div>
+    <div class="stage"><div class="rail"><div class="dot">8</div><div class="wire"></div></div>
+      <div class="sbody"><h4>Encode &amp; publish — <code>FrameHub</code></h4>
+        <span class="tag">JPEG q=82</span><span class="tag">thread-safe</span>
+        <div class="io">Encode frame thành JPEG, giữ frame mới nhất dưới lock.</div>
+      </div>
+    </div>
+    <div class="stage"><div class="rail"><div class="dot">9</div></div>
+      <div class="sbody"><h4>Stream — HTTP MJPEG :8080</h4>
+        <span class="tag">multipart/x-mixed-replace</span><span class="tag">/stream.mjpg</span>
+        <div class="io">Browser mở <code>http://&lt;pi-ip&gt;:8080</code> → xem realtime, không cần màn hình cắm vào Pi.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="core">
+  <h2><span class="n">03</span> Thuật toán lõi — head-normalized pupil offset</h2>
+  <p class="lead">Đây là trái tim của project. Với mỗi mắt, ta dựng một <b>hệ trục riêng gắn vào hốc mắt</b> rồi chiếu vị trí iris lên đó. Vì hệ trục "trôi" theo mặt, kết quả bất biến với vị trí/kích thước/độ nghiêng của đầu — <b>đó là lý do không cần calibration mà vẫn head-robust</b>.</p>
+
+  <h3>Dựng hệ trục mắt</h3>
+  <p>Lấy 2 khoé mắt <code>c0, c1</code>. Tâm mắt là trung điểm. Trục ngang <code>u</code> đi dọc theo khoé mắt; trục dọc <code>v_axis</code> vuông góc với <code>u</code> (xoay 90°). Chiều cao mắt <code>eye_h</code> = khoảng cách mí trên–mí dưới.</p>
+
+  <div class="math">
+<span class="cm"># hệ trục gắn vào hốc mắt (tự trôi theo đầu)</span>
+eye_center = (c0 + c1) / 2
+u          = (c1 − c0) / ‖c1 − c0‖        <span class="cm"># trục NGANG, đơn vị</span>
+width      = ‖c1 − c0‖                     <span class="cm"># bề rộng mắt (thang đo ngang)</span>
+v_axis     = (−u_y ,  u_x)                 <span class="cm"># trục DỌC = u xoay 90°</span>
+eye_h      = ‖top − bottom‖                <span class="cm"># chiều cao mắt (thang đo dọc)</span>
+  </div>
+
+  <h3>Chiếu iris lên hệ trục → tín hiệu h, v</h3>
+  <p>Tâm iris <code>iris_c</code> = trung bình 4 điểm vòng iris. Vector lệch <code>disp</code> = iris_c − eye_center. Chiếu <code>disp</code> lên <code>u</code> và <code>v_axis</code>, rồi <b>chia cho nửa kích thước mắt</b> để chuẩn hoá về khoảng [−1, 1].</p>
+
+  <div class="math">
+disp = iris_c − eye_center
+<span class="lbl">h</span> = (disp · u)      / (width / 2)   <span class="cm"># ngang: −1 = khoé trái … +1 = khoé phải</span>
+<span class="lbl">v</span> = (disp · v_axis) / (eye_h / 2)   <span class="cm"># dọc: −1 = mí … +1 = mí đối diện</span>
+  </div>
+
+  <div class="note ok"><b>Vì sao head-robust?</b> Cả tử số (<code>disp</code>) lẫn mẫu số (<code>width</code>, <code>eye_h</code>) đều đo trong <b>cùng một hệ gắn vào mặt</b>. Đầu tiến lại gần → cả iris lẫn mắt đều to lên cùng tỉ lệ → <code>h, v</code> không đổi. Đầu nghiêng → <code>u</code>, <code>v_axis</code> nghiêng theo → phép chiếu vẫn đúng. Đây là chuẩn hoá bằng <b>tỉ lệ hình học nội tại</b>, không phải toạ độ tuyệt đối.</p></div>
+
+  <div class="eyeviz">
+    <svg width="360" height="200" viewBox="0 0 360 200" role="img" aria-label="Sơ đồ hệ trục mắt">
+      <ellipse cx="180" cy="100" rx="120" ry="46" fill="none" stroke="#243141" stroke-width="2"/>
+      <!-- corners -->
+      <circle cx="60" cy="100" r="5" fill="#fca5a5"/><text x="34" y="104" fill="#93a1b0" font-size="12" font-family="monospace">c0</text>
+      <circle cx="300" cy="100" r="5" fill="#fca5a5"/><text x="308" y="104" fill="#93a1b0" font-size="12" font-family="monospace">c1</text>
+      <!-- center -->
+      <circle cx="180" cy="100" r="3" fill="#e7edf3"/>
+      <!-- u axis -->
+      <line x1="180" y1="100" x2="270" y2="100" stroke="#6ee7ff" stroke-width="2" marker-end="url(#a)"/>
+      <text x="248" y="92" fill="#6ee7ff" font-size="13" font-family="monospace">u</text>
+      <!-- v axis -->
+      <line x1="180" y1="100" x2="180" y2="40" stroke="#c084fc" stroke-width="2" marker-end="url(#b)"/>
+      <text x="186" y="46" fill="#c084fc" font-size="13" font-family="monospace">v</text>
+      <!-- iris -->
+      <circle cx="216" cy="118" r="16" fill="none" stroke="#34d399" stroke-width="2"/>
+      <circle cx="216" cy="118" r="3" fill="#34d399"/>
+      <line x1="180" y1="100" x2="216" y2="118" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text x="222" y="140" fill="#34d399" font-size="12" font-family="monospace">iris_c</text>
+      <defs>
+        <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#6ee7ff"/></marker>
+        <marker id="b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c084fc"/></marker>
+      </defs>
+    </svg>
+    <div style="max-width:300px" class="muted">
+      <p style="margin:0"><b style="color:var(--ink)">disp</b> (nét đứt vàng) là độ lệch của tâm iris so với tâm mắt. Chiếu lên <b style="color:var(--acc)">u</b> ra <code>h</code>, lên <b style="color:var(--acc2)">v</b> ra <code>v</code>. Mọi thứ scale theo <code>width</code>/<code>eye_h</code> nên bất biến với đầu.</p>
+    </div>
+  </div>
+
+  <h3>Code thật (<code>measure_eye</code>)</h3>
+  <pre><span class="kw">def</span> <span class="fn">measure_eye</span>(px, eyedef, iris_group):
+    c0, c1   = px[eyedef[<span class="str">"corners"</span>][<span class="num">0</span>]], px[eyedef[<span class="str">"corners"</span>][<span class="num">1</span>]]
+    top      = mean(px[i] <span class="kw">for</span> i <span class="kw">in</span> eyedef[<span class="str">"top"</span>])
+    bottom   = mean(px[i] <span class="kw">for</span> i <span class="kw">in</span> eyedef[<span class="str">"bottom"</span>])
+    iris_c   = mean(px[i] <span class="kw">for</span> i <span class="kw">in</span> iris_group)          <span class="com"># tâm 4 điểm iris</span>
+
+    eye_center = (c0 + c1) * <span class="num">0.5</span>
+    u          = (c1 - c0); width = ‖u‖; u = u / width       <span class="com"># trục ngang</span>
+    v_axis     = [-u[<span class="num">1</span>], u[<span class="num">0</span>]]                             <span class="com"># trục dọc ⟂ u</span>
+    eye_h      = ‖top - bottom‖
+
+    disp = iris_c - eye_center
+    h = dot(disp, u)      / (width  * <span class="num">0.5</span>)                 <span class="com"># -1..1</span>
+    v = dot(disp, v_axis) / (eye_h  * <span class="num">0.5</span>)                 <span class="com"># -1..1</span>
+    <span class="kw">return</span> {<span class="str">"h"</span>: h, <span class="str">"v"</span>: v, <span class="str">"u"</span>: u, <span class="str">"v_axis"</span>: v_axis, ...}</pre>
+</section>
+
+<section id="landmark">
+  <h2><span class="n">04</span> Landmark dùng tới</h2>
+  <p class="lead">MediaPipe FaceMesh với <code>refine_landmarks=True</code> trả 478 điểm; 10 điểm cuối (468–477) là 2 vòng iris. Project chỉ đụng vào một tập nhỏ được khai báo cứng trong <code>constants.py</code>.</p>
+
+  <table>
+    <thead><tr><th>Mắt</th><th>Khoé (c0,c1)</th><th>Mí trên</th><th>Mí dưới</th><th>Vòng iris</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>eye_33_133</code></td>
+        <td><code>33, 133</code></td>
+        <td><code>159,160,161,158</code></td>
+        <td><code>145,153,154,155</code></td>
+        <td><code>469,470,471,472</code></td>
+      </tr>
+      <tr>
+        <td><code>eye_362_263</code></td>
+        <td><code>362, 263</code></td>
+        <td><code>386,387,388,384</code></td>
+        <td><code>374,380,381,382</code></td>
+        <td><code>474,475,476,477</code></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="muted">Khoé mắt → dựng trục ngang <code>u</code> &amp; thang đo <code>width</code>. Mí trên/dưới → thang đo dọc <code>eye_h</code>. Vòng iris → tâm pupil <code>iris_c</code>. Ngoài ra <code>contour</code> (16 điểm) chỉ để vẽ viền mắt lên overlay.</p>
+
+  <div class="note"><b>Lưu ý:</b> <code>constants.py</code> còn sót <code>ORBITAL_LANDMARKS</code> và các <code>CALIBRATION_POINTS_*</code> từ bản cũ — bản pupil hiện tại <b>không import/không dùng</b> chúng (chỉ dùng <code>EYE_DEFINITIONS</code> &amp; <code>IRIS_GROUPS</code>). Xem mục Giới hạn.</p></div>
+</section>
+
+<section id="smooth">
+  <h2><span class="n">05</span> Smoothing &amp; Down-gain</h2>
+
+  <h3>EMA — làm mượt theo thời gian</h3>
+  <p>Landmark rung nhẹ giữa các frame. Mỗi mắt có một <code>EyeSmoother</code> lọc trung bình trượt mũ (EMA) riêng cho <code>h</code> và <code>v</code>:</p>
+  <div class="math">
+s<sub>t</sub> = <span class="lbl">α</span>·x<sub>t</sub> + (1 − <span class="lbl">α</span>)·s<sub>t−1</sub>        <span class="cm"># α = 0.45</span>
+  </div>
+  <p class="muted">α cao → bám nhanh, ít mượt; α thấp → mượt, trễ hơn. 0.45 là điểm cân bằng cho realtime.</p>
+
+  <h3>Down-gain — bù nhìn xuống bị đọc thiếu</h3>
+  <p>Khi nhìn xuống, mí trên che một phần iris → landmark iris bị kéo lên, tín hiệu <code>v</code> xuống bị <b>đọc thiếu</b>. Ta khuếch đại <b>chỉ riêng thành phần đi xuống</b> ×1.5, còn nhìn lên/ngang giữ nguyên:</p>
+  <pre><span class="kw">def</span> <span class="fn">apply_down_gain</span>(v, u):
+    <span class="kw">if</span> v * u[<span class="num">0</span>] &gt; <span class="num">0.0</span>:        <span class="com"># pupil đang chỉ XUỐNG</span>
+        <span class="kw">return</span> v * <span class="num">1.5</span>       <span class="com"># V_DOWN_GAIN</span>
+    <span class="kw">return</span> v</pre>
+  <div class="note"><b>Vì sao là <code>v * u[0] &gt; 0</code>?</b> Với mắt gần nằm ngang, "pupil ở dưới tâm mắt trong ảnh" (nhìn xuống) tương đương <code>v·u_x &gt; 0</code> — bất kể khoé nào được đánh index 0. Nhờ vậy điều kiện đúng cho cả hai mắt mà không cần biết thứ tự khoé.</p></div>
+</section>
+
+<section id="ui">
+  <h2><span class="n">06</span> Rinnegan gauge &amp; Web UI</h2>
+
+  <h3>Ánh xạ tín hiệu → đồng hồ</h3>
+  <p>Hai gauge Rinnegan ở góc phải-dưới, mỗi cái một mắt. Chấm sáng chạy theo hướng pupil. Tín hiệu <code>h, v</code> được nhân gain rồi <code>clamp</code> vào [−1.5, 1.5]:</p>
+  <div class="math">
+x_dot = clamp(<span class="lbl">h</span> · 3.0 , −1.5, 1.5)     <span class="cm"># GAUGE_GAIN_H</span>
+y_dot = clamp(<span class="lbl">v</span> · 2.5 , −1.5, 1.5)     <span class="cm"># GAUGE_GAIN_V</span>
+  </div>
+  <p class="muted">Gain phóng đại chuyển động nhỏ của pupil thành dịch chuyển thấy rõ trên gauge. Chấm màu <b style="color:var(--ok)">xanh</b> khi confidence ≥ 0.5, <b style="color:var(--warn)">vàng</b> khi thấp. Trên khuôn mặt còn có mũi tên vàng (<code>vec = (h·u + v·v_axis)·2.6</code>, giới hạn 1.5×width) để đối chiếu gauge với pupil thật.</p>
+
+  <h3>Hằng số điều chỉnh (đầu file <code>pupil_spike.py</code>)</h3>
+  <table>
+    <thead><tr><th>Hằng số</th><th>Giá trị</th><th>Ý nghĩa</th></tr></thead>
+    <tbody>
+      <tr><td><code>EMA_ALPHA</code></td><td>0.45</td><td>Độ mượt EMA (cao = bám nhanh hơn).</td></tr>
+      <tr><td><code>V_DOWN_GAIN</code></td><td>1.5</td><td>Khuếch đại riêng chiều nhìn xuống.</td></tr>
+      <tr><td><code>GAUGE_GAIN_H / _V</code></td><td>3.0 / 2.5</td><td>Độ nhạy chấm gauge ngang/dọc.</td></tr>
+      <tr><td><code>ARROW_AMP / _MAX</code></td><td>2.6 / 1.5</td><td>Phóng đại &amp; giới hạn mũi tên trên mặt.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Truyền hình ảnh ra browser</h3>
+  <p><code>FrameHub</code> encode mỗi frame thành JPEG (chất lượng 82) và giữ frame mới nhất dưới lock. <code>WebUIServer</code> mở một <code>ThreadingHTTPServer</code> ở luồng nền:</p>
+  <ul style="color:var(--muted)">
+    <li><code>GET /</code> → trang HTML nhúng thẻ <code>&lt;img src="/stream.mjpg"&gt;</code>.</li>
+    <li><code>GET /stream.mjpg</code> → phát liên tục dạng <code>multipart/x-mixed-replace</code>: cứ có frame mới là đẩy một ảnh JPEG, trình duyệt tự cập nhật (MJPEG).</li>
+  </ul>
+  <div class="note warn"><b>Chưa có WebSocket server.</b> Trang HTML cũ có JS kết nối <code>ws://…:8765</code> để hiện pan/tilt/gate/clients, nhưng <b>runtime không mở cổng WS nào</b> — nên mấy ô đó luôn hiển thị <code>--</code>. Phần <b>stream video vẫn chạy đầy đủ</b>. Đây là tàn dư UI cũ, vô hại.</p></div>
+</section>
+
+<section id="loop">
+  <h2><span class="n">07</span> Vòng inference (main loop)</h2>
+  <p class="lead">Toàn bộ xử lý nằm trong một vòng <code>while</code> đồng bộ trong <code>main()</code>. FPS tính bằng EMA của nhịp khung.</p>
+  <pre><span class="kw">while</span> <span class="kw">True</span>:
+    ok, frame = cap.read()                          <span class="com"># 1. capture</span>
+    frame = cv2.flip(frame, <span class="num">1</span>)                     <span class="com"># 2. mirror</span>
+    rgb   = cv2.cvtColor(frame, BGR2RGB)
+    result = face_mesh.process(rgb)                 <span class="com"># 3. FaceMesh 478</span>
+
+    <span class="kw">if</span> result.multi_face_landmarks:
+        px = landmarks × (W, H)                     <span class="com"># chuẩn hoá → pixel</span>
+        <span class="kw">for</span> eyedef, iris <span class="kw">in</span> zip(EYE_DEFINITIONS, IRIS_GROUPS):
+            eye   = measure_eye(px, eyedef, iris)   <span class="com"># 4. đo h,v</span>
+            h, v  = smoother[eye].update(eye.h, eye.v)   <span class="com"># 5. EMA</span>
+            v     = apply_down_gain(v, eye.u)       <span class="com"># 6. down-gain</span>
+            draw_face_markers(frame, eye, h, v)     <span class="com"># mũi tên + iris</span>
+
+    draw_gauges(frame, per_eye)                     <span class="com"># 7. 2 Rinnegan gauge</span>
+    draw_hud(frame, fps, face)                      <span class="com"># thanh trạng thái + FPS</span>
+    frame_hub.update(frame)                         <span class="com"># 8. encode JPEG → stream</span></pre>
+  <p class="muted">Không có mặt → bỏ qua bước đo, gauge về 0/xám, HUD hiện <code>NO FACE</code>. Có mặt → HUD hiện <code>BOTH PUPILS TRACKED</code>. Cứ 30 frame in một dòng log <code>h/v</code> mỗi mắt ra stdout (vào <code>pupil.log</code> khi chạy nền).</p>
+</section>
+
+<section id="deploy">
+  <h2><span class="n">08</span> Deploy trên Raspberry Pi 5</h2>
+  <p class="lead">Pi 5 chạy Debian Trixie. MediaPipe cài trong virtualenv <code>.venv</code> (tạo bằng <code>uv</code>, Python 3.11). Camera là USB UGREEN tại <code>/dev/video0</code>.</p>
+
+  <h3>Chạy tay (SSH vào Pi)</h3>
+  <pre><span class="com"># chạy nền, không phụ thuộc phiên SSH</span>
+nohup ~/track-eye/run_pupil.sh &gt;&gt; ~/track-eye/pupil.log <span class="num">2</span>&gt;&amp;<span class="num">1</span> &amp;
+
+<span class="com"># xem log / dừng</span>
+tail -f ~/track-eye/pupil.log
+pkill -f pupil_spike.py</pre>
+  <p class="muted">Rồi mở <code>http://&lt;pi-ip&gt;:8080</code> (hoặc <code>http://pi5.local:8080</code>) trên máy khác cùng mạng.</p>
+
+  <h3>Tự chạy khi cắm điện — 2 cách</h3>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">A · crontab @reboot <span style="color:var(--ok); font-size:13px">(đang dùng)</span></h3>
+      <p class="muted" style="margin-top:4px">Không cần sudo — hợp với Pi không có NOPASSWD sudo.</p>
+      <pre style="margin:8px 0 0"><span class="com"># crontab -e</span>
+@reboot sleep <span class="num">15</span> &amp;&amp; \
+ /home/pi5/track-eye/run_pupil.sh \
+ &gt;&gt; /home/pi5/track-eye/pupil.log <span class="num">2</span>&gt;&amp;<span class="num">1</span></pre>
+      <p class="muted" style="margin-bottom:0"><code>sleep 15</code> chờ camera USB + mạng lên. Gỡ: <code>crontab -e</code> xoá dòng.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">B · systemd <span style="color:var(--muted); font-size:13px">(tuỳ chọn)</span></h3>
+      <p class="muted" style="margin-top:4px">Thêm <b>auto-restart khi app crash</b> (<code>Restart=always</code>), chờ <code>/dev/video0</code> mới chạy.</p>
+      <pre style="margin:8px 0 0"><span class="com"># chạy 1 lần trên Pi (hỏi mật khẩu)</span>
+bash ~/track-eye/install_autostart.sh
+
+<span class="com"># quản lý</span>
+sudo systemctl status pupil
+journalctl -u pupil -f</pre>
+      <p class="muted" style="margin-bottom:0">Nếu bật systemd thì <b>bỏ dòng @reboot</b> ở crontab để khỏi chạy trùng port.</p>
+    </div>
+  </div>
+
+  <h3>Chuỗi khởi động (cách A)</h3>
+  <div class="math">
+cắm điện → boot → cron chạy <span class="cm">@reboot</span>
+  → sleep 15s <span class="cm">(chờ cam + mạng)</span>
+  → run_pupil.sh → .venv/python tools/pupil_spike.py --web-ui-host 0.0.0.0
+  → server MJPEG :8080 sẵn sàng → mở browser là thấy
+  </div>
+  <div class="note ok"><b>Trạng thái đã kiểm chứng:</b> launcher chạy OK (PID sống, <code>HTTP 200</code> tại :8080, 0 lỗi). Bằng chứng cuối cho @reboot là <b>rút/cắm điện thật</b> — cách này chưa test vì cần power-cycle Pi.</p></div>
+</section>
+
+<section id="limit">
+  <h2><span class="n">09</span> Giới hạn &amp; điểm cần biết</h2>
+  <ul>
+    <li><b>Tín hiệu là hướng pupil trong hốc mắt, KHÔNG phải gaze tuyệt đối.</b> Không map ra điểm nhìn trên màn hình (đó là chủ đích: bỏ calibration, chỉ cần chuyển động tương đối để "gương" bằng servo).</li>
+    <li><b>WebSocket 8765 chưa được implement</b> — các ô pan/tilt/gate/clients trên trang luôn <code>--</code>. Chỉ có stream video là thật.</li>
+    <li><b>Code tàn dư trong <code>constants.py</code></b> (<code>ORBITAL_LANDMARKS</code>, <code>CALIBRATION_POINTS_*</code>, <code>CalibrationPointSpec</code>) không được runtime dùng — có thể dọn sau.</li>
+    <li><b>Một mặt tại một thời điểm</b> (<code>max_num_faces=1</code>) — đúng bài toán 1 người trong hộp.</li>
+    <li><b>Servo / IR / triển khai phần cứng: out of scope</b> — chờ spec (ông Khang) chốt.</li>
+    <li><b>Phụ thuộc chất lượng iris landmark của MediaPipe</b> — thiếu sáng, kính loá, nhắm mắt sẽ làm nhiễu; down-gain chỉ bù được phần nhìn-xuống.</li>
+  </ul>
+</section>
+
+<footer>
+  Track Eye · per-eye pupil tracking demo · tài liệu sinh từ mã nguồn <code>tools/pupil_spike.py</code>, <code>constants.py</code>, <code>web_ui_server.py</code>.<br>
+  Mọi công thức &amp; hằng số ở trên đối chiếu trực tiếp với code hiện tại trong repo.
+</footer>
+
+</div>
+</body>
+</html>

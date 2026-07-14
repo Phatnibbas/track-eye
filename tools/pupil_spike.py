@@ -33,6 +33,7 @@ import mediapipe as mp  # noqa: E402
 
 from constants import EYE_DEFINITIONS, IRIS_GROUPS  # noqa: E402
 from filters import clamp  # noqa: E402
+from servo_link import EyeMapper, UdpServoLink  # noqa: E402
 from web_ui_server import FrameHub, WebUIServer  # noqa: E402
 
 FONT = cv2.FONT_HERSHEY_SIMPLEX
@@ -270,6 +271,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--min-detect", type=float, default=0.5)
     p.add_argument("--min-track", type=float, default=0.5)
     p.add_argument("--no-mirror", action="store_true")
+    p.add_argument("--udp-host", type=str, default=None,
+                   help="ESP32 IP for servo UDP output; unset = no servo emit (demo unchanged)")
+    p.add_argument("--udp-port", type=int, default=8770)
     p.add_argument("--max-frames", type=int, default=None)
     return p.parse_args(argv)
 
@@ -283,6 +287,11 @@ def main(argv: list[str] | None = None) -> int:
         min_tracking_confidence=args.min_track,
     )
     smoothers = {d["name"]: EyeSmoother(EMA_ALPHA) for d in EYE_DEFINITIONS}
+
+    servo_link = UdpServoLink(args.udp_host, args.udp_port) if args.udp_host else None
+    eye_mappers = [EyeMapper(), EyeMapper()] if servo_link is not None else None
+    if servo_link is not None:
+        print(f"[PUPIL] servo UDP -> {args.udp_host}:{args.udp_port}")
 
     frame_hub = FrameHub() if args.web_ui_host else None
     server = (
@@ -322,11 +331,20 @@ def main(argv: list[str] | None = None) -> int:
                 for idx, (eyedef, iris_group) in enumerate(zip(EYE_DEFINITIONS, IRIS_GROUPS)):
                     eye = measure_eye(px, eyedef, iris_group)
                     hs, vs = smoothers[eye["name"]].update(eye["h"], eye["v"])
-                    vs = apply_down_gain(vs, eye["u"])   # boost downward gaze only
-                    eye["h"], eye["v"] = hs, vs
+                    vs_disp = apply_down_gain(vs, eye["u"])   # display keeps downward boost
+                    eye["h"], eye["v"] = hs, vs_disp
+                    eye["v_servo"] = vs                        # raw (pre-down-gain) -> servo mapper
                     per_eye[idx] = eye
-                    draw_face_markers(frame, eye, hs, vs)
+                    draw_face_markers(frame, eye, hs, vs_disp)
                     log_bits.append(f"{eye['name'][-3:]}:h={hs:+.2f} v={vs:+.2f}")
+
+            if servo_link is not None:
+                if face and per_eye[0] is not None and per_eye[1] is not None:
+                    lp, lt = eye_mappers[0].map(per_eye[0]["h"], per_eye[0]["v_servo"])
+                    rp, rt = eye_mappers[1].map(per_eye[1]["h"], per_eye[1]["v_servo"])
+                    servo_link.send(lp, lt, rp, rt, "tracking")
+                else:
+                    servo_link.send(80, 60, 80, 60, "neutral")
 
             draw_gauges(frame, per_eye)
 
@@ -357,6 +375,8 @@ def main(argv: list[str] | None = None) -> int:
             cap.release()
         if server is not None:
             server.close()
+        if servo_link is not None:
+            servo_link.close()
 
 
 if __name__ == "__main__":
