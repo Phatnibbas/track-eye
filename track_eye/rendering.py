@@ -21,9 +21,9 @@ RIN_CORE = (60, 20, 55)
 RIN_AXIS = (230, 210, 240)
 ARROW_AMP = 2.6
 ARROW_MAX = 1.5
-GAUGE_GAIN_H = 3.0
-GAUGE_GAIN_V = 2.5
-DISPLAY_DOWN_GAIN = 1.5
+GAUGE_GAIN_H = 2.0       # left/right, both directions
+GAUGE_GAIN_V = 2.5       # up; down adds DISPLAY_DOWN_GAIN
+DISPLAY_DOWN_GAIN = 1.2  # 2.5 * 1.2 = 3.0 effective down gain
 
 
 def apply_display_down_gain(value: float, gain: float = DISPLAY_DOWN_GAIN) -> float:

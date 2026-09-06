@@ -26,6 +26,16 @@ Useful flags: `--width`, `--height`, `--fps`, `--fourcc`, `--no-mirror`, `--ema-
 
 ## Controlled baseline
 
+
+Display mapping is presentation-only:
+
+```text
+left/right:  x * 2.0
+up:          y * 2.5
+down:        y * 3.0
+```
+
+`EyeSignal.x/y` and `/status.json` remain unscaled.
 Run with the camera free:
 
 ```bash
