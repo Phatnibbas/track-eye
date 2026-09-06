@@ -156,6 +156,7 @@ class EyeTracker:
                     x=smooth_h * orientation,
                     y=smooth_v * orientation,
                     raw_h=smooth_h,
+                    raw_v=smooth_v,
                     contour=measured["contour"],
                     eye_center=measured["eye_center"],
                     iris_center=measured["iris_center"],
