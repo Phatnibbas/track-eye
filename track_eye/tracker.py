@@ -40,6 +40,7 @@ class EyeSignal:
     eye_center: tuple[float, float] = (0.0, 0.0)
     iris_center: tuple[float, float] = (0.0, 0.0)
     iris_radius: float = 0.0
+    eye_width: float = 0.0
     axis_x: tuple[float, float] = (1.0, 0.0)
     axis_y: tuple[float, float] = (0.0, 1.0)
 
@@ -155,11 +156,11 @@ class EyeTracker:
                     x=smooth_h * orientation,
                     y=smooth_v * orientation,
                     raw_h=smooth_h,
-                    raw_v=smooth_v,
                     contour=measured["contour"],
                     eye_center=measured["eye_center"],
                     iris_center=measured["iris_center"],
                     iris_radius=measured["iris_radius"],
+                    eye_width=measured["width"],
                     axis_x=measured["axis_x"],
                     axis_y=measured["axis_y"],
                 )

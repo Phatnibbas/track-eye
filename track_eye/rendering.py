@@ -43,8 +43,7 @@ def draw_face_marker(frame: np.ndarray, eye: EyeSignal) -> None:
     magnitude = float(np.linalg.norm(vector))
     if magnitude > ARROW_MAX:
         vector = vector / magnitude * ARROW_MAX
-    tip = np.asarray(eye.eye_center) + vector * max(np.linalg.norm(eye.axis_x), 1.0) * 50.0
-    cv2.arrowedLine(frame, center, tuple(int(value) for value in tip), YELLOW, 2, cv2.LINE_AA, tipLength=0.3)
+    tip = np.asarray(eye.eye_center) + vector * max(eye.eye_width, 1.0)
 
 
 def _clamp(value: float, minimum: float = -1.0, maximum: float = 1.0) -> float:
