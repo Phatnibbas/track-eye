@@ -1,58 +1,55 @@
-# Track Eye — per-eye pupil tracking
+# Track Eye — software-only per-eye pupil tracking
 
-Live demo that tracks **both pupils independently** from a USB camera on a
-Raspberry Pi 5 and streams the result to a browser. Built for a head-in-box film
-installation: a camera inside the box watches the viewer's eyes so that (later)
-two servos can mirror each pupil independently, robustly to head movement.
+Track Eye captures a UVC camera stream, extracts both iris positions with MediaPipe FaceMesh, normalizes each eye in its own socket, and serves an MJPEG browser view. The stable output is an unscaled per-eye `TrackingResult`.
 
-## What it does
+Servo, mechanical calibration, ESP32 discovery, UDP, and actuator control are intentionally outside this runtime.
 
-- Reads iris landmarks **directly** from MediaPipe FaceMesh (`refine_landmarks=True`),
-  so whenever a face is visible **both pupils are always tracked** — no per-eye
-  dropout.
-- For each eye, computes the pupil offset inside the socket, **head-normalized**
-  against that eye's own corners (survives head translation/rotation), then
-  EMA-smooths it. Downward gaze gets a 1.5× boost (it reads short otherwise).
-- The two eyes stay **independent** (no fusion) — the shape the servo stage needs.
-- **No calibration.** Open the camera and go.
-- UI: two Rinnegan-style gauges (LEFT / RIGHT EYE) showing where each pupil points,
-  plus iris markers on the face, streamed as MJPEG to `http://<pi>:8080`.
-
-## Run (on the Pi)
+## Run
 
 ```bash
-python tools/pupil_spike.py --web-ui-host 0.0.0.0
-# then open http://<pi-ip>:8080 in a browser
+uv sync --frozen
+.venv/bin/python -m track_eye.app \
+  --device /dev/v4l/by-id/usb-UGREEN_Camera_UGREEN_Camera_SN0001-video-index0 \
+  --web-host 0.0.0.0
 ```
 
-Useful flags: `--width/--height`, `--fourcc MJPG`, `--camera-index`,
-`--no-mirror`, `--max-frames N`.
+Open `http://<pi-ip>:8080`.
+
+Useful flags: `--width`, `--height`, `--fps`, `--fourcc`, `--no-mirror`, `--ema-alpha`, `--display-down-gain`, `--max-frames`.
+
+## HTTP surface
+
+- `/` — camera overlay and software tracker status.
+- `/stream.mjpg` — sequenced MJPEG; each client receives each source frame once.
+- `/status.json` — camera negotiation, frame age, FPS, face status, and both eye signals.
+- `/healthz` — `200` only while capture is alive and the last frame is recent; otherwise `503`.
 
 ## Controlled baseline
 
-Stop any running tracker so it releases `/dev/video0`, then run:
+Run with the camera free:
 
 ```bash
-.venv/bin/python tools/tracking_baseline.py --web-ui-host 0.0.0.0
-# open http://<pi-ip>:8080 and follow the target/instruction overlay
+.venv/bin/python tools/tracking_baseline.py \
+  --device /dev/v4l/by-id/usb-UGREEN_Camera_UGREEN_Camera_SN0001-video-index0 \
+  --web-ui-host 0.0.0.0
 ```
 
-The protocol records an adjacent center reference before each gaze direction,
-then measures tracking rate, frame time, separation, center jitter, head-motion
-drift, and the down/up amplitude ratio. Results are written as JSON and text
-under the ignored `benchmark_data/` directory. A run below 80% face tracking is
-marked invalid and cannot recommend a down-gain.
+The protocol records adjacent center references before each gaze direction, then reports tracking rate, frame time, separation, center jitter, head drift, and display-only down-gain analysis. JSON and text reports are written under ignored `benchmark_data/`.
 
-## Layout
+A run below the configured per-phase tracking threshold is invalid. Down-gain is diagnostic only and is not recommended unless both vertical directions pass separation gates.
 
-| File | Role |
+## Package layout
+
+| Path | Role |
 |------|------|
-| `tools/pupil_spike.py` | the demo (camera → per-eye pupil → Rinnegan UI → stream) |
-| `tools/tracking_baseline.py` | browser-guided quantitative baseline; no servo output |
-| `constants.py` | eye-landmark definitions (corners, lids, iris rings) |
-| `filters.py` | small numeric helpers (`clamp`) |
-| `web_ui_server.py` | MJPEG stream + browser page |
-| `docs/PIVOT_PUPIL_MIRROR_2026-07-02.md` | why this approach (pupil mirroring, not gaze direction) |
+| `track_eye/camera.py` | by-id V4L2 ownership, negotiated-format validation, read-failure threshold |
+| `track_eye/tracker.py` | FaceMesh lifecycle, eye geometry, canonical signal contract, EMA |
+| `track_eye/rendering.py` | OpenCV overlays and display-only gain |
+| `track_eye/web.py` | sequenced MJPEG, status, health, browser page |
+| `track_eye/app.py` | single process composition root and signal lifecycle |
+| `tools/tracking_baseline.py` | browser-guided quantitative baseline |
+| `tests/` | behavioral math, contract, baseline, and stream tests |
+| `deploy/track-eye.service` | single systemd owner on Pi |
+| `scripts/install_pi.sh` | rollback-backed Pi deployment cutover |
 
-`servo_link.py` and `tools/servo_link_test.py` provide the current UDP servo
-path. The controlled baseline never emits servo commands.
+Legacy servo files remain in the repository for a later integration phase but are not imported by `track_eye.app` or the production service.

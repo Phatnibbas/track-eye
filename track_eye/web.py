@@ -71,19 +71,21 @@ class WebUIServer:
         port: int,
         status_provider: Callable[[], dict],
         index_html: str = INDEX_HTML,
+        start_callback: Callable[[], None] | None = None,
     ):
         self.frame_hub = frame_hub
         self.host = host
         self.port = int(port)
         self.status_provider = status_provider
         self.index_html = index_html
+        self.start_callback = start_callback
         self.httpd: ThreadingHTTPServer | None = None
         self.thread: threading.Thread | None = None
 
     def start(self) -> None:
         if self.thread is not None:
             return
-        hub, provider, index_html = self.frame_hub, self.status_provider, self.index_html
+        hub, provider, index_html, start_callback = self.frame_hub, self.status_provider, self.index_html, self.start_callback
 
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self):  # noqa: N802
@@ -92,6 +94,16 @@ class WebUIServer:
                     body = index_html.encode("utf-8")
                     self.send_response(200)
                     self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+                    return
+                if path == "/start":
+                    if start_callback is not None:
+                        start_callback()
+                    body = b"{\"started\":true}"
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
                     self.send_header("Content-Length", str(len(body)))
                     self.end_headers()
                     self.wfile.write(body)

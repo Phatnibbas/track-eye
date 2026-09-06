@@ -97,6 +97,8 @@ def main(argv: list[str] | None = None) -> int:
     except (CameraError, OSError) as exc:
         state["capture_alive"] = False
         print(f"[APP] ERROR: {exc}", flush=True)
+        if server.thread is not None:
+            time.sleep(2.2)
         return 1
     except KeyboardInterrupt:
         return 0

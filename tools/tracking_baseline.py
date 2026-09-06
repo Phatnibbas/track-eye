@@ -1,8 +1,9 @@
 """Controlled browser-guided baseline for the current per-eye tracker.
 
 The runner does not alter the tracking algorithm. It records the production
-FaceMesh measurement before the display/servo down-gain, shows each pose in the
+FaceMesh measurement before the display-only down-gain, shows each pose in the
 browser stream, and writes a compact JSON plus a human-readable report.
+ 
 
 Run on the Pi with the camera free:
     .venv/bin/python tools/tracking_baseline.py --web-ui-host 0.0.0.0
@@ -15,6 +16,7 @@ import argparse
 import json
 import statistics
 import sys
+import threading
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -26,7 +28,7 @@ import numpy as np
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 
 from track_eye.camera import DEFAULT_DEVICE, Camera, CameraConfig  # noqa: E402
-from track_eye.rendering import DISPLAY_DOWN_GAIN, apply_display_down_gain, draw_face_marker  # noqa: E402
+from track_eye.rendering import DISPLAY_DOWN_GAIN, draw_face_marker  # noqa: E402
 from track_eye.tracker import EYE_DEFINITIONS, EMA_ALPHA, EyeTracker  # noqa: E402
 from track_eye.web import FrameHub, WebUIServer  # noqa: E402
 
@@ -71,14 +73,23 @@ def render_baseline_html(_ws_port: int) -> str:
     main { width: min(96vw, 1280px); }
     h1 { margin: 0 0 8px; font-size: 22px; letter-spacing: .08em; }
     p { margin: 0 0 12px; color: #aeb5bf; }
+    button { margin-bottom: 12px; padding: 8px 18px; cursor: pointer; }
     img { display: block; width: 100%; max-height: 84vh; object-fit: contain;
           border: 1px solid #343940; border-radius: 12px; background: #000; }
   </style>
 </head>
 <body><main>
   <h1>TRACK EYE BASELINE</h1>
-  <p>Follow the red target and the instruction drawn on the camera stream.</p>
+  <p>Keep your head still. Press Start when FACE OK is stable, then follow the target.</p>
+  <button id="start">Start recording</button>
   <img src="/stream.mjpg" alt="baseline camera stream">
+  <script>
+    document.getElementById("start").onclick = async () => {
+      await fetch("/start");
+      document.getElementById("start").disabled = true;
+      document.getElementById("start").textContent = "Recording started";
+    };
+  </script>
 </main></body>
 </html>"""
 
@@ -91,7 +102,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--fourcc", default="MJPG")
     parser.add_argument("--web-ui-host", default="0.0.0.0")
     parser.add_argument("--web-ui-port", type=int, default=8080)
-    parser.add_argument("--start-delay", type=float, default=20.0)
+    parser.add_argument("--start-delay", type=float, default=0.0, help="Headless pre-start delay; web mode uses Start button by default")
     parser.add_argument("--countdown", type=float, default=3.0)
     parser.add_argument("--duration", type=float, default=6.0)
     parser.add_argument(
@@ -309,7 +320,6 @@ def build_analysis(phases: dict) -> dict:
     return {
         "eyes": eyes,
         "current_display_down_gain": DISPLAY_DOWN_GAIN,
-        "current_servo_down_up_gain_ratio": 2.0,
         "measured_recommended_down_gain": recommended_gain,
     }
 
@@ -421,7 +431,6 @@ def render_text_report(report: dict) -> str:
             "",
             "DOWN-GAIN DECISION",
             f"  current display gain: {analysis['current_display_down_gain']:.2f}",
-            f"  current servo down/up gain ratio: {analysis['current_servo_down_up_gain_ratio']:.2f}",
             f"  measured median required gain: {fmt(analysis['measured_recommended_down_gain'], 2)}",
             "  Gain is reported only when both UP and DOWN separate from their adjacent center (D >= 1).",
             "  Separation: <1 poor, 1-3 weak/moderate, >3 clear.",
@@ -447,6 +456,8 @@ def main(argv: list[str] | None = None) -> int:
     frame_times: list[float] = []
     last_frame_at = time.perf_counter()
     fps = 0.0
+    start_requested = threading.Event()
+    face_ready_since: float | None = None
 
     def status() -> dict:
         return {
@@ -454,6 +465,8 @@ def main(argv: list[str] | None = None) -> int:
             "healthy": True,
             "frame_sequence": 0 if frame_hub is None else frame_hub.latest_sequence,
             "camera": None if camera.info is None else camera.info.__dict__,
+            "start_requested": start_requested.is_set(),
+            "face_ready": face_ready_since is not None and time.perf_counter() - face_ready_since >= 1.0,
         }
 
     try:
@@ -466,12 +479,13 @@ def main(argv: list[str] | None = None) -> int:
                 args.web_ui_port,
                 status,
                 index_html=render_baseline_html(0),
+                start_callback=start_requested.set,
             )
             server.start()
             print(f"[BASELINE] open http://{args.web_ui_host}:{args.web_ui_port}", flush=True)
 
         def run_window(phase: Phase, seconds: float, recording: bool, headline: str) -> None:
-            nonlocal fps, last_frame_at
+            nonlocal fps, last_frame_at, face_ready_since
             started = time.perf_counter()
             while True:
                 loop_started = time.perf_counter()
@@ -489,6 +503,10 @@ def main(argv: list[str] | None = None) -> int:
                 if not args.no_mirror:
                     frame = cv2.flip(frame, 1)
                 result = tracker.process(frame)
+                if result.face_detected:
+                    face_ready_since = face_ready_since or time.perf_counter()
+                else:
+                    face_ready_since = None
                 if recording:
                     bucket["tracked_frames"] += int(result.face_detected)
                     if result.eyes is not None:
@@ -514,6 +532,11 @@ def main(argv: list[str] | None = None) -> int:
         first_phase = phases[0]
         if args.start_delay > 0:
             run_window(first_phase, args.start_delay, False, "GET READY")
+        elif frame_hub is None:
+            raise ValueError("--start-delay is required when web UI is disabled")
+        else:
+            while not start_requested.is_set() or face_ready_since is None or time.perf_counter() - face_ready_since < 1.0:
+                run_window(first_phase, 0.1, False, "READY - PRESS START")
         for index, phase in enumerate(phases, start=1):
             print(f"[BASELINE] {index}/{len(phases)} prepare {phase.name}: {phase.instruction}", flush=True)
             if args.countdown > 0:
