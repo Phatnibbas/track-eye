@@ -1,0 +1,15 @@
+[Unit]
+Description=Track Eye software-only pupil tracker
+After=local-fs.target
+
+[Service]
+Type=simple
+User=pi5
+WorkingDirectory=/home/pi5/track-eye
+ExecStart=/home/pi5/track-eye/.venv/bin/python -u -m track_eye.app --device /dev/v4l/by-id/usb-UGREEN_Camera_UGREEN_Camera_SN0001-video-index0 --web-host 0.0.0.0 --web-port 8080
+Restart=on-failure
+RestartSec=5
+SyslogIdentifier=track-eye
+
+[Install]
+WantedBy=multi-user.target
