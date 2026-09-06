@@ -5,7 +5,7 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from .tracker import EyeSignal, TrackingResult
+from .output import OutputEyeSignal, OutputTrackingResult
 
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 GREEN = (0, 220, 0)
@@ -21,13 +21,6 @@ RIN_CORE = (60, 20, 55)
 RIN_AXIS = (230, 210, 240)
 ARROW_AMP = 2.6
 ARROW_MAX = 1.5
-GAUGE_GAIN_H = 2.0       # left/right, both directions
-GAUGE_GAIN_V = 2.5       # up; down adds DISPLAY_DOWN_GAIN
-DISPLAY_DOWN_GAIN = 1.2  # 2.5 * 1.2 = 3.0 effective down gain
-
-
-def apply_display_down_gain(value: float, gain: float = DISPLAY_DOWN_GAIN) -> float:
-    return value * gain if value > 0.0 else value
 
 
 def draw_face_marker(frame: np.ndarray, eye: EyeSignal) -> None:
@@ -54,9 +47,8 @@ def draw_gauge(
     frame: np.ndarray,
     center: tuple[int, int],
     size: int,
-    eye: EyeSignal | None,
+    eye: OutputEyeSignal | None,
     label: str,
-    display_down_gain: float,
 ) -> None:
     outer = size // 2 - 8
     track = outer - 20
@@ -72,8 +64,8 @@ def draw_gauge(
     cv2.circle(frame, center, max(6, size // 16), RIN_CORE, -1, cv2.LINE_AA)
     cv2.circle(frame, center, max(3, size // 30), BLACK, -1, cv2.LINE_AA)
     if eye is not None:
-        x_value = _clamp(eye.x * GAUGE_GAIN_H, -1.5, 1.5)
-        y_value = _clamp(apply_display_down_gain(eye.y, display_down_gain) * GAUGE_GAIN_V, -1.5, 1.5)
+        x_value = _clamp(eye.x, -1.5, 1.5)
+        y_value = _clamp(eye.y, -1.5, 1.5)
         dot = (int(round(center[0] + track * x_value)), int(round(center[1] + track * y_value)))
         cv2.line(frame, center, dot, (235, 220, 245), 1, cv2.LINE_AA)
         cv2.circle(frame, dot, 9, WHITE, -1, cv2.LINE_AA)
@@ -83,7 +75,12 @@ def draw_gauge(
         cv2.putText(frame, text, position, FONT, 0.44, WHITE, 1, cv2.LINE_AA)
 
 
-def render_frame(frame: np.ndarray, result: TrackingResult, fps: float, display_down_gain: float = DISPLAY_DOWN_GAIN) -> np.ndarray:
+def render_frame(
+    frame: np.ndarray,
+    result: TrackingResult,
+    output: OutputTrackingResult,
+    fps: float,
+) -> np.ndarray:
     if result.eyes is not None:
         for eye in result.eyes:
             draw_face_marker(frame, eye)
@@ -93,9 +90,9 @@ def render_frame(frame: np.ndarray, result: TrackingResult, fps: float, display_
     radius = size // 2
     baseline_y = height - margin - radius
     centers = [(width - margin - gap - size - radius, baseline_y), (width - margin - radius, baseline_y)]
-    eyes = result.eyes or (None, None)
+    eyes = output.eyes or (None, None)
     for center, eye, label in zip(centers, eyes, ("LEFT EYE", "RIGHT EYE")):
-        draw_gauge(frame, center, size, eye, label, display_down_gain)
+        draw_gauge(frame, center, size, eye, label)
     overlay = frame.copy()
     cv2.rectangle(overlay, (0, 0), (width, 34), (18, 18, 28), -1)
     cv2.addWeighted(overlay, 0.55, frame, 0.45, 0.0, frame)

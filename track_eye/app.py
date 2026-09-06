@@ -10,7 +10,8 @@ import time
 import cv2
 
 from .camera import DEFAULT_DEVICE, Camera, CameraConfig, CameraError
-from .rendering import DISPLAY_DOWN_GAIN, render_frame
+from .output import OutputGain, scale_tracking_result
+from .rendering import render_frame
 from .tracker import EyeTracker
 from .web import FrameHub, WebUIServer
 
@@ -27,7 +28,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--min-detect", type=float, default=0.5)
     parser.add_argument("--min-track", type=float, default=0.5)
     parser.add_argument("--ema-alpha", type=float, default=0.45)
-    parser.add_argument("--display-down-gain", type=float, default=DISPLAY_DOWN_GAIN)
+    parser.add_argument("--output-horizontal-gain", type=float, default=2.0)
+    parser.add_argument("--output-vertical-up-gain", type=float, default=2.5)
+    parser.add_argument("--output-vertical-down-gain", type=float, default=3.0)
     parser.add_argument("--no-mirror", action="store_true")
     parser.add_argument("--max-frames", type=int, default=None)
     return parser.parse_args(argv)
@@ -42,13 +45,20 @@ def main(argv: list[str] | None = None) -> int:
     camera = Camera(CameraConfig(args.device, args.width, args.height, args.fps, args.fourcc))
     tracker: EyeTracker | None = None
     hub = FrameHub()
-    state = {"started_at": time.time(), "last_frame_at": 0.0, "capture_alive": False, "result": None, "fps": 0.0}
+    state = {"started_at": time.time(), "last_frame_at": 0.0, "capture_alive": False, "result": None, "output": None, "fps": 0.0}
+    output_gain = OutputGain(
+        horizontal=args.output_horizontal_gain,
+        vertical_up=args.output_vertical_up_gain,
+        vertical_down=args.output_vertical_down_gain,
+    )
 
     def status() -> dict:
         now = time.time()
         age = None if not state["last_frame_at"] else max(0.0, now - state["last_frame_at"])
         result = state["result"]
-        eyes = result.eyes if result is not None and result.face_detected else None
+        output = state["output"]
+        raw_eyes = result.eyes if result is not None and result.face_detected else None
+        output_eyes = output.eyes if output is not None and output.face_detected else None
         return {
             "version": "0.1.0",
             "uptime_seconds": now - state["started_at"],
@@ -58,8 +68,15 @@ def main(argv: list[str] | None = None) -> int:
             "fps": state["fps"],
             "face_detected": bool(result and result.face_detected),
             "inference_ms": None if result is None else result.inference_ms,
-            "left": None if eyes is None else {"x": eyes[0].x, "y": eyes[0].y},
-            "right": None if eyes is None else {"x": eyes[1].x, "y": eyes[1].y},
+            "raw_left": None if raw_eyes is None else {"x": raw_eyes[0].x, "y": raw_eyes[0].y},
+            "raw_right": None if raw_eyes is None else {"x": raw_eyes[1].x, "y": raw_eyes[1].y},
+            "output_left": None if output_eyes is None else {"x": output_eyes[0].x, "y": output_eyes[0].y},
+            "output_right": None if output_eyes is None else {"x": output_eyes[1].x, "y": output_eyes[1].y},
+            "output_gain": {
+                "horizontal": output_gain.horizontal,
+                "vertical_up": output_gain.vertical_up,
+                "vertical_down": output_gain.vertical_down,
+            },
             "capture_alive": state["capture_alive"],
             "healthy": bool(state["capture_alive"] and age is not None and age <= 2.0),
         }
@@ -85,9 +102,10 @@ def main(argv: list[str] | None = None) -> int:
             instant = 1.0 / max(now - last_frame, 1e-6)
             fps = instant if fps == 0.0 else 0.9 * fps + 0.1 * instant
             last_frame = now
-            rendered = render_frame(frame, result, fps, args.display_down_gain)
+            output = scale_tracking_result(result, output_gain)
+            rendered = render_frame(frame, result, output, fps)
             hub.update(rendered)
-            state.update({"last_frame_at": time.time(), "result": result, "fps": fps})
+            state.update({"last_frame_at": time.time(), "result": result, "output": output, "fps": fps})
             frames += 1
             if frames % 30 == 0:
                 print(f"[APP] frames={frames} fps={fps:.1f} face={result.face_detected} inference_ms={result.inference_ms:.1f}", flush=True)

@@ -28,9 +28,13 @@ import numpy as np
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 
 from track_eye.camera import DEFAULT_DEVICE, Camera, CameraConfig  # noqa: E402
-from track_eye.rendering import DISPLAY_DOWN_GAIN, draw_face_marker  # noqa: E402
+from track_eye.output import OutputGain  # noqa: E402
+from track_eye.rendering import draw_face_marker  # noqa: E402
 from track_eye.tracker import EYE_DEFINITIONS, EMA_ALPHA, EyeTracker  # noqa: E402
 from track_eye.web import FrameHub, WebUIServer  # noqa: E402
+
+OUTPUT_GAIN = OutputGain()
+OUTPUT_DOWN_UP_RATIO = OUTPUT_GAIN.vertical_down / OUTPUT_GAIN.vertical_up
 
 
 @dataclass(frozen=True)
@@ -311,7 +315,7 @@ def build_analysis(phases: dict) -> dict:
             "required_down_gain": required_down_gain,
             "down_vs_up_after_current_gain": None
             if not gain_is_reliable or not up_amplitude
-            else down_amplitude * DISPLAY_DOWN_GAIN / up_amplitude,
+            else down_amplitude * OUTPUT_DOWN_UP_RATIO / up_amplitude,
             "center_jitter": center_jitter,
             "head_drift": head_drift,
         }
@@ -319,7 +323,11 @@ def build_analysis(phases: dict) -> dict:
     recommended_gain = statistics.median(gain_candidates) if gain_candidates else None
     return {
         "eyes": eyes,
-        "current_display_down_gain": DISPLAY_DOWN_GAIN,
+        "output_gain": {
+            "horizontal": OUTPUT_GAIN.horizontal,
+            "vertical_up": OUTPUT_GAIN.vertical_up,
+            "vertical_down": OUTPUT_GAIN.vertical_down,
+        },
         "measured_recommended_down_gain": recommended_gain,
     }
 
@@ -393,11 +401,6 @@ def render_text_report(report: dict) -> str:
             f"  {phase_name:<12} tracking={phase['tracking_rate'] * 100:5.1f}% "
             f"frames={phase['frames']}"
         )
-        for eye in EYE_NAMES:
-            x = phase["eyes"][eye]["x"]
-            y = phase["eyes"][eye]["y"]
-            lines.append(f"    {eye}: x={format_stats(x)} y={format_stats(y)}")
-
     analysis = report["analysis"]
     lines.extend(["", "SIGNAL ANALYSIS"])
     for eye, values in analysis["eyes"].items():
@@ -411,7 +414,7 @@ def render_text_report(report: dict) -> str:
                 f"{fmt(values['right_separation'], 2)} / {fmt(values['up_separation'], 2)} / "
                 f"{fmt(values['down_separation'], 2)}",
                 f"    up/down amplitude: {fmt(values['up_amplitude'])} / {fmt(values['down_amplitude'])}",
-                f"    down/up after current {DISPLAY_DOWN_GAIN:.2f}x display gain: "
+                f"    down/up after current output ratio {OUTPUT_DOWN_UP_RATIO:.2f}: "
                 f"{fmt(values['down_vs_up_after_current_gain'], 2)}",
             ]
         )
@@ -429,9 +432,11 @@ def render_text_report(report: dict) -> str:
     lines.extend(
         [
             "",
-            "DOWN-GAIN DECISION",
-            f"  current display gain: {analysis['current_display_down_gain']:.2f}",
-            f"  measured median required gain: {fmt(analysis['measured_recommended_down_gain'], 2)}",
+            "OUTPUT-GAIN DECISION",
+            f"  horizontal gain: {OUTPUT_GAIN.horizontal:.2f}",
+            f"  vertical up gain: {OUTPUT_GAIN.vertical_up:.2f}",
+            f"  vertical down gain: {OUTPUT_GAIN.vertical_down:.2f}",
+            f"  measured median required down gain: {fmt(analysis['measured_recommended_down_gain'], 2)}",
             "  Gain is reported only when both UP and DOWN separate from their adjacent center (D >= 1).",
             "  Separation: <1 poor, 1-3 weak/moderate, >3 clear.",
             "  Head drift normalized near 0 is better; 1.0 equals a full gaze span.",

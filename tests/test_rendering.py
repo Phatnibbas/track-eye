@@ -1,15 +1,31 @@
 import unittest
 
-from track_eye.rendering import DISPLAY_DOWN_GAIN, GAUGE_GAIN_H, GAUGE_GAIN_V, apply_display_down_gain
+from track_eye.output import OutputGain, scale_tracking_result
+from track_eye.tracker import EyeSignal, TrackingResult
 
 
-class RenderingGainTests(unittest.TestCase):
-    def test_requested_directional_display_gains(self):
-        self.assertEqual(GAUGE_GAIN_H, 2.0)
-        self.assertEqual(GAUGE_GAIN_V, 2.5)
-        self.assertAlmostEqual(GAUGE_GAIN_V * DISPLAY_DOWN_GAIN, 3.0)
-        self.assertAlmostEqual(apply_display_down_gain(-1.0) * GAUGE_GAIN_V, -2.5)
-        self.assertAlmostEqual(apply_display_down_gain(1.0) * GAUGE_GAIN_V, 3.0)
+class OutputGainTests(unittest.TestCase):
+    def test_directional_gains_apply_after_raw_tracker_result(self):
+        raw = TrackingResult(
+            timestamp_ns=123,
+            face_detected=True,
+            eyes=(
+                EyeSignal("left", 0.25, -0.4, 0.25, -0.4),
+                EyeSignal("right", -0.5, 0.6, -0.5, 0.6),
+            ),
+            inference_ms=4.5,
+        )
+        output = scale_tracking_result(raw, OutputGain())
+        self.assertEqual((raw.eyes[0].x, raw.eyes[0].y), (0.25, -0.4))
+        self.assertEqual((output.eyes[0].x, output.eyes[0].y), (0.5, -1.0))
+        self.assertAlmostEqual(output.eyes[1].x, -1.0)
+        self.assertAlmostEqual(output.eyes[1].y, 1.8)
+
+    def test_no_face_stays_no_face_at_output_boundary(self):
+        raw = TrackingResult(123, False, None, 4.5)
+        output = scale_tracking_result(raw)
+        self.assertFalse(output.face_detected)
+        self.assertIsNone(output.eyes)
 
 
 if __name__ == "__main__":
