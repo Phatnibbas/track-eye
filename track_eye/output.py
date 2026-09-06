@@ -9,11 +9,11 @@ from .tracker import TrackingResult
 
 @dataclass(frozen=True)
 class OutputGain:
-    """Directional gains applied after perception and filtering."""
+    """Directional gains matching the original Pi display mapping."""
 
-    horizontal: float = 2.0
+    horizontal: float = 3.0
     vertical_up: float = 2.5
-    vertical_down: float = 3.0
+    vertical_down: float = 3.75
 
 
 @dataclass(frozen=True)

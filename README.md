@@ -15,7 +15,7 @@ uv sync --frozen
 
 Open `http://<pi-ip>:8080`.
 
-Useful flags: `--width`, `--height`, `--fps`, `--fourcc`, `--no-mirror`, `--ema-alpha`, `--display-down-gain`, `--max-frames`.
+Useful flags: `--width`, `--height`, `--fps`, `--fourcc`, `--no-mirror`, `--ema-alpha`, `--output-horizontal-gain`, `--output-vertical-up-gain`, `--output-vertical-down-gain`, `--max-frames`.
 
 ## HTTP surface
 
@@ -30,9 +30,9 @@ Useful flags: `--width`, `--height`, `--fps`, `--fourcc`, `--no-mirror`, `--ema-
 Output mapping is applied after tracking/filtering, at the output boundary:
 
 ```text
-left/right:  raw x * 2.0
+left/right:  raw x * 3.0
 up:          raw y * 2.5
-down:        raw y * 3.0
+down:        raw y * 3.75 (2.5 * 1.5 effective)
 ```
 
 `TrackingResult` remains raw. `/status.json` exposes `raw_left/raw_right` and
