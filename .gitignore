@@ -15,6 +15,10 @@ firmware/esp32_eye_ws_firmware/secrets.py
 
 # Generated benchmark data (large, reproducible)
 benchmark_data/
+# Runtime output calibration saved by the web tuner
+output-calibration.json
+output-calibration.json.tmp
+
 
 # Archived legacy material (kept locally, not in repo)
 archive/

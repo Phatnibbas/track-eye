@@ -12,7 +12,8 @@ import cv2
 
 from .baseline import BaselineSession
 from .camera import DEFAULT_DEVICE, Camera, CameraConfig, CameraError
-from .output import OutputGain, scale_tracking_result
+from .output import OutputGain
+from .output_tuning import OutputTuner
 from .rendering import render_frame
 from .tracker import EyeTracker
 from .web import FrameHub, WebUIServer
@@ -30,9 +31,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--min-detect", type=float, default=0.5)
     parser.add_argument("--min-track", type=float, default=0.5)
     parser.add_argument("--ema-alpha", type=float, default=0.45)
-    parser.add_argument("--output-horizontal-gain", type=float, default=3.0)
-    parser.add_argument("--output-vertical-up-gain", type=float, default=2.5)
-    parser.add_argument("--output-vertical-down-gain", type=float, default=3.75)
+    parser.add_argument("--output-left-gain", type=float, default=3.0)
+    parser.add_argument("--output-right-gain", type=float, default=3.0)
+    parser.add_argument("--output-up-gain", type=float, default=2.5)
+    parser.add_argument("--output-down-gain", type=float, default=3.75)
+    parser.add_argument("--output-soft-limit", type=float, default=1.5)
+    parser.add_argument("--output-config", type=Path, default=Path("output-calibration.json"))
     parser.add_argument("--no-mirror", action="store_true")
     parser.add_argument("--max-frames", type=int, default=None)
     return parser.parse_args(argv)
@@ -48,12 +52,17 @@ def main(argv: list[str] | None = None) -> int:
     tracker: EyeTracker | None = None
     hub = FrameHub()
     baseline = BaselineSession(Path("benchmark_data"))
-    state = {"started_at": time.time(), "last_frame_at": 0.0, "capture_alive": False, "result": None, "output": None, "fps": 0.0}
-    output_gain = OutputGain(
-        horizontal=args.output_horizontal_gain,
-        vertical_up=args.output_vertical_up_gain,
-        vertical_down=args.output_vertical_down_gain,
+    output_tuner = OutputTuner(
+        args.output_config,
+        OutputGain(
+            left=args.output_left_gain,
+            right=args.output_right_gain,
+            up=args.output_up_gain,
+            down=args.output_down_gain,
+            soft_limit=args.output_soft_limit,
+        ),
     )
+    state = {"started_at": time.time(), "last_frame_at": 0.0, "capture_alive": False, "result": None, "output": None, "fps": 0.0}
 
     def status() -> dict:
         now = time.time()
@@ -75,17 +84,26 @@ def main(argv: list[str] | None = None) -> int:
             "raw_right": None if raw_eyes is None else {"x": raw_eyes[1].x, "y": raw_eyes[1].y},
             "output_left": None if output_eyes is None else {"x": output_eyes[0].x, "y": output_eyes[0].y},
             "output_right": None if output_eyes is None else {"x": output_eyes[1].x, "y": output_eyes[1].y},
-            "output_gain": {
-                "horizontal": output_gain.horizontal,
-                "vertical_up": output_gain.vertical_up,
-                "vertical_down": output_gain.vertical_down,
-            },
             "capture_alive": state["capture_alive"],
             "healthy": bool(state["capture_alive"] and age is not None and age <= 2.0),
             "baseline": baseline.status(),
+            "output_tuning": output_tuner.status(),
         }
 
-    server = WebUIServer(hub, args.web_host, args.web_port, status, start_callback=baseline.request_start)
+    server = WebUIServer(
+        hub,
+        args.web_host,
+        args.web_port,
+        status,
+        start_callback=baseline.request_start,
+        action_callbacks={
+            "/baseline/start": lambda _body: baseline.request_start() or baseline.status(),
+            "/output/gain": output_tuner.update_gain,
+            "/output/neutral": lambda _body: output_tuner.request_neutral(),
+            "/output/save": lambda _body: output_tuner.save(),
+            "/output/reset": lambda _body: output_tuner.reset(),
+        },
+    )
     frames = 0
     last_frame = time.perf_counter()
     fps = 0.0
@@ -109,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
             instant = 1.0 / max(now - last_frame, 1e-6)
             fps = instant if fps == 0.0 else 0.9 * fps + 0.1 * instant
             last_frame = now
-            output = scale_tracking_result(result, output_gain)
+            output = output_tuner.process(result)
             if not baseline.process(frame, result, fps, time.perf_counter() - loop_started):
                 rendered = render_frame(frame, result, output, fps)
             else:

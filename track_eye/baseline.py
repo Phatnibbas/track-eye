@@ -18,7 +18,7 @@ from .rendering import draw_face_marker
 from .tracker import EYE_DEFINITIONS, EMA_ALPHA, TrackingResult
 
 OUTPUT_GAIN = OutputGain()
-OUTPUT_DOWN_UP_RATIO = OUTPUT_GAIN.vertical_down / OUTPUT_GAIN.vertical_up
+OUTPUT_DOWN_UP_RATIO = OUTPUT_GAIN.down / OUTPUT_GAIN.up
 EYE_NAMES = [definition["name"] for definition in EYE_DEFINITIONS]
 
 
@@ -170,9 +170,11 @@ def build_analysis(phases: dict) -> dict:
     return {
         "eyes": eyes,
         "output_gain": {
-            "horizontal": OUTPUT_GAIN.horizontal,
-            "vertical_up": OUTPUT_GAIN.vertical_up,
-            "vertical_down": OUTPUT_GAIN.vertical_down,
+            "left": OUTPUT_GAIN.left,
+            "right": OUTPUT_GAIN.right,
+            "up": OUTPUT_GAIN.up,
+            "down": OUTPUT_GAIN.down,
+            "soft_limit": OUTPUT_GAIN.soft_limit,
         },
         "measured_recommended_down_gain": statistics.median(gain_candidates) if gain_candidates else None,
     }
@@ -399,9 +401,8 @@ class BaselineSession:
         lines.extend([
             "",
             "OUTPUT-GAIN DECISION",
-            f"  horizontal gain: {OUTPUT_GAIN.horizontal:.2f}",
-            f"  vertical up gain: {OUTPUT_GAIN.vertical_up:.2f}",
-            f"  vertical down gain: {OUTPUT_GAIN.vertical_down:.2f}",
+            f"  left/right gain: {OUTPUT_GAIN.left:.2f} / {OUTPUT_GAIN.right:.2f}",
+            f"  vertical up/down gain: {OUTPUT_GAIN.up:.2f} / {OUTPUT_GAIN.down:.2f}",
             f"  measured median required down gain: {analysis['measured_recommended_down_gain']}",
         ])
         return "\n".join(lines) + "\n"
