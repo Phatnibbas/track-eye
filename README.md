@@ -37,7 +37,12 @@ down:        raw y * 3.75 (2.5 * 1.5 effective)
 
 `TrackingResult` remains raw. `/status.json` exposes `raw_left/raw_right` and
 `output_left/output_right` separately.
-Run with the camera free:
+The production page at `http://<pi-ip>:8080` has a **Start baseline** button.
+Press it while `FACE OK` is visible, then follow the on-screen target for all
+phases. The production camera/tracker stays in one process; results are written
+to `benchmark_data/` and the normal tracker resumes after completion.
+
+For a standalone baseline process, run with the camera free:
 
 ```bash
 .venv/bin/python tools/tracking_baseline.py \
@@ -55,6 +60,7 @@ A run below the configured per-phase tracking threshold is invalid. Output gain 
 |------|------|
 | `track_eye/camera.py` | by-id V4L2 ownership, negotiated-format validation, read-failure threshold |
 | `track_eye/tracker.py` | FaceMesh lifecycle, eye geometry, canonical signal contract, EMA |
+| `track_eye/baseline.py` | in-process browser-controlled baseline session |
 | `track_eye/rendering.py` | OpenCV overlays and display-only gain |
 | `track_eye/web.py` | sequenced MJPEG, status, health, browser page |
 | `track_eye/app.py` | single process composition root and signal lifecycle |

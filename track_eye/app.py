@@ -6,9 +6,11 @@ import argparse
 import signal
 import threading
 import time
+from pathlib import Path
 
 import cv2
 
+from .baseline import BaselineSession
 from .camera import DEFAULT_DEVICE, Camera, CameraConfig, CameraError
 from .output import OutputGain, scale_tracking_result
 from .rendering import render_frame
@@ -45,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     camera = Camera(CameraConfig(args.device, args.width, args.height, args.fps, args.fourcc))
     tracker: EyeTracker | None = None
     hub = FrameHub()
+    baseline = BaselineSession(Path("benchmark_data"))
     state = {"started_at": time.time(), "last_frame_at": 0.0, "capture_alive": False, "result": None, "output": None, "fps": 0.0}
     output_gain = OutputGain(
         horizontal=args.output_horizontal_gain,
@@ -79,19 +82,22 @@ def main(argv: list[str] | None = None) -> int:
             },
             "capture_alive": state["capture_alive"],
             "healthy": bool(state["capture_alive"] and age is not None and age <= 2.0),
+            "baseline": baseline.status(),
         }
 
-    server = WebUIServer(hub, args.web_host, args.web_port, status)
+    server = WebUIServer(hub, args.web_host, args.web_port, status, start_callback=baseline.request_start)
     frames = 0
     last_frame = time.perf_counter()
     fps = 0.0
     try:
         camera.open()
+        baseline.configure(camera.info.__dict__, args.device, not args.no_mirror)
         tracker = EyeTracker(args.min_detect, args.min_track, args.ema_alpha)
         server.start()
         state["capture_alive"] = True
         print(f"[APP] web=http://{args.web_host}:{args.web_port} device={args.device}", flush=True)
         while not stop.is_set():
+            loop_started = time.perf_counter()
             ok, frame = camera.read()
             if not ok or frame is None:
                 continue
@@ -103,7 +109,10 @@ def main(argv: list[str] | None = None) -> int:
             fps = instant if fps == 0.0 else 0.9 * fps + 0.1 * instant
             last_frame = now
             output = scale_tracking_result(result, output_gain)
-            rendered = render_frame(frame, result, output, fps)
+            if not baseline.process(frame, result, fps, time.perf_counter() - loop_started):
+                rendered = render_frame(frame, result, output, fps)
+            else:
+                rendered = frame
             hub.update(rendered)
             state.update({"last_frame_at": time.time(), "result": result, "output": output, "fps": fps})
             frames += 1

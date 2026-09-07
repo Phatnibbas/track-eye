@@ -13,11 +13,37 @@ import cv2
 import numpy as np
 
 INDEX_HTML = """<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Track Eye</title><style>*{box-sizing:border-box}body{margin:0;background:#060708;color:#f4efe4;font-family:system-ui,sans-serif}main{display:grid;grid-template-columns:1fr 320px;gap:18px;padding:18px;min-height:100vh}.stage{border:1px solid #2d2a26;border-radius:18px;overflow:hidden;background:#000}.stage img{width:100%;height:100%;object-fit:contain;display:block}.hud{background:#101317;border:1px solid #302c24;border-radius:18px;padding:18px}h1{margin:0 0 8px;font-size:24px;letter-spacing:.08em}.tag{color:#9ca3af;margin-bottom:22px}.metric{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #27231e}.metric b{color:#ff6b4a;font-family:monospace}.status{margin-top:18px;color:#9ca3af;font-family:monospace;white-space:pre-wrap}@media(max-width:900px){main{grid-template-columns:1fr}}</style>
-</head><body><main><section class="stage"><img src="/stream.mjpg" alt="camera stream"></section><aside class="hud"><h1>Track Eye</h1><div class="tag">software tracker status</div><div class="metric"><span>face</span><b id="face">--</b></div><div class="metric"><span>left</span><b id="left">--</b></div><div class="metric"><span>right</span><b id="right">--</b></div><div class="status" id="status">loading...</div></aside></main><script>
-const statusEl=document.getElementById('status');
-async function poll(){try{const r=await fetch('/status.json',{cache:'no-store'});const s=await r.json();document.getElementById('face').textContent=s.face_detected?'OK':'NO FACE';document.getElementById('left').textContent=s.output_left?s.output_left.x.toFixed(3)+', '+s.output_left.y.toFixed(3):'--';document.getElementById('right').textContent=s.output_right?s.output_right.x.toFixed(3)+', '+s.output_right.y.toFixed(3):'--';statusEl.textContent=JSON.stringify(s,null,2)}catch(e){statusEl.textContent='status unavailable'}}
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Track Eye</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#060708;color:#f4efe4;font-family:system-ui,sans-serif}
+main{display:grid;grid-template-columns:1fr 320px;gap:18px;padding:18px;min-height:100vh}
+.stage{border:1px solid #2d2a26;border-radius:18px;overflow:hidden;background:#000}
+.stage img{width:100%;height:100%;object-fit:contain;display:block}
+.hud{background:#101317;border:1px solid #302c24;border-radius:18px;padding:18px}
+h1{margin:0 0 8px;font-size:24px;letter-spacing:.08em}.tag{color:#9ca3af;margin-bottom:22px}
+.metric{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #27231e}
+.metric b{color:#ff6b4a;font-family:monospace}.status{margin-top:18px;color:#9ca3af;font-family:monospace;white-space:pre-wrap;font-size:12px}
+button{width:100%;margin-top:18px;padding:11px;border:1px solid #ff6b4a;border-radius:8px;background:#211714;color:#ffb09c;font-weight:700;cursor:pointer}
+button:disabled{cursor:default;opacity:.55}
+</style></head>
+<body><main><section class="stage"><img src="/stream.mjpg" alt="camera stream"></section>
+<aside class="hud"><h1>Track Eye</h1><div class="tag">software tracker status</div>
+<div class="metric"><span>face</span><b id="face">--</b></div>
+<div class="metric"><span>left</span><b id="left">--</b></div>
+<div class="metric"><span>right</span><b id="right">--</b></div>
+<button id="baseline">Start baseline</button>
+<div class="status" id="status">loading...</div></aside></main>
+<script>
+const statusEl=document.getElementById('status'), baselineButton=document.getElementById('baseline');
+baselineButton.onclick=async()=>{baselineButton.disabled=true;baselineButton.textContent='Waiting for FACE OK...';await fetch('/start')};
+async function poll(){try{const r=await fetch('/status.json',{cache:'no-store'}),s=await r.json(),b=s.baseline||{};
+document.getElementById('face').textContent=s.face_detected?'OK':'NO FACE';
+document.getElementById('left').textContent=s.output_left?s.output_left.x.toFixed(3)+', '+s.output_left.y.toFixed(3):'--';
+document.getElementById('right').textContent=s.output_right?s.output_right.x.toFixed(3)+', '+s.output_right.y.toFixed(3):'--';
+if(b.state==='idle'||b.state==='completed'||b.state==='error'){baselineButton.disabled=false;baselineButton.textContent=b.state==='completed'?'Run baseline again':'Start baseline'}
+else if(b.state==='countdown'||b.state==='recording'||b.state==='ready'){baselineButton.disabled=true;baselineButton.textContent=b.state==='recording'?'Baseline recording...':'Baseline preparing...'}
+statusEl.textContent=JSON.stringify({healthy:s.healthy,fps:s.fps,baseline:b},null,2)}catch(e){statusEl.textContent='status unavailable'}}
 poll();setInterval(poll,1000);
 </script></body></html>"""
 
