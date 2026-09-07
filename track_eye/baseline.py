@@ -297,6 +297,11 @@ class BaselineSession:
                 ],
             }
 
+    def record_read_failure(self) -> None:
+        with self._lock:
+            if self._state == "recording":
+                self._raw_phases[PHASES[self._phase_index].name]["read_failures"] += 1
+
     def process(self, frame: np.ndarray, result: TrackingResult, fps: float, frame_time: float) -> bool:
         now = time.perf_counter()
         with self._lock:

@@ -100,6 +100,7 @@ def main(argv: list[str] | None = None) -> int:
             loop_started = time.perf_counter()
             ok, frame = camera.read()
             if not ok or frame is None:
+                baseline.record_read_failure()
                 continue
             if not args.no_mirror:
                 frame = cv2.flip(frame, 1)
