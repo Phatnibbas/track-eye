@@ -1,8 +1,8 @@
 # Track Eye — software-only per-eye pupil tracking
 
-Track Eye captures a UVC camera stream, extracts both iris positions with MediaPipe FaceMesh, normalizes each eye in its own socket, and serves an MJPEG browser view. The stable output is an unscaled per-eye `TrackingResult`.
+Track Eye captures a UVC camera stream, extracts both iris positions with MediaPipe FaceMesh, applies persisted output calibration, and serves an MJPEG browser view. A deployed shadow pipeline also measures head transform, face position, body/person position, and source transitions; the package includes the accepted 20-byte codec without connecting it to production output or hardware.
 
-Servo, mechanical calibration, ESP32 discovery, UDP, and actuator control are intentionally outside this runtime.
+Servo mechanics, ESP32 transport/discovery, and actuator control remain outside this runtime. Fallback emission is explicitly disabled.
 
 ## Run
 
@@ -15,15 +15,16 @@ uv sync --frozen
 
 Open `http://<pi-ip>:8080`.
 
-Useful flags: `--width`, `--height`, `--fps`, `--fourcc`, `--no-mirror`, `--ema-alpha`, `--output-left-gain`, `--output-right-gain`, `--output-up-gain`, `--output-down-gain`, `--output-soft-limit`, `--output-config`, `--max-frames`.
+Useful flags include `--width`, `--height`, `--fps`, `--fourcc`, `--no-mirror`, `--ema-alpha`, output gain/config flags, `--fallback-config`, `--no-head-shadow`, `--no-face-shadow`, `--no-body-shadow`, `--validation-dir`, `--validation-token`, and `--max-frames`.
 
 ## HTTP surface
 
 - `/` — live camera, scaled output status, directional gain controls, neutral capture, persistence, and baseline control.
 - `/frame.jpg` — long-polled latest JPEG used by the browser to avoid MJPEG backlog latency.
-- `/stream.mjpg` — sequenced MJPEG; each client receives each source frame once.
-- `/status.json` — camera, raw/output signals, baseline state, and active output calibration.
-- `/healthz` — `200` only while capture is alive and the last frame is recent; otherwise `503`.
+- `/stream.mjpg` — sequenced latest-frame MJPEG; slow clients may skip intermediate source frames.
+- `/status.json` — camera, raw/output signals, baseline state, output calibration, shadow candidates/selection, stage timings, and validation status.
+- `/healthz` — `200` only while capture is alive and the last frame is recent; otherwise `503`. It does not validate tracking quality.
+- `/validation/start`, `/validation/stop`, `/validation/cleanup` — explicit pre-render JPEG validation capture controls. They are disabled unless the process receives `--validation-token`; callers currently supply that token in the JSON body. Run only on an isolated/trusted network and clean participant artifacts deliberately.
 
 ## Controlled baseline
 
@@ -63,6 +64,16 @@ The protocol records adjacent center references before each gaze direction, then
 
 A run below the configured per-phase tracking threshold is invalid. Output gain is diagnostic until the directional separation gates pass.
 
+## Project context
+
+- `AGENTS.md` is the mandatory entry point for development agents.
+- `docs/PROJECT_FRAMEWORK.md` defines the current product invariant, architecture, contracts, evidence, and deployment protocol.
+- `docs/PI5_DEPLOYED_STATE.md` records the validated live Pi service, dependencies, calibration, and baseline evidence.
+- `docs/PIVOT_PUPIL_MIRROR_2026-07-02.md` is a historical decision log; its pivot to per-eye pupil mirroring remains valid, but its proposed next steps are stale.
+- `docs/OPEN_RESEARCH_PROTOCOL_FALLBACK.md` records the accepted payload and source priority, deployed shadow implementation, and still-open quality, transport, and rig gates.
+
+The local Git repository is the source for changes. `/home/pi5/track-eye` is the deployed runtime and is not a Git checkout. Preserve its `output-calibration.json` and `benchmark_data/` during ordinary source sync.
+
 ## Package layout
 
 | Path | Role |
@@ -70,13 +81,21 @@ A run below the configured per-phase tracking threshold is invalid. Output gain 
 | `track_eye/camera.py` | by-id V4L2 ownership, negotiated-format validation, read-failure threshold |
 | `track_eye/tracker.py` | FaceMesh lifecycle, eye geometry, canonical signal contract, EMA |
 | `track_eye/baseline.py` | in-process browser-controlled baseline session |
+| `track_eye/pupil_quality.py` | per-eye geometry/velocity diagnostics; quality gate remains uncalibrated |
+| `track_eye/shadow.py` | pinned head transform, full-range face candidate, HOG body worker |
+| `track_eye/fallback.py` | strict shadow config, monotonic source selector, accepted 20-byte codec |
+| `track_eye/validation.py` | explicit mirrored pre-render JPEG capture and decision artifacts |
 | `track_eye/output_tuning.py` | live gain/neutral state and atomic JSON persistence |
 | `track_eye/rendering.py` | OpenCV overlays and display-only gain |
 | `track_eye/web.py` | sequenced MJPEG, status, health, browser page |
 | `track_eye/app.py` | single process composition root and signal lifecycle |
 | `tools/tracking_baseline.py` | browser-guided quantitative baseline |
 | `tests/` | behavioral math, contract, baseline, and stream tests |
+| `AGENTS.md` | mandatory agent entry point and non-negotiable contracts |
+| `docs/PROJECT_FRAMEWORK.md` | current architecture, authority hierarchy, evidence, and change protocol |
+| `docs/PI5_DEPLOYED_STATE.md` | validated deployed runtime and calibration snapshot |
+| `docs/OPEN_RESEARCH_PROTOCOL_FALLBACK.md` | accepted contract, deployed shadow implementation, open behavioral/transport/rig gates |
 | `deploy/track-eye.service` | single systemd owner on Pi |
 | `scripts/install_pi.sh` | rollback-backed Pi deployment cutover |
 
-Legacy servo files remain in the repository for a later integration phase but are not imported by `track_eye.app` or the production service.
+Legacy servo files remain isolated. `track_eye.app` does not call the payload encoder or send fallback targets; status must remain `disabled-shadow-only` until behavioral and hardware gates pass.

@@ -80,6 +80,7 @@ def render_frame(
     result: TrackingResult,
     output: OutputTrackingResult,
     fps: float,
+    shadow: dict | None = None,
 ) -> np.ndarray:
     if result.eyes is not None:
         for eye in result.eyes:
@@ -98,4 +99,13 @@ def render_frame(
     cv2.addWeighted(overlay, 0.55, frame, 0.45, 0.0, frame)
     status = "BOTH PUPILS TRACKED" if result.face_detected else "NO FACE"
     cv2.putText(frame, f"PUPIL TRACKING  |  FPS {fps:4.1f}  |  {status}", (8, 23), FONT, 0.6, GREEN if result.face_detected else RED, 2, cv2.LINE_AA)
+    if shadow is not None:
+        source = str(shadow.get("shadow_source", "NONE"))
+        states = shadow.get("shadow_states", ["?", "?"])
+        cv2.putText(
+            frame,
+            f"SHADOW {source} L:{states[0]} R:{states[1]} emission={shadow.get('emission', 'disabled-shadow-only')}",
+            (8, 52),
+            FONT, 0.5, YELLOW, 1, cv2.LINE_AA,
+        )
     return frame

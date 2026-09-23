@@ -41,6 +41,9 @@ class EyeSignal:
     iris_center: tuple[float, float] = (0.0, 0.0)
     iris_radius: float = 0.0
     eye_width: float = 0.0
+    eyelid_aperture: float = 0.0
+    iris_inside_lid: float = 0.0
+    lid_overflow: float = 0.0
     axis_x: tuple[float, float] = (1.0, 0.0)
     axis_y: tuple[float, float] = (0.0, 1.0)
 
@@ -107,6 +110,9 @@ def measure_eye(px: np.ndarray, eyedef: dict, iris_group: tuple[int, ...]) -> di
         "u": axis_x,
         "v_axis": axis_y,
         "width": width,
+        "aperture": eye_h,
+        "iris_inside_lid": float(np.linalg.norm(iris_c - (top + bottom) * 0.5) / max(eye_h * 0.5, 1e-6)),
+        "lid_overflow": max(0.0, (float(np.linalg.norm(iris_c - (top + bottom) * 0.5)) + iris_r - eye_h * 0.5) / max(eye_h * 0.5, 1e-6)),
         "h": h,
         "v": v,
     }
@@ -162,6 +168,9 @@ class EyeTracker:
                     iris_center=measured["iris_center"],
                     iris_radius=measured["iris_radius"],
                     eye_width=measured["width"],
+                    eyelid_aperture=measured["aperture"],
+                    iris_inside_lid=measured["iris_inside_lid"],
+                    lid_overflow=measured["lid_overflow"],
                     axis_x=measured["axis_x"],
                     axis_y=measured["axis_y"],
                 )

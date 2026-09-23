@@ -19,6 +19,10 @@ benchmark_data/
 output-calibration.json
 output-calibration.json.tmp
 
+# Runtime validation captures and logs may contain participant data
+validation_data/
+*.log
+
 
 # Archived legacy material (kept locally, not in repo)
 archive/
