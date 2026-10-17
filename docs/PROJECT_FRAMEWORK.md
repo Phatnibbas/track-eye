@@ -1,5 +1,20 @@
 # Track Eye Project Framework
 
+> **Current scope override — 2026-10-17:** Read `PI5_DEPLOYED_STATE.md` first for
+> the dated two-service snapshot and calibration preservation constraints.
+> The local tree now contains canonical `track_eye/` plus the active external
+> `delta_bridge/` adapter, Delta tools/tests, reference firmware, profiles and
+> systemd unit. `track-eye.service` alone owns the camera and publishes HTTP;
+> `track-eye-delta.service` consumes HTTP and alone owns Delta serial output.
+> Shared mean/single-eye/face output is active externally; head is sign-gated.
+> Internal fallback remains shadow-only. Statements below about absent transport
+> or emission not started refer to the internal September pipeline, not the
+> external adapter. Earlier prototype-only/left-only/no-sender claims are historical.
+> No accuracy or rig-safety certification follows from source synchronization.
+> Latest inspected baseline is `20261014-200150` (738/1166, 63.3%, zero camera
+> read failures), superseding older “latest” labels without changing old evidence.
+> This preservation sync authorizes no restart, upgrade or hardware operation.
+
 This is the current operating framework for development agents. It is derived from the tracked repository, the files deployed under `/home/pi5/track-eye`, the live systemd unit, the live HTTP status, the persisted calibration, and the latest available baseline artifact.
 
 ## 1. Authority hierarchy

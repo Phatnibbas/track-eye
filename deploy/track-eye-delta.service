@@ -1,0 +1,22 @@
+[Unit]
+Description=Track Eye shared binocular target to Delta v3 master
+Wants=track-eye.service
+After=track-eye.service
+
+[Service]
+Type=simple
+User=pi5
+SupplementaryGroups=dialout
+WorkingDirectory=/home/pi5/track-eye-delta
+ExecStart=/usr/bin/python3 -u tools/delta_v3_stream.py --config config.json --emit-owner-approved
+Restart=no
+TimeoutStopSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/home/pi5/track-eye-delta/state
+ProtectHome=read-only
+PrivateTmp=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

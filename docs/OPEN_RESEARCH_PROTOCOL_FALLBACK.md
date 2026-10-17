@@ -1,5 +1,7 @@
 # Open Research: Pi5→ESP32 Protocol and Tracking Fallback
 
+> 2026-10-08 checkpoint: October owner-scoped prototype uses the existing Delta master text protocol over CH340 USB-UART; see `PI5_MASTER_DATA_CONTRACT.md` and `PI5_MASTER_PROTOCOL_AUDIT_2026-10-08.md`. The accepted normalized/binary contract below remains a separate library contract, not the live master decoder. Fallback emission and rig/lifecycle gates remain open.
+
 Status: **OUTPUT PAYLOAD AND FALLBACK PRIORITY ACCEPTED; CODEC + SHADOW PIPELINE DEPLOYED 2026-09-16; BEHAVIORAL GATES, EFFECTIVE EMISSION, TRANSPORT, AND RIG OPEN**
 
 This document records the accepted Pi5→ESP32 output boundary, accepted pupil → head pose → face position → body/person priority, deployed shadow implementation, and still-open behavioral validation plus transport/framing work. Separate accepted contract, mechanism tests, live shadow execution, labeled behavioral validation, and hardware validation.

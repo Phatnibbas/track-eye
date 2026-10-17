@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-17T03:25:25.613505+00:00",
+  "local_tests": {
+    "command": ".venv/bin/python -m unittest discover -s tests",
+    "run": 153,
+    "failures": 0,
+    "errors": 0
+  },
+  "pi_tests": {
+    "interpreter": "/home/pi5/track-eye/.venv/bin/python",
+    "scope": "Clean rsynced Git-equivalent temporary checkpoint; no deployed legacy root test files",
+    "run": 153,
+    "failures": 0,
+    "errors": 0
+  },
+  "initial_verification_findings": [
+    "Imported monitor test required >=100 status replies in 1.2 seconds; macOS produced 97. Removed the host-speed quota instead of changing runtime or lowering the quota.",
+    "Remote launch from /home/pi5 initially lacked repo import path; PYTHONPATH exposed deployed root legacy test module collisions. Final Pi suite ran in a clean mirrored checkpoint, without deleting legacy files or changing production import behavior."
+  ],
+  "test_only_normalization": "Removed human-error-wording assertions; retained exception types and consumer-visible protocol, state and no-motion assertions.",
+  "smoke": {
+    "samples": 20,
+    "sequence_advanced": 41,
+    "fps_min": 14.02201389683555,
+    "fps_max": 14.848044715469765,
+    "health": 200,
+    "jpeg": {
+      "http": 200,
+      "shape": [
+        720,
+        1280,
+        3
+      ]
+    },
+    "offline_shared_selector_sources": {
+      "PUPIL_BOTH_MEAN": 15,
+      "NONE": 5
+    },
+    "violations": [],
+    "pids": {
+      "track-eye.service": "726",
+      "track-eye-delta.service": "30339"
+    },
+    "calibration_dirty": true
+  },
+  "source_checksums": {
+    "canonical_mismatches": [],
+    "active_sender_source_config_and_installed_unit_mismatches": [],
+    "method": "SHA-256 against preserved files; manifest itself has no self-hash"
+  },
+  "prohibited_actions_not_performed": [
+    "service restart",
+    "camera device open",
+    "serial device open",
+    "new hardware command",
+    "calibration save/reset",
+    "firmware flash",
+    "push"
+  ],
+  "limits": "Does not prove pupil accuracy, motor acceptance/completion, physical direction, reconnect or unattended safety; existing sender kept running unchanged."
+}

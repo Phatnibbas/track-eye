@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "rate_hz": 10.0,
+  "queries_per_session": 3000,
+  "sessions": 1,
+  "reopen_pause_s": 1.0,
+  "sync_attempts": 2,
+  "seed": 20261008,
+  "tilt_min_deg": 0.0,
+  "tilt_max_deg": 2.0,
+  "twist_deg": 0.0,
+  "ik_tolerance_deg": 0.001
+}

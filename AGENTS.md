@@ -1,5 +1,47 @@
 # Track Eye Agent Context
 
+## Current sync authority — 2026-10-17
+
+Read `docs/PI5_DEPLOYED_STATE.md`, then the top overrides in
+`docs/PROJECT_CONTEXT.md` and `docs/HANDOFF_CURRENT.md` before older checkpoints.
+Local source now preserves canonical tracker and the active external Delta
+bundle. The camera and sender are separate services with unique device owners.
+External Delta emits shared binocular-mean/single-eye/face targets; head remains
+sign-gated. Internal `track_eye.app` fallback remains shadow-only. October
+left-only/no-sender/prototype-only statements and September numerical evidence
+below are historical, not current deployment facts.
+
+Preserve both disk calibration and dirty in-memory calibration; never save or
+restart merely to synchronize. The deployed `observe-only-owner-test` policy
+and bounded robot-error CLEAR are recorded facts, not permission to deploy,
+resume or recover. No service/hardware change, serial/camera open, firmware flash,
+upgrade or push is authorized by this sync. Snapshot references and exact dated
+policy are in `deploy/pi5-snapshot-2026-10-17/manifest.json` and
+`runtime-observation.json`. Earlier passing counts are historical only.
+
+## 2026-10-08 Pi5/Delta protocol checkpoint (project context)
+
+For Delta integration work, first read `docs/PROJECT_CONTEXT.md` and
+`docs/HANDOFF_CURRENT.md`, then `docs/PI5_MASTER_DATA_CONTRACT.md` and
+`docs/PI5_MASTER_PROTOCOL_AUDIT_2026-10-08.md`. This is curated project context,
+not permission to execute proposed next steps or change production behavior.
+
+Owner temporarily accepted matching text semantics and bounded session evidence:
+3000/3000 IK queries at ~10 Hz, plus 50/50 across 5 fd-reopen sessions. Do not
+claim physical cable reconnect/reset/24-7 reliability or live motor delivery.
+The existing Delta master accepts ASCII `look az tilt twist ms` (newline) at
+115200, not the tracking package's binary EyeTargetFrame. The codec contract
+remains separate; no binary decoder or effective fallback emission was added.
+
+Prototype/evidence stays in `/home/pi5/track-eye-integration-audit-20261008/`.
+Production `track_eye.app`, calibration and fallback settings are unchanged.
+Display-left is the owner-selected prototype route; trial mapping is explicit
+config, not rig calibration. Never auto-clear/home, bypass readiness, flash
+firmware, replay stale targets or promote shadow output by implication.
+
+The September framework below remains the production/fallback baseline;
+October docs record a scoped independent protocol investigation, not rollout.
+
 ## Mandatory read order
 
 Before changing behavior or deployment:

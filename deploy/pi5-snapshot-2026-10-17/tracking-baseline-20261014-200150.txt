@@ -1,0 +1,36 @@
+TRACK EYE BASELINE
+========================================================================
+created: 2026-10-14T20:01:50.929895+07:00
+camera: 1280x720 @ 30.0 fps, MJPG
+runtime: avg 16.9 fps, p95 71.0 ms/frame
+tracking: 738/1166 (63.3%), camera read failures=0
+
+PHASES (canonical x: image-right positive, y: down positive)
+  center_left  tracking=100.0% frames=88
+  eyes_left    tracking=100.0% frames=87
+  center_right tracking=100.0% frames=88
+  eyes_right   tracking=100.0% frames=87
+  center_up    tracking= 98.9% frames=87
+  eyes_up      tracking=100.0% frames=88
+  center_down  tracking= 60.0% frames=90
+  eyes_down    tracking=  0.0% frames=97
+  center_head  tracking=  0.0% frames=94
+  head_left    tracking= 88.5% frames=87
+  head_right   tracking=  0.0% frames=89
+  head_up      tracking=  9.4% frames=96
+  head_down    tracking= 84.1% frames=88
+
+SIGNAL ANALYSIS
+  eye_33_133
+    separation L/R/U/D: 0.4619238726973145 / 0.13359376810754506 / 0.2381666943524898 / None
+    up/down amplitude: 0.024622407607825025 / None
+    required down gain: None
+  eye_362_263
+    separation L/R/U/D: 0.34267636688229797 / 0.5883118926296437 / 0.15505259647846636 / None
+    up/down amplitude: 0.03100086677670255 / None
+    required down gain: None
+
+OUTPUT-GAIN DECISION
+  left/right gain: 3.00 / 3.00
+  vertical up/down gain: 2.50 / 3.75
+  measured median required down gain: None

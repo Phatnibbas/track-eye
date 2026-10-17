@@ -1,5 +1,76 @@
 # Pi5 Deployed State
 
+## Current preservation snapshot — 2026-10-17
+
+This section supersedes all older runtime identities, calibration descriptions,
+and “latest baseline” wording below. The older bodies remain dated evidence.
+
+| Service | Live identity observed for this snapshot | Ownership |
+|---|---|---|
+| `track-eye.service` | PID `726`, active since 2026-10-14 21:41:32 +07, `NRestarts=0` | Unique camera owner; `/home/pi5/track-eye`, canonical `track_eye/` |
+| `track-eye-delta.service` | PID `30339`, active since 2026-10-14 22:50:31 +07, `NRestarts=0` | Unique Delta serial owner; `/home/pi5/track-eye-delta`, external `delta_bridge/` |
+
+These are dated observations, not a guarantee about a future PID or device state.
+The local tree now preserves both the canonical tracker and the external Delta
+bundle (tools, tests/fixtures, firmware reference, profiles and service unit).
+The external sender is active and emits shared binocular-mean, single-eye or
+valid-face targets. Head remains sign-gated (`false`). The internal
+`track_eye.app` fallback remains `disabled-shadow-only`; it neither invokes the
+binary codec nor sends hardware commands.
+
+The deployed external policy is `observe-only-owner-test`: LOOK may be sent
+despite node readiness diagnostics; this is not a safe default deployment profile.
+Current scheduling is capped at 5 Hz, tilt is multiplied by 10 and capped at
+15°, with a 1° angular direction deadband after scaling/capping. Previously
+owner-approved robot-error auto-CLEAR is bounded by 5 s cooldown and 3 consecutive
+attempts; geometry/USB/REPL failures do not authorize recovery. This sync does
+not authorize CLEAR, HOME, reset, replay, firmware flash or a sender restart.
+The active policy is recorded, not newly approved by these documents.
+
+**Calibration has two distinct states; preserve both without saving or restart.**
+Disk gains (left/right/up/down) are `3/3/2.5/3.75`, with no saved neutrals.
+RAM gains are `10/3/2.5/6.2`, with two neutrals and `dirty=true`. Saving would
+overwrite the disk evidence; restarting would discard the unsaved RAM state.
+Read `deploy/pi5-snapshot-2026-10-17/manifest.json` for exact preserved paths and
+`deploy/pi5-snapshot-2026-10-17/runtime-observation.json` for the dated runtime
+observation, alongside the saved calibration, live tuner snapshot and current
+Delta configuration in that snapshot directory.
+
+Latest baseline inspected for this sync: `20261014-200150`, tracking
+`738/1166 = 63.3%`, zero camera read failures. It supersedes September
+“latest-inspected” wording, but does not certify direction, motor completion,
+accuracy, unattended reliability or hardware safety.
+
+This is preservation/source synchronization only: no upgrade, service restart,
+hardware change or calibration persistence. Commit is local only; no push is
+implied. Historical test counts below are not verification of this sync.
+
+### Synchronization verification
+
+- Integrated suite: **153/153 passed locally** and **153/153 passed on Pi**.
+  Pi used a clean Git-equivalent checkpoint with the existing production venv;
+  the deployed root's legacy `test_rendering.py`/`test_web.py` collide with
+  combined-suite discovery after Delta tools prepend the root to `sys.path`.
+  No legacy runtime file was deleted and no import workaround was added.
+- Removed imported assertions tied to human error wording and a host-speed
+  quota of 100 status replies in 1.2 seconds. Kept error types, readiness,
+  no-motion, no-retry and protocol behavior assertions; runtime code is unchanged.
+- Post-sync read-only smoke: 20 HTTP samples, 41 fresh-frame sequence advances,
+  14.02–14.85 reported fps, health HTTP 200 and decoded 1280×720 JPEG.
+  No stale-eye, frame/sample mismatch or health violations. The offline shared
+  selector consumed live HTTP observations: 15 pupil-mean and 5 no-source samples;
+  it did not open serial or send commands.
+- Camera/sender PIDs remained `726`/`30339`; saved config, installed service units
+  and the active sender source matched the preserved checksums. RAM tuning
+  remained dirty. Full evidence: `deploy/pi5-snapshot-2026-10-17/verification.json`.
+- Common tracked files are mirrored under `/home/pi5/track-eye`. The running
+  sender remains under `/home/pi5/track-eye-delta`; it was not restarted or moved.
+  Pre-sync overwritten files are backed up under
+  `/home/pi5/track-eye-sync-backups/20261017-pre-upgrade/`.
+- Ignored local `archive/` preserves audit evidence, sender logs/backups and
+  root-level legacy copies. These are not active source or committed participant
+  captures. Ordinary sync must continue preserving Pi-owned calibration/data.
+
 ## 2026-09-23 fallback mechanism validation
 
 Authoritative observations after deploying the initial-promotion fix:

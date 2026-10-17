@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "mode": "dry-run",
+  "serial": {
+    "device": "/dev/serial/by-path/platform-xhci-hcd.0-usb-0:1:1.0-port0",
+    "baud": 115200,
+    "io_timeout_s": 1.0,
+    "max_line_bytes": 2048
+  },
+  "mapping": {
+    "slot": "left",
+    "max_tilt_deg": 2.0,
+    "az_offset_deg": 0.0,
+    "x_sign": 1,
+    "y_sign": -1,
+    "twist_deg": 0.0,
+    "duration_ms": 500
+  },
+  "expected_nodes": [1, 2, 3],
+  "snapshot_window_s": 0.5,
+  "status_max_age_s": 2.0,
+  "frame_max_age_s": 0.25,
+  "poll_hz": 2.0,
+  "status_url": "http://127.0.0.1:8080/status.json"
+}

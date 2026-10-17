@@ -1,5 +1,7 @@
 # Handoff State — 2026-09-23
 
+> 2026-10-08 checkpoint: Historical handoff dated 2026-09-23. For the current owner decision and Delta protocol checkpoint, read `HANDOFF_CURRENT.md` and `PROJECT_CONTEXT.md` first. Keep the older evidence below as historical; it does not describe the October prototype.
+
 ## Decision
 
 - Shadow mechanism: operational.

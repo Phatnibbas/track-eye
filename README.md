@@ -1,10 +1,49 @@
-# Track Eye — software-only per-eye pupil tracking
+# Track Eye — pupil tracking and external Delta adapter
 
-Track Eye captures a UVC camera stream, extracts both iris positions with MediaPipe FaceMesh, applies persisted output calibration, and serves an MJPEG browser view. A deployed shadow pipeline also measures head transform, face position, body/person position, and source transitions; the package includes the accepted 20-byte codec without connecting it to production output or hardware.
+Track Eye captures a UVC camera stream, extracts both iris positions with
+MediaPipe FaceMesh, applies output calibration and serves an MJPEG browser view.
+The canonical `track_eye/` app also measures fallback candidates in shadow mode;
+its binary codec is not connected to production output or hardware.
 
-Servo mechanics, ESP32 transport/discovery, and actuator control remain outside this runtime. Fallback emission is explicitly disabled.
+A separate `delta_bridge/` adapter consumes the camera app's HTTP data and sends
+text-protocol targets to Delta hardware. On the Pi, `track-eye.service` alone
+owns the camera and `track-eye-delta.service` alone owns Delta serial. The active
+external sender uses binocular mean, single-eye or valid face; head is sign-gated.
+This external output does not enable the internal shadow fallback pipeline.
 
-## Run
+## Current preservation checkpoint — 2026-10-17
+
+The local repository now preserves the canonical tracker and Delta bundle from
+the Pi, including tests/fixtures, historical config profiles and reference
+firmware. Read `docs/PI5_DEPLOYED_STATE.md` for dated service identities, current
+policy and baseline evidence; `docs/PROJECT_CONTEXT.md` and
+`docs/HANDOFF_CURRENT.md` have newest-override pointers above historical reports.
+
+Current external policy is `observe-only-owner-test`, maximum 5 Hz, tilt×10
+capped15°, 1° scaled-direction deadband and bounded robot-error auto-CLEAR
+(5 s cooldown/max3). Recording this policy does **not** authorize redeployment,
+recovery, motion or bypassing readiness. Hardware accuracy is not certified.
+
+**Do not save calibration or restart during source synchronization.** Saved
+gains are3/3/2.5/3.75 with no neutrals; live RAM is10/3/2.5/6.2 with two neutrals
+and dirty=true. Both must survive as distinct evidence. See
+`deploy/pi5-snapshot-2026-10-17/manifest.json` and
+`deploy/pi5-snapshot-2026-10-17/runtime-observation.json`.
+
+Sync/recovery guidance: compare exact source content against the live Pi,
+preserve Pi-owned calibration, benchmarks, config and runtime state, and copy
+only new/different source files. Do not run installer/start/restart commands,
+open a second camera/serial owner, clear faults, home, replay targets, save RAM
+calibration or flash reference firmware. Any later recovery requires fresh
+state inspection and separate authorization; this checkpoint is not recovery.
+This sync makes no service or hardware change, performs no upgrade, and commits
+locally only—no push. Historical passing test counts are not sync verification.
+
+## Camera application reference (not a sync/recovery procedure)
+
+The commands below describe a separate camera run, only with the deployed
+camera owner stopped under a separately approved operation. Do not run them
+against the currently owned device as part of preservation.
 
 ```bash
 uv sync --frozen
@@ -72,7 +111,10 @@ A run below the configured per-phase tracking threshold is invalid. Output gain 
 - `docs/PIVOT_PUPIL_MIRROR_2026-07-02.md` is a historical decision log; its pivot to per-eye pupil mirroring remains valid, but its proposed next steps are stale.
 - `docs/OPEN_RESEARCH_PROTOCOL_FALLBACK.md` records the accepted payload and source priority, deployed shadow implementation, and still-open quality, transport, and rig gates.
 
-The local Git repository is the source for changes. `/home/pi5/track-eye` is the deployed runtime and is not a Git checkout. Preserve its `output-calibration.json` and `benchmark_data/` during ordinary source sync.
+The local Git repository is the source for the next change. `/home/pi5/track-eye`
+and `/home/pi5/track-eye-delta` are deployed runtime directories, not Git
+checkouts. Preserve runtime-owned calibration, benchmarks, live Delta config,
+state and logs rather than overwriting them from historical profiles.
 
 ## Package layout
 
@@ -90,12 +132,22 @@ The local Git repository is the source for changes. `/home/pi5/track-eye` is the
 | `track_eye/web.py` | sequenced MJPEG, status, health, browser page |
 | `track_eye/app.py` | single process composition root and signal lifecycle |
 | `tools/tracking_baseline.py` | browser-guided quantitative baseline |
-| `tests/` | behavioral math, contract, baseline, and stream tests |
+| `delta_bridge/` | external HTTP-to-Delta text-protocol adapter, separate from internal fallback |
+| `tools/delta_*.py` | Delta validation/runtime tools; presence is not permission to run hardware commands |
+| `tests/` | tracker and Delta behavioral tests, protocol tests and fixtures |
+| `firmware/` | preserved board-source reference; not an instruction or permission to flash |
+| `config/` | named historical Delta JSON profiles, not authoritative deployed config |
 | `AGENTS.md` | mandatory agent entry point and non-negotiable contracts |
 | `docs/PROJECT_FRAMEWORK.md` | current architecture, authority hierarchy, evidence, and change protocol |
 | `docs/PI5_DEPLOYED_STATE.md` | validated deployed runtime and calibration snapshot |
 | `docs/OPEN_RESEARCH_PROTOCOL_FALLBACK.md` | accepted contract, deployed shadow implementation, open behavioral/transport/rig gates |
-| `deploy/track-eye.service` | single systemd owner on Pi |
+| `deploy/track-eye.service` | canonical camera service unit |
+| `deploy/track-eye-delta.service` | external sender service unit |
+| `deploy/pi5-snapshot-2026-10-17/` | preserved live configuration/calibration and dated runtime evidence |
 | `scripts/install_pi.sh` | rollback-backed Pi deployment cutover |
 
-Legacy servo files remain isolated. `track_eye.app` does not call the payload encoder or send fallback targets; status must remain `disabled-shadow-only` until behavioral and hardware gates pass.
+Legacy servo files remain isolated. `track_eye.app` does not call the payload
+encoder or send fallback targets; internal status remains `disabled-shadow-only`.
+The separate Delta service does emit hardware data under the recorded external
+policy. Neither reference firmware nor successful LOOK echoes certify motor
+completion, mechanical direction, tracking accuracy or unattended safety.

@@ -749,3 +749,5 @@ def load_config_file(path: Path) -> tuple[FallbackConfig, str | None, str]:
     except (ValueError, TypeError, IndexError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         return DEFAULT_FALLBACK_CONFIG, f"invalid config; using shadow defaults: {exc}", DEFAULT_FALLBACK_CONFIG.checksum()
     return config, None, config.checksum()
+
+

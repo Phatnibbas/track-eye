@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "mode": "read-only",
+  "serial": {
+    "device": "/dev/serial/by-path/platform-xhci-hcd.0-usb-0:1:1.0-port0",
+    "baud": 115200,
+    "io_timeout_s": 0.5,
+    "max_line_bytes": 2048
+  },
+  "expected_nodes": [1, 2, 3],
+  "snapshot_window_s": 0.5,
+  "status_max_age_s": 2.0,
+  "poll_hz": 1.0
+}

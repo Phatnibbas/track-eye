@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "mode": "dry-run",
+  "serial": {
+    "device": null,
+    "baud": null,
+    "io_timeout_s": null,
+    "max_line_bytes": null
+  },
+  "mapping": {
+    "slot": null,
+    "max_tilt_deg": null,
+    "az_offset_deg": null,
+    "x_sign": null,
+    "y_sign": null,
+    "twist_deg": null,
+    "duration_ms": null
+  },
+  "expected_nodes": [],
+  "snapshot_window_s": null,
+  "status_max_age_s": null,
+  "frame_max_age_s": null,
+  "poll_hz": null,
+  "status_url": null
+}

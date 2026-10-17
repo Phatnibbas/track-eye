@@ -1,0 +1,356 @@
+{
+  "observed_at": "2026-10-17T03:21:11.192607+00:00",
+  "scope": "Read-only HTTP, systemd and existing process/device ownership; no serial or camera opened, no restart or hardware command",
+  "health_http": 200,
+  "services": {
+    "track-eye.service": {
+      "MainPID": "726",
+      "NRestarts": "0",
+      "ExecStart": "{ path=/home/pi5/track-eye/.venv/bin/python ; argv[]=/home/pi5/track-eye/.venv/bin/python -u -m track_eye.app --device /dev/v4l/by-id/usb-UGREEN_Camera_UGREEN_Camera_SN0001-video-index0 --web-host 0.0.0.0 --web-port 8080 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "WorkingDirectory": "/home/pi5/track-eye",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled",
+      "ActiveEnterTimestamp": "Wed 2026-10-14 21:41:32 +07"
+    },
+    "track-eye-delta.service": {
+      "MainPID": "30339",
+      "NRestarts": "0",
+      "ExecStart": "{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 -u tools/delta_v3_stream.py --config config.json --emit-owner-approved ; ignore_errors=no ; start_time=[Wed 2026-10-14 22:50:31 +07] ; stop_time=[n/a] ; pid=30339 ; code=(null) ; status=0/0 }",
+      "WorkingDirectory": "/home/pi5/track-eye-delta",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled",
+      "ActiveEnterTimestamp": "Wed 2026-10-14 22:50:31 +07"
+    }
+  },
+  "device_owners": {
+    "/dev/video0": {
+      "pids": [
+        "726"
+      ],
+      "exit_code": 0
+    },
+    "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0": {
+      "pids": [
+        "30339"
+      ],
+      "exit_code": 0
+    }
+  },
+  "tracking": {
+    "version": "0.1.0",
+    "uptime_seconds": 218375.07087302208,
+    "frame_sequence": 3252063,
+    "last_frame_age_seconds": 0.045807600021362305,
+    "camera": {
+      "device": "/dev/v4l/by-id/usb-UGREEN_Camera_UGREEN_Camera_SN0001-video-index0",
+      "width": 1280,
+      "height": 720,
+      "fps": 30.0,
+      "fourcc": "MJPG"
+    },
+    "fps": 14.37953915006246,
+    "face_detected": false,
+    "inference_ms": 5.698135,
+    "raw_left": null,
+    "raw_right": null,
+    "output_left": null,
+    "output_right": null,
+    "capture_alive": true,
+    "healthy": true,
+    "baseline": {
+      "state": "idle",
+      "start_requested": false,
+      "face_ready": false,
+      "phase": "center_left",
+      "phase_index": 1,
+      "phase_total": 13,
+      "instruction": "LOOK CENTER - HEAD STILL",
+      "remaining_seconds": null,
+      "json_path": null,
+      "text_path": null,
+      "invalid_phases": []
+    },
+    "output_tuning": {
+      "calibration": {
+        "schema_version": 1,
+        "gain": {
+          "left": 10.0,
+          "right": 3.0,
+          "up": 2.5,
+          "down": 6.2,
+          "soft_limit": 1.5
+        },
+        "neutrals": [
+          {
+            "name": "eye_33_133",
+            "x": 0.1325237328925585,
+            "y": -0.2991422694098317
+          },
+          {
+            "name": "eye_362_263",
+            "x": -0.05054253184019682,
+            "y": -0.21243936213203962
+          }
+        ]
+      },
+      "dirty": true,
+      "load_error": null,
+      "neutral_state": "idle",
+      "neutral_remaining_seconds": null,
+      "path": "output-calibration.json"
+    },
+    "fallback": {
+      "config": {
+        "schema_version": 1,
+        "emission_enabled": false,
+        "calibrated": false,
+        "pupil_mode": "compatibility",
+        "pupil": {
+          "promote_s": 0.15,
+          "demote_s": 0.4,
+          "expire_s": 1.0
+        },
+        "head_pose": {
+          "promote_s": 0.3,
+          "demote_s": 0.6,
+          "expire_s": 2.0
+        },
+        "face_position": {
+          "promote_s": 0.4,
+          "demote_s": 0.8,
+          "expire_s": 2.5
+        },
+        "body_position": {
+          "promote_s": 0.6,
+          "demote_s": 1.0,
+          "expire_s": 3.0
+        },
+        "hold_s": 0.6,
+        "max_held_s": 0.6,
+        "slew_per_s": 8.0,
+        "head_yaw_neutral": 0.0,
+        "head_yaw_scale": 0.6,
+        "head_pitch_neutral": 0.0,
+        "head_pitch_scale": 0.6,
+        "head_sign_validated": false,
+        "face_roi": [
+          0.05,
+          0.05,
+          0.95,
+          0.95
+        ],
+        "face_gain": 1.0,
+        "face_score_min": 0.3,
+        "body_score_min": 0.35,
+        "body_cadence_s": 0.5,
+        "body_enabled": false,
+        "multi_person": "nearest-retained",
+        "pupil_quality": {
+          "gate": "uncalibrated"
+        }
+      },
+      "config_checksum": "33c86e3c36ab90f7",
+      "config_error": null,
+      "emission_enabled": false,
+      "emission_requested": false,
+      "emission": "disabled-shadow-only",
+      "calibrated": false,
+      "shadow_source": "NONE",
+      "shadow_reason": "promote-gated FACE_POSITION",
+      "shadow_states": [
+        "INVALID",
+        "INVALID"
+      ],
+      "shadow_target_left": [
+        0.0,
+        0.0
+      ],
+      "shadow_target_right": [
+        0.0,
+        0.0
+      ],
+      "source_age_s": 1.11664635600755,
+      "held_age_s": 1.7391081640089396,
+      "candidates": {
+        "HEAD_POSE": {
+          "valid": false,
+          "target": [
+            0.0,
+            0.0
+          ],
+          "age_s": 0.08274810499278829,
+          "latency_ms": 6.045449001248926,
+          "quality": {
+            "reason": "no face transform"
+          }
+        },
+        "FACE_POSITION": {
+          "valid": false,
+          "target": [
+            0.0,
+            0.0
+          ],
+          "age_s": 0.0766691750031896,
+          "latency_ms": 14.252152992412448,
+          "quality": {
+            "reason": "no detection"
+          }
+        },
+        "BODY_POSITION": {
+          "valid": false,
+          "target": [
+            0.0,
+            0.0
+          ],
+          "age_s": 0.44842972699552774,
+          "latency_ms": 34.10434699617326,
+          "quality": {
+            "reason": "no detection"
+          }
+        }
+      },
+      "pupil_left": null,
+      "pupil_right": null,
+      "head": {
+        "enabled": true,
+        "available": true,
+        "error": null,
+        "valid": false,
+        "reason": "no face transform",
+        "yaw_raw": 0.0,
+        "pitch_raw": 0.0,
+        "roll_raw": 0.0,
+        "rotation": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "quaternion": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "determinant": 1.0,
+        "latency_ms": 6.045449001248926,
+        "model_sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+        "model_size": 3758596
+      },
+      "face": {
+        "enabled": true,
+        "available": true,
+        "error": null,
+        "score": 0.0,
+        "box": null,
+        "raw_box": null,
+        "latency_ms": 14.252152992412448
+      },
+      "body": {
+        "enabled": true,
+        "available": true,
+        "selected": false,
+        "error": null,
+        "valid": false,
+        "score": 0.0,
+        "box": null,
+        "target": [
+          0.0,
+          0.0
+        ],
+        "age_s": 0.402507315,
+        "latency_ms": 34.10434699617326,
+        "cadence_s": 0.5,
+        "score_min": 0.35
+      },
+      "stages_ms": {
+        "tracker": 5.698135,
+        "head": 6.045449001248926,
+        "face": 14.252152992412448,
+        "body": 34.10434699617326
+      },
+      "sample_id": 3252063
+    },
+    "validation": {
+      "active": false,
+      "scenario": "unlabeled",
+      "frames": 0,
+      "max_frames": 2000,
+      "dir": null,
+      "last_error": null
+    }
+  },
+  "delta": {
+    "phase": "WAIT_SOURCE",
+    "source": "NONE",
+    "emit_enabled": true,
+    "look_sent": 45056,
+    "echo_verified": 45056,
+    "node_state_policy": "observe-only-owner-test",
+    "target_rate_hz": 5.0,
+    "max_tilt_deg": 15.0,
+    "tilt_multiplier": 10.0,
+    "deadband_deg": 1.0,
+    "auto_clear_policy": {
+      "enabled": true,
+      "cooldown_s": 5.0,
+      "max_consecutive": 3
+    },
+    "motor_delivery_claim": false,
+    "head_axis_gate": "requires production head_sign_validated=true",
+    "loss_policy": "no new movement; last command may finish/hold; no firmware Pi watchdog",
+    "reason": "promote-gated FACE_POSITION",
+    "last_command_echo_verified": true,
+    "desired_xy": [
+      -0.42727365797690775,
+      0.7262447346953542
+    ],
+    "command_xy": [
+      -0.42727365797690775,
+      0.7262447346953542
+    ],
+    "polar": [
+      239.53,
+      15.0,
+      0.0
+    ],
+    "frame_sequence": 3252038,
+    "head_sign_validated": false,
+    "monotonic_s": 218105.137388621,
+    "ik_verified": 1,
+    "counters": {
+      "ik": 1,
+      "look": 45056,
+      "echo": 45056,
+      "source_PUPIL_BOTH_MEAN": 32423,
+      "deadband_skips": 41585,
+      "source_FACE_POSITION": 9366,
+      "source_PUPIL_RIGHT": 2270,
+      "source_PUPIL_LEFT": 997,
+      "robot_diagnostics": 1733,
+      "clear_sent": 223,
+      "clear_ack": 223,
+      "master_move_rejections": 923
+    },
+    "desired_polar": [
+      243.7154963244289,
+      15.0,
+      0.0
+    ],
+    "direction_delta_deg": 0.3897823217634607,
+    "last_robot_diagnostic": "ERR move: n1 offline"
+  }
+}

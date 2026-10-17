@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "serial": {
+    "device": "/dev/serial/by-path/platform-xhci-hcd.0-usb-0:2:1.0-port0",
+    "baud": 115200,
+    "io_timeout_s": 1.0,
+    "max_line_bytes": 2048
+  },
+  "expected_eyes": [1, 2],
+  "expected_vergence_deg": 0.0,
+  "mapping": {
+    "slot": "left",
+    "max_tilt_deg": 2.0,
+    "az_offset_deg": 0.0,
+    "x_sign": 1,
+    "y_sign": -1,
+    "twist_deg": 0.0,
+    "duration_ms": 500
+  },
+  "seconds": 20.0,
+  "poll_hz": 2.0,
+  "status_url": "http://127.0.0.1:8080/status.json",
+  "frame_max_age_s": 0.25,
+  "status_max_age_s": 2.0,
+  "snapshot_window_s": 1.0,
+  "numeric_tolerance_deg": 0.001,
+  "max_motor_step_deg": 2.0,
+  "expected_calibration_sha256": "47cfed0fc3641f816aa9ac5c7ac0f72d11a3ed84e3e47bc06cff658b87884983"
+}

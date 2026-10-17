@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "mode": "read-only",
+  "serial": {
+    "device": null,
+    "baud": null,
+    "io_timeout_s": null,
+    "max_line_bytes": null
+  },
+  "expected_nodes": [],
+  "snapshot_window_s": null,
+  "status_max_age_s": null,
+  "poll_hz": null
+}
