@@ -8,6 +8,7 @@ mappings stay in FallbackConfig and default to unvalidated/disabled.
 from __future__ import annotations
 
 import hashlib
+import math
 import queue
 import threading
 import time
@@ -280,7 +281,7 @@ class HeadPoseShadow:
 
 
 class FacePositionShadow:
-    """Full-range FaceDetection box-center candidate. Real detector, real box."""
+    """Full-range face box for mesh acquisition and shadow position selection."""
 
     def __init__(self, enabled: bool = True) -> None:
         self.enabled = enabled
@@ -304,35 +305,62 @@ class FacePositionShadow:
     def error(self) -> str | None:
         return self._error
 
-    def process(self, frame_bgr: np.ndarray, config: FallbackConfig, score_min: float = 0.1) -> Candidate | None:
+    def process(
+        self,
+        frame_bgr: np.ndarray,
+        config: FallbackConfig,
+        score_min: float = 0.1,
+        reference_box: tuple[float, float, float, float] | None = None,
+    ) -> Candidate:
+        # Timestamp the input, not completion: freshness includes detector work.
         now_ns = time.monotonic_ns()
+        self.last_box = None
+        self.last_raw_box = None
+        self.last_score = 0.0
+        self.last_latency_ms = 0.0
         if self._detector is None:
             return Candidate(SourceKind.FACE_POSITION, now_ns, 0.0, 0.0, False, 0.0, {"reason": self._error or "unavailable"})
 
         started = time.perf_counter()
-        rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
         try:
+            rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
             result = self._detector.process(rgb)
         except Exception as exc:
-            return Candidate(SourceKind.FACE_POSITION, now_ns, 0.0, 0.0, False, 0.0, {"reason": f"{type(exc).__name__}: {exc}"})
+            self.last_latency_ms = (time.perf_counter() - started) * 1000.0
+            return Candidate(SourceKind.FACE_POSITION, now_ns, 0.0, 0.0, False, self.last_latency_ms, {"reason": f"{type(exc).__name__}: {exc}"})
         latency_ms = (time.perf_counter() - started) * 1000.0
-        detections = list(getattr(result, "detections", []) or [])
-        if not detections:
-            self.last_box = None
-            self.last_raw_box = None
-            self.last_score = 0.0
-            self.last_latency_ms = latency_ms
-            return Candidate(SourceKind.FACE_POSITION, now_ns, 0.0, 0.0, False, latency_ms, {"reason": "no detection"})
-        best = max(detections, key=lambda d: float(d.score[0]) if len(d.score) else 0.0)
-        score = float(best.score[0]) if len(best.score) else 0.0
-        box = best.location_data.relative_bounding_box
-        x0, y0, w, h = float(box.xmin), float(box.ymin), float(box.width), float(box.height)
-        raw_box = (x0, y0, w, h)
-        clipped_box, (cx, cy) = clip_relative_box(x0, y0, w, h)
+        self.last_latency_ms = latency_ms
+        detections = getattr(result, "detections", None) or []
+        best = None
+        best_key = None
+        for detection in detections:
+            score = float(detection.score[0]) if len(detection.score) else 0.0
+            box = detection.location_data.relative_bounding_box
+            raw_box = (float(box.xmin), float(box.ymin), float(box.width), float(box.height))
+            if not all(math.isfinite(value) for value in (*raw_box, score)) or raw_box[2] <= 0.0 or raw_box[3] <= 0.0:
+                continue
+            clipped_box, center = clip_relative_box(*raw_box)
+            x, y, w, h = clipped_box
+            if w <= 0.0 or h <= 0.0:
+                continue
+            overlap = 0.0
+            if reference_box is not None:
+                rx, ry, rw, rh = reference_box
+                intersection = max(0.0, min(x + w, rx + rw) - max(x, rx)) * max(0.0, min(y + h, ry + rh) - max(y, ry))
+                if intersection <= 0.0:
+                    continue
+                overlap = intersection / (w * h + rw * rh - intersection)
+            key = (score >= score_min, overlap, score)
+            if best_key is None or key > best_key:
+                best_key = key
+                best = (score, raw_box, clipped_box, center)
+        if best is None:
+            reason = "no matching detection" if reference_box is not None else "no detection"
+            return Candidate(SourceKind.FACE_POSITION, now_ns, 0.0, 0.0, False, latency_ms, {"reason": reason})
+        score, raw_box, clipped_box, (cx, cy) = best
         self.last_raw_box = raw_box
         self.last_box = clipped_box
         self.last_score = score
-        self.last_latency_ms = latency_ms
         if score < score_min:
             return Candidate(SourceKind.FACE_POSITION, now_ns, 0.0, 0.0, False, latency_ms, {
                 "reason": "below score_min", "score": score, "box": self.last_box, "raw_box": raw_box,

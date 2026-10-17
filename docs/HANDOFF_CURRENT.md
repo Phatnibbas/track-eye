@@ -1,22 +1,27 @@
 # Handoff hiện hành — checkpoint 2026-10-14
 
-## Current authority override — 2026-10-17 preservation sync
+## Current native-ROI acquisition — 2026-10-17
 
-Start with `PI5_DEPLOYED_STATE.md`: camera PID726 and external sender PID30339
-are active, both NRestarts0, with unique device ownership. The canonical tracker
-and external Delta bundle are now preserved locally. The latest external policy
-is `observe-only-owner-test`, max5 Hz, tilt×10/cap15°, angular deadband1°,
-bounded robot-error CLEAR cooldown5 s/max3. Mean/single-eye/face emits externally;
-head gate is false and internal fallback remains shadow-only.
+Start with `PI5_DEPLOYED_STATE.md`. Production is pre-upgrade`b8387c0` plus
+diagnostic UI and selected full-range ROI acquisition/reacquisition. One native
+crop/full-frame FaceMesh call; landmarks return to original pixels before
+unchanged aperture-v1 math. FACE fallback remains independent of pupil failure.
+The0.6s reference is geometric association, not identity. No model/threshold,
+mapping-unit/calibration, head/body gate, visitor pipeline or sender-policy change.
 
-All earlier “final condition”, no-sender, left-only and 15 Hz/no-clear claims
-below are dated evidence superseded by this pointer and the newest October14
-output override, not instructions to restore old state. Disk gains3/3/2.5/3.75
-have no neutrals; RAM gains10/3/2.5/6.2 have two neutrals and dirty=true:
-**do not save or restart**. Snapshot authority is
-`deploy/pi5-snapshot-2026-10-17/manifest.json` and `runtime-observation.json`.
-Sync is preservation only, no upgrade/recovery/hardware change; commit local,
-no push. Historical test results below do not verify the current source sync.
+Web separates pre-EMA, raw-after-EMA and tuned output. Local175/Pi34 focused
+tests and actual-model cold/warm/loss replay pass; controlled small-photo
+acquisition improved, not measured2m or pupil-direction acceptance. Aperture-v1
+vertical sensitivity remains: smaller lid aperture amplifies vertical signal.
+
+Camera PID136647 and sender PID146887 active, saved tuning clean3.9/3/3.45/3.7,
+limit1.0, two neutrals, pin2f797a4c… preserved. Initially offline nodes later
+returned; obtained a new complete clean snapshot after a BOOT-merged header.
+Existing sender policy issued one acknowledged bounded CLEAR after startup
+FAULT rejection; completed360/360 echo session, then fresh node-position feedback.
+Final resumed session307/307 echoes, no rejection/CLEAR. No HOME/reset/flash.
+Temporary validation token/drop-in removed. RAM/owner-test/reboot limits remain;
+read fresh state rather than restoring any historical dirty/stopped paragraph.
 
 ## Current continuous sender — overrides bounded-only restrictions below
 

@@ -1,0 +1,738 @@
+{
+  "owner_request": "Explicit CLEAR and restore old running E2E before algorithm upgrade",
+  "baseline_commit": "b8387c02988b1d2eee8ad5d19d74d31360e2d676",
+  "runtime_source_changed": false,
+  "algorithm_upgrade_enabled": false,
+  "master": {
+    "actual_flash_file_sha256": {
+      "main.py": "2b0525c078ad2f2134ed3f80ddf8a15d77c2894361a381eaf2990a7ae3821a9c",
+      "proto3.py": "8e8db1cf0c623b0f052441fa445dca27555820810b0faf65a45c52f33dc9172d",
+      "spm_ik.py": "004a201260935a6693e7523292adb47369c257e2290a88a1bf156cdc6d52166d",
+      "neutral3.txt": "0b57f3b4e4d3223cb20d03d7dd5a7d2c5e41d4cdc36ff60388472af0ce04b454",
+      "eyes.txt": "6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918"
+    },
+    "confirmed_repl": true,
+    "ram_policy": {
+      "auto_home": false,
+      "auto_rehome": false,
+      "restored_target_replay": false,
+      "wdt_enabled_observed_before_recovery": false
+    },
+    "flash_written": false,
+    "reset_sent": false,
+    "home_sent": false,
+    "manual_clear_commands": 1,
+    "clear_ack": true,
+    "pre_output_nodes": {
+      "fault": false,
+      "nodes": {
+        "1": {
+          "online": true,
+          "state": "IDLE",
+          "error": "NONE",
+          "homed": true,
+          "switch": false,
+          "pos": 1.993,
+          "target": 0.0
+        },
+        "2": {
+          "online": true,
+          "state": "IDLE",
+          "error": "NONE",
+          "homed": true,
+          "switch": false,
+          "pos": 1.993,
+          "target": 0.0
+        },
+        "3": {
+          "online": true,
+          "state": "IDLE",
+          "error": "NONE",
+          "homed": true,
+          "switch": false,
+          "pos": 1.993,
+          "target": 0.0
+        },
+        "4": {
+          "online": true,
+          "state": "IDLE",
+          "error": "NONE",
+          "homed": true,
+          "switch": false,
+          "pos": 1.993,
+          "target": 0.0
+        },
+        "5": {
+          "online": true,
+          "state": "IDLE",
+          "error": "NONE",
+          "homed": true,
+          "switch": false,
+          "pos": 1.993,
+          "target": 0.0
+        },
+        "6": {
+          "online": true,
+          "state": "IDLE",
+          "error": "NONE",
+          "homed": true,
+          "switch": false,
+          "pos": 1.993,
+          "target": 0.0
+        }
+      },
+      "ready": true
+    },
+    "non_motion_validation": {
+      "duration_s": 13.369717869999931,
+      "synthetic_verified": 10,
+      "synthetic_planned": 10,
+      "camera_samples": 10,
+      "camera_verified": 0,
+      "camera_skipped": 10,
+      "error": null,
+      "max_reference_error_deg": 0.0004769425143322792,
+      "latency_ms": {
+        "median": 56.71540600008029,
+        "p95": 61.80086999984269,
+        "max": 61.80086999984269
+      },
+      "snapshots": [
+        {
+          "ready": true,
+          "fault": false,
+          "nodes": {
+            "1": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "2": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "3": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "4": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "5": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "6": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            }
+          },
+          "eyes": [
+            1,
+            2
+          ],
+          "vergence": 0.0
+        },
+        {
+          "ready": true,
+          "fault": false,
+          "nodes": {
+            "1": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "2": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "3": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "4": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "5": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "6": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            }
+          },
+          "eyes": [
+            1,
+            2
+          ],
+          "vergence": 0.0
+        },
+        {
+          "ready": true,
+          "fault": false,
+          "nodes": {
+            "1": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "2": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "3": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "4": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "5": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "6": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            }
+          },
+          "eyes": [
+            1,
+            2
+          ],
+          "vergence": 0.0
+        },
+        {
+          "ready": true,
+          "fault": false,
+          "nodes": {
+            "1": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "2": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "3": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "4": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "5": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "6": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            }
+          },
+          "eyes": [
+            1,
+            2
+          ],
+          "vergence": 0.0
+        },
+        {
+          "ready": true,
+          "fault": false,
+          "nodes": {
+            "1": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "2": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "3": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "4": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "5": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            },
+            "6": {
+              "online": true,
+              "state": "IDLE",
+              "error": "NONE",
+              "homed": true,
+              "switch": false,
+              "pos": 1.993,
+              "target": 0.0
+            }
+          },
+          "eyes": [
+            1,
+            2
+          ],
+          "vergence": 0.0
+        }
+      ],
+      "diagnostics": [],
+      "motion_tx": false,
+      "limitation": "Calculation/echo only; no USB request ID, node ACK or physical accuracy evidence; RAM recovery policy applies"
+    }
+  },
+  "sender": {
+    "config_changed_fields": [
+      "calibration_sha256"
+    ],
+    "config_sha256": "1c5750bcabcac6a66d4ebebd19115928a637ff83efba62e8104394578aa573ea",
+    "previous_calibration_pin": "47cfed0fc3641f816aa9ac5c7ac0f72d11a3ed84e3e47bc06cff658b87884983",
+    "current_calibration_pin": "95f6a91e3809b9f57666f9f1063e13ec088a0b2352fa07206ef2af2cef62fa13",
+    "node_state_policy": "observe-only-owner-test",
+    "completed_session_status": {
+      "phase": "STOPPED",
+      "source": "NONE",
+      "emit_enabled": true,
+      "look_sent": 1325,
+      "echo_verified": 1325,
+      "node_state_policy": "observe-only-owner-test",
+      "target_rate_hz": 5.0,
+      "max_tilt_deg": 15.0,
+      "tilt_multiplier": 10.0,
+      "deadband_deg": 1.0,
+      "auto_clear_policy": {
+        "enabled": true,
+        "cooldown_s": 5.0,
+        "max_consecutive": 3
+      },
+      "motor_delivery_claim": false,
+      "head_axis_gate": "requires production head_sign_validated=true",
+      "loss_policy": "no new movement; last command may finish/hold; no firmware Pi watchdog",
+      "reason": "worker stopped; no new command or neutral sent",
+      "last_command_echo_verified": true,
+      "desired_xy": [
+        0.14200647672017416,
+        0.4060135947333442
+      ],
+      "command_xy": [
+        0.14182084136539036,
+        0.38227584626939565
+      ],
+      "polar": [
+        290.354,
+        8.155,
+        0.0
+      ],
+      "frame_sequence": 20300,
+      "head_sign_validated": false,
+      "monotonic_s": 2097.861533743,
+      "ik_verified": 1,
+      "counters": {
+        "ik": 1,
+        "look": 1325,
+        "echo": 1325,
+        "source_PUPIL_BOTH_MEAN": 1208,
+        "source_PUPIL_LEFT": 56,
+        "deadband_skips": 589,
+        "source_PUPIL_RIGHT": 14,
+        "source_FACE_POSITION": 47
+      },
+      "desired_polar": [
+        289.2776895910722,
+        8.602624681776362,
+        0.0
+      ],
+      "direction_delta_deg": 0.4744716765864845
+    },
+    "completed_wire_replay": {
+      "look_tx": 1325,
+      "completed_look_verified": 1325,
+      "ik_tx": 1,
+      "pending_tail_excluded": null,
+      "max_reference_error_deg": 0.0005283203377999257,
+      "minimum_look_interval_s": 0.1960181150000153,
+      "robot_or_command_errors": [],
+      "raw_rows": 10304,
+      "startup_open": {
+        "monotonic_s": 1567.607647123,
+        "opened": true,
+        "device": "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0",
+        "emit": true
+      }
+    },
+    "nominal_rate_hz": 5,
+    "nominal_tilt_cap_deg": 15,
+    "deadband_deg": 1,
+    "final_restart_utc": "2026-10-17T10:44:33.292894+00:00",
+    "last_observed_running_status": {
+      "phase": "SENDING_TEST",
+      "source": "PUPIL_BOTH_MEAN",
+      "emit_enabled": true,
+      "look_sent": 94,
+      "echo_verified": 94,
+      "node_state_policy": "observe-only-owner-test",
+      "target_rate_hz": 5.0,
+      "max_tilt_deg": 15.0,
+      "tilt_multiplier": 10.0,
+      "deadband_deg": 1.0,
+      "auto_clear_policy": {
+        "enabled": true,
+        "cooldown_s": 5.0,
+        "max_consecutive": 3
+      },
+      "motor_delivery_claim": false,
+      "head_axis_gate": "requires production head_sign_validated=true",
+      "loss_policy": "no new movement; last command may finish/hold; no firmware Pi watchdog",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth",
+      "monotonic_s": 2207.242859762,
+      "ik_verified": 1,
+      "counters": {
+        "ik": 1,
+        "look": 94,
+        "echo": 94,
+        "source_FACE_POSITION": 5,
+        "deadband_skips": 28,
+        "source_PUPIL_BOTH_MEAN": 74,
+        "source_PUPIL_LEFT": 7,
+        "source_PUPIL_RIGHT": 8
+      },
+      "last_command_echo_verified": true,
+      "desired_xy": [
+        0.2011471443074398,
+        0.9022879341051226
+      ],
+      "command_xy": [
+        0.2011471443074398,
+        0.9022879341051226
+      ],
+      "polar": [
+        282.567,
+        15.0,
+        0.0
+      ],
+      "frame_sequence": 21884,
+      "head_sign_validated": false,
+      "desired_polar": [
+        248.65755660109687,
+        15.0,
+        0.0
+      ],
+      "direction_delta_deg": 0.42186099088213147
+    },
+    "archived_checksum_latch": "/home/pi5/track-eye-delta/state/fault-latch.checksum-preserved-e2e-restore-20261017T102933Z.json"
+  },
+  "live_monitor": {
+    "duration_s": 300.04075987500005,
+    "samples": 300,
+    "errors": [],
+    "look_start": 779,
+    "look_end": 1325,
+    "measured_fps": 14.329326021035016,
+    "fps_median": 14.35438170058429,
+    "phase_counts": {
+      "HOLD_DEADBAND": 92,
+      "SENDING_TEST": 95,
+      "WAIT_SOURCE": 113
+    },
+    "source_counts": {
+      "PUPIL_BOTH_MEAN": 115,
+      "PUPIL_LEFT": 10,
+      "NONE": 113,
+      "PUPIL_RIGHT": 1,
+      "FACE_POSITION": 61
+    }
+  },
+  "post_motion_fresh_node_feedback": {
+    "fault": false,
+    "nodes": {
+      "1": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 16.457,
+        "target": 16.461
+      },
+      "2": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 20.555,
+        "target": 20.549
+      },
+      "3": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 8.389,
+        "target": 8.384
+      },
+      "4": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 16.457,
+        "target": 16.461
+      },
+      "5": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 20.555,
+        "target": 20.549
+      },
+      "6": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 8.389,
+        "target": 8.384
+      }
+    },
+    "ready_at_snapshot": true
+  },
+  "calibration": {
+    "saved_before_and_after_sha256": "95f6a91e3809b9f57666f9f1063e13ec088a0b2352fa07206ef2af2cef62fa13",
+    "saved_document": {
+      "schema_version": 1,
+      "gain": {
+        "left": 10.0,
+        "right": 3.0,
+        "up": 2.5,
+        "down": 6.2,
+        "soft_limit": 1.5
+      },
+      "neutrals": [
+        {
+          "name": "eye_33_133",
+          "x": 0.1325237328925585,
+          "y": -0.2991422694098317
+        },
+        {
+          "name": "eye_362_263",
+          "x": -0.05054253184019682,
+          "y": -0.21243936213203962
+        }
+      ]
+    },
+    "observed_final_ram": {
+      "calibration": {
+        "schema_version": 1,
+        "gain": {
+          "left": 3.9,
+          "right": 3.0,
+          "up": 3.45,
+          "down": 3.7,
+          "soft_limit": 1.0
+        },
+        "neutrals": [
+          {
+            "name": "eye_33_133",
+            "x": 0.1325237328925585,
+            "y": -0.2991422694098317
+          },
+          {
+            "name": "eye_362_263",
+            "x": -0.05054253184019682,
+            "y": -0.21243936213203962
+          }
+        ]
+      },
+      "dirty": true,
+      "load_error": null,
+      "neutral_state": "idle",
+      "neutral_remaining_seconds": null,
+      "path": "output-calibration.json"
+    },
+    "ram_tuning_saved_by_assistant": false
+  },
+  "final_health": {
+    "health_http": 200,
+    "decoded_jpeg_shape": [
+      720,
+      1280,
+      3
+    ],
+    "camera_pid": 14833,
+    "sender_pid": 43166,
+    "unique_camera_owner": "14833",
+    "unique_serial_owner": "43166",
+    "services": "MainPID=14833\nNRestarts=0\nExecStart={ path=/home/pi5/track-eye/.venv/bin/python ; argv[]=/home/pi5/track-eye/.venv/bin/python -u -m track_eye.app --device /dev/v4l/by-id/usb-UGREEN_Camera_UGREEN_Camera_SN0001-video-index0 --web-host 0.0.0.0 --web-port 8080 ; ignore_errors=no ; start_time=[Sat 2026-10-17 17:20:04 +07] ; stop_time=[n/a] ; pid=14833 ; code=(null) ; status=0/0 }\nId=track-eye.service\nActiveState=active\nSubState=running\n\nMainPID=43166\nNRestarts=0\nExecStart={ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 -u tools/delta_v3_stream.py --config config.json --emit-owner-approved ; ignore_errors=no ; start_time=[Sat 2026-10-17 17:44:33 +07] ; stop_time=[n/a] ; pid=43166 ; code=(null) ; status=0/0 }\nId=track-eye-delta.service\nActiveState=active\nSubState=running\nenabled\nenabled\n"
+  },
+  "preserved_failures": [
+    "Prior incomplete traceback before any TX",
+    "Startup supervision mistakenly read stale status then stopped worker during initial listen, causing missing-CFG latch",
+    "Next startup rejected orphaned CFG prefix; subsequent maintenance completed fresh status/CFG/IK without relaxing allowlist",
+    "First long sampler stopped immediately on dirty RAM tuning, not communication failure; preserved and replaced by tuning-aware sampler"
+  ],
+  "limits": [
+    "Established-session E2E and node-reported feedback only, not external mechanical direction/gaze accuracy",
+    "Existing observe-only-owner-test policy is not fail-closed node readiness",
+    "Master reader UnicodeError lifecycle root cause not established/fixed; no blanket catch or automatic restart added",
+    "RAM no-home/replay policy is lost on master reset; no power-cycle/USB-reconnect/24x7 acceptance",
+    "RAM tuning remains dirty and differs from disk; preserve before camera restart; save/pin updates must be coordinated with sender stopped",
+    "Minimum logged LOOK interval is post-write log spacing, not exact UART TX-start measurement"
+  ],
+  "remote_evidence": "/home/pi5/track-eye-integration-audit-20261008/e2e-restore-20261017T102933Z",
+  "local_raw_evidence": "archive/e2e-restore-20261017T102933Z",
+  "new_commit_or_push": false
+}

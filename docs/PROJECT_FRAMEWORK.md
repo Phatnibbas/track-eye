@@ -1,19 +1,19 @@
 # Track Eye Project Framework
 
-> **Current scope override — 2026-10-17:** Read `PI5_DEPLOYED_STATE.md` first for
-> the dated two-service snapshot and calibration preservation constraints.
-> The local tree now contains canonical `track_eye/` plus the active external
-> `delta_bridge/` adapter, Delta tools/tests, reference firmware, profiles and
-> systemd unit. `track-eye.service` alone owns the camera and publishes HTTP;
-> `track-eye-delta.service` consumes HTTP and alone owns Delta serial output.
-> Shared mean/single-eye/face output is active externally; head is sign-gated.
-> Internal fallback remains shadow-only. Statements below about absent transport
-> or emission not started refer to the internal September pipeline, not the
-> external adapter. Earlier prototype-only/left-only/no-sender claims are historical.
-> No accuracy or rig-safety certification follows from source synchronization.
-> Latest inspected baseline is `20261014-200150` (738/1166, 63.3%, zero camera
-> read failures), superseding older “latest” labels without changing old evidence.
-> This preservation sync authorizes no restart, upgrade or hardware operation.
+> **Current native-ROI acquisition — 2026-10-17:** production is `b8387c0` plus
+> diagnostic UI and selected full-range ROI acquisition/reacquisition. One
+> FaceMesh inference per frame; native crop coordinates return to original
+> pixels before unchanged aperture-v1 mapping. FACE fallback stays independent.
+> Models, confidence thresholds, calibration units and sender policy unchanged.
+> Web separates pre-EMA, raw-after-EMA and tuned output; extracted geometry is
+> not reliable-pupil certification. Controlled real-photo replay passes cold,
+> warm, loss/reacquisition on Mac/Pi; no labeled2m acceptance was collected.
+> Camera and external sender active; saved tuning3.9/3/3.45/3.7, limit1.0, two
+> neutrals and pin2f797a4c… preserved. Existing sender policy issued one bounded
+> CLEAR after a startup FAULT rejection; subsequent final session clean.
+> No HOME/reset/flash or visitor/YOLOX pipeline. Detailed evidence and operational
+> limits: `PI5_DEPLOYED_STATE.md`. Installation redesign below remains broader
+> design work, not implied acceptance of its unimplemented parts.
 
 This is the current operating framework for development agents. It is derived from the tracked repository, the files deployed under `/home/pi5/track-eye`, the live systemd unit, the live HTTP status, the persisted calibration, and the latest available baseline artifact.
 
@@ -56,12 +56,12 @@ The old appearance-gaze/ONNX direction remains rejected as the normal pupil-mirr
 UGREEN UVC camera (one V4L2 owner)
   -> optional horizontal mirror (enabled on Pi)
   -> one mirrored, pre-render frame
-       |-> EyeTracker (legacy FaceMesh) -> raw TrackingResult
-       |     |-> OutputTuner -> OutputTrackingResult
-       |     |     `-> calibrated pupil targets for shadow selection
-       |     `-> PupilQualityMonitor -> per-eye geometry/velocity diagnostics
+       |-> FacePositionShadow (one full-range detection; retained-face matching)
+       |     |-> FACE candidate (independent of pupil/mesh availability)
+       |     `-> selected bbox -> EyeTracker (one FaceMesh; native ROI/full frame)
+       |           |-> OutputTuner -> OutputTrackingResult -> calibrated pupil targets
+       |           `-> PupilQualityMonitor -> per-eye geometry/velocity diagnostics
        |-> HeadPoseShadow (Tasks Face Landmarker transform, synchronous)
-       |-> FacePositionShadow (full-range FaceDetection, synchronous)
        |-> BodyPositionWorker (OpenCV HOG, latest-frame queue depth one)
        `-> ValidationSession (explicit-start pre-render JPEG capture only)
   -> FallbackSelector -> labeled shadow decision
@@ -70,7 +70,123 @@ UGREEN UVC camera (one V4L2 owner)
 
 `track_eye.app` owns composition and lifecycle. The selector consumes monotonic timestamps after synchronous candidate inference, so newly produced candidates are not rejected as “future” samples. Pupil targets entering the selector are the calibrated `OutputTrackingResult` coordinates; raw pupil geometry remains diagnostic.
 
-The deployed runtime is still **shadow-only**. The fallback decision is visible in status, overlays, and validation artifacts, but does not replace `OutputTrackingResult`, invoke the 20-byte encoder, or send data to hardware. Configuration rejects `emission_enabled=true` until an output integration exists.
+The app's internal fallback remains **shadow-only**. Its decision is visible in status, overlays, and validation artifacts, but does not replace `OutputTrackingResult`, invoke the 20-byte encoder, or send data to hardware. Configuration rejects `emission_enabled=true` until an internal output integration exists; the separate external Delta adapter remains active.
+
+### Native-ROI acquisition and mapping semantics — 2026-10-17
+
+Cold/lost tracking uses the current selected full-range detector box padded1.8×,
+clipped to native image bounds without pre-resizing. Healthy ROI tracking follows
+the previous accepted landmark bounds even when the detector misses; healthy
+full-frame tracking remains full-frame. There is only one FaceMesh inference per
+camera frame, not an extra full-frame-then-crop retry. Coordinate-mode changes,
+actual loss, resolution changes and expired tracking reset graph/EMA state;
+consecutive cold empty frames do not repeatedly reset the graph.
+
+Every crop landmark maps back to original-image pixels before unchanged
+`measure_eye`. A retained accepted box lasts0.6s; nonoverlapping proposals/meshes
+cannot steal that reference. This is short geometric association, not re-ID or
+validated multi-person ownership. FACE candidates remain independently usable
+when the same selected visitor has no accepted pupil/mesh.
+
+`face_detected` still means accepted refined FaceMesh landmarks; false implies
+no eye values. `PupilQualityMonitor.valid` means geometry extracted, not labeled
+pupil reliability. The UI exposes detector score/native bbox, acquisition
+path/ROI/reason, per-eye pixel geometry, canonical pre-EMA XY, existing raw XY
+(after EMA, before tuning), and tuned output. Shadow selection is not hardware
+source; the separate external sender retains its own mean/single-eye/FACE policy.
+
+Unchanged aperture-v1 mapping divides horizontal displacement by half eye width
+and vertical displacement by half lid aperture. A measured-geometry
+counterfactual on Pi halves aperture6.312→3.156px while holding corners/iris
+fixed: vertical signal−0.2481→−0.4961. Thus mapping itself can amplify lid
+variation; ROI does not establish vertical robustness, pupil truth or new units.
+
+Actual-model replay on Mac and Pi used one official photographic input at five
+controlled native sizes. At detector boxes approximately65/91/104px wide,
+fresh baseline FaceMesh failed and selected ROI succeeded; both passed145/227px.
+Both retained all ten shrinking warm samples; new loss/reacquisition cleared
+stale values and reinitialized EMA. This supports an acquisition/ROI bottleneck,
+not a measured distance or pupil-direction accuracy claim. Two actual Pi captures
+(269 frames) contained no usable face and supply no2m acceptance evidence.
+See `deploy/roi-acquisition-20261017T114130Z/verification.json` for exact evidence.
+
+
+### Installation redesign — design only
+
+Goal: responsive artwork within 3 m for one selected visitor among a small
+group. Prefer the existing lightweight MediaPipe components; no YOLOX, HOG,
+person re-identification, second landmark network or independent parallel
+research pipeline in the installation path.
+
+```mermaid
+flowchart TD
+    A[One camera: latest mirrored frame] --> B[Lightweight face detection]
+    B --> C[Lock one face and its ROI]
+    C --> D[One FaceMesh on selected ROI]
+    D --> E[Per-eye pupil measurements and quality]
+    D --> F[Head pose from the same landmarks]
+    C --> G[Selected face center]
+    E --> H[One selector: PUPIL then HEAD then FACE]
+    F --> H
+    G --> H
+    H --> I[Calibrated bounded target: source and freshness]
+    I --> J[Existing separate Delta adapter]
+    I --> K[Existing web preview]
+```
+
+- **Scheduling:** start face discovery at 10 Hz on a smaller full-frame image;
+  run FaceMesh once per fresh selected ROI using the original camera pixels.
+  Reuse detections only within their freshness bound; no unbounded inference
+  queues. The rate is a starting setting to measure, not a performance claim.
+- **Visitor lock:** select a face in the installation interaction zone, prefer
+  the largest box and use distance to zone center as a deterministic tie-break.
+  Keep the current box by overlap/center continuity; a larger newcomer does not
+  steal it. Short occlusion retains only the lock, not valid motion. On timeout,
+  reacquire, reset pupil smoothing and discard all previous-person candidates.
+  This is geometric continuity, not guaranteed identity through a crossing.
+- **One owner of observations:** pupil, head and face candidates must belong
+  to the same selected ROI/frame. A face detector can remain usable when iris
+  landmarks fail; never borrow another visitor's face as fallback.
+- **Pupil:** retain independent raw eye signals; qualify geometry before using
+  a candidate. Two usable eyes stay independent at the perception boundary.
+  A sole usable eye stays explicitly single-eye; the shared hardware adapter
+  may use it, but must not invent a second measured eye. Preserve existing
+  feature units/calibration initially; recalibrate deliberately if those change.
+- **Head:** estimate orientation with `solvePnP` from the already computed
+  landmarks and documented camera intrinsics/model points. Enable only after
+  installation axes/sign/range and reprojection checks pass. Until then skip
+  HEAD and fall through to FACE; do not add another neural model for it.
+- **Face:** map the selected box center within the configured interaction zone
+  to a bounded shared target, with its own installation center/range. It is
+  position-following, not pupil mirroring or a claim of gaze direction.
+- **Transitions/loss:** use one monotonic selector, short stability hysteresis
+  and bounded output slew. With no fresh source, hold only briefly for continuity,
+  then INVALID/no new movement. HELD is not a fresh observation and must not be
+  retransmitted as one. Retain the existing 250 ms sender freshness bound.
+- **One decision:** implement source priority in the existing selector once.
+  Publish that decision to preview and sender; replace the adapter's duplicate
+  selection policy during cutover, leaving only explicit shared-target mapping,
+  freshness/rig checks and transport. No second output/calibration path.
+- **Presence:** selected fresh face means a usable visitor signal. No face means
+  no usable face, not proof that the room is empty. Full-body-only/back-facing
+  response is deliberately outside this installation design; no person model is
+  required merely to enable face fallback.
+
+Implementation should reuse `app.py`, `tracker.py`, `shadow.py`, `fallback.py`,
+`output.py`/`output_tuning.py` and the existing Delta adapter, removing redundant
+inference/selection paths as they are replaced. Do not enable a shadow decision
+or sender automatically as a side effect of rollback.
+
+Field check before motion: one visitor at 1/2/3 m; unreadable pupils with a visible
+face; head turns/blinks; two or three people entering/crossing; loss/reacquisition.
+Require same-visitor source transitions, no stale replay, calibrated direction,
+at least 12 processed fps and P95 capture-to-decision age below 250 ms as initial
+acceptance targets. Measure from a monotonic capture timestamp; the restored
+baseline's HTTP frame age is publish age and cannot certify this latency target.
+If a face lacks enough pixels/light, adjust camera placement/lighting; ROI resize
+cannot recover missing optical detail. Robot readiness/USB/calibration pin and
+physical direction remain separate installation checks.
+
 
 ## 4. Module boundaries
 

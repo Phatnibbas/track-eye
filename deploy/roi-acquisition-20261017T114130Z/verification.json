@@ -1,0 +1,689 @@
+{
+  "schema_version": 1,
+  "task": "selected-full-range-native-ROI-acquisition",
+  "date_utc": "2026-10-17",
+  "source_identity": "b8387c0 plus diagnostic UI and native-ROI acquisition delta",
+  "source_manifest": "source-manifest.json",
+  "tests": {
+    "local_unittest_discover": {
+      "passed": 175
+    },
+    "pi_focused": {
+      "passed": 34,
+      "modules": [
+        "test_tracker_acquisition",
+        "test_shadow_math",
+        "test_tracker_math",
+        "test_filtering",
+        "test_output_tuning"
+      ]
+    }
+  },
+  "real_model_replay": {
+    "hosts": [
+      "Mac arm64",
+      "Pi5"
+    ],
+    "input_url": "https://storage.googleapis.com/mediapipe-assets/portrait.jpg",
+    "input_sha256": "a6f11efaa834706db23f275b6115058fa87fc7f14362681e6abe14e82749de3e",
+    "kind": "photograph-with-controlled-image-transforms-not-distance-or-pupil-accuracy-acceptance",
+    "pi_cold": [
+      {
+        "patch_width_px": 96,
+        "detector_bbox_width_px": 65.29918670654297,
+        "old_mesh": false,
+        "new_mesh": true
+      },
+      {
+        "patch_width_px": 128,
+        "detector_bbox_width_px": 90.7992935180664,
+        "old_mesh": false,
+        "new_mesh": true
+      },
+      {
+        "patch_width_px": 160,
+        "detector_bbox_width_px": 104.47635650634766,
+        "old_mesh": false,
+        "new_mesh": true
+      },
+      {
+        "patch_width_px": 224,
+        "detector_bbox_width_px": 145.29438018798828,
+        "old_mesh": true,
+        "new_mesh": true
+      },
+      {
+        "patch_width_px": 320,
+        "detector_bbox_width_px": 226.69578552246094,
+        "old_mesh": true,
+        "new_mesh": true
+      }
+    ],
+    "warm": [
+      {
+        "width": 320,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Acquired mesh",
+          "roi_px": [
+            444,
+            125,
+            409,
+            409
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.06565915781142763,
+              "y": -0.2951659073593026
+            },
+            "right": {
+              "x": 0.06173790074160017,
+              "y": -0.4427741244613975
+            }
+          }
+        }
+      },
+      {
+        "width": 288,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Tracking accepted mesh",
+          "roi_px": [
+            465,
+            111,
+            355,
+            437
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.10252756611618455,
+              "y": -0.35866190249604096
+            },
+            "right": {
+              "x": 0.10598808974679605,
+              "y": -0.44358296771508454
+            }
+          }
+        }
+      },
+      {
+        "width": 256,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Tracking accepted mesh",
+          "roi_px": [
+            489,
+            115,
+            313,
+            424
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.07544663295727787,
+              "y": -0.3037889870232489
+            },
+            "right": {
+              "x": 0.08789016801746491,
+              "y": -0.4667108136278871
+            }
+          }
+        }
+      },
+      {
+        "width": 224,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Tracking accepted mesh",
+          "roi_px": [
+            507,
+            138,
+            285,
+            370
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.11428957663552121,
+              "y": -0.3085948079440768
+            },
+            "right": {
+              "x": 0.10698047387471232,
+              "y": -0.48194392971956646
+            }
+          }
+        }
+      },
+      {
+        "width": 192,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Tracking accepted mesh",
+          "roi_px": [
+            525,
+            166,
+            251,
+            310
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.08137332152145911,
+              "y": -0.24723838733497036
+            },
+            "right": {
+              "x": 0.07194695032599636,
+              "y": -0.4707631671659912
+            }
+          }
+        }
+      },
+      {
+        "width": 160,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Tracking accepted mesh",
+          "roi_px": [
+            546,
+            185,
+            216,
+            264
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.11797952742324139,
+              "y": -0.3014933825830389
+            },
+            "right": {
+              "x": 0.12310745839724485,
+              "y": -0.43187953435578585
+            }
+          }
+        }
+      },
+      {
+        "width": 144,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Tracking accepted mesh",
+          "roi_px": [
+            567,
+            204,
+            178,
+            222
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.11257534273729015,
+              "y": -0.2537077157532697
+            },
+            "right": {
+              "x": 0.08656896255846804,
+              "y": -0.4246512076754624
+            }
+          }
+        }
+      },
+      {
+        "width": 128,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Tracking accepted mesh",
+          "roi_px": [
+            579,
+            213,
+            160,
+            199
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.08252737753067807,
+              "y": -0.2919665865725772
+            },
+            "right": {
+              "x": 0.09594457742910598,
+              "y": -0.40581846680182787
+            }
+          }
+        }
+      },
+      {
+        "width": 112,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Tracking accepted mesh",
+          "roi_px": [
+            590,
+            223,
+            143,
+            177
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.058324639855242055,
+              "y": -0.2612172807366388
+            },
+            "right": {
+              "x": 0.09557625276341059,
+              "y": -0.5272094398754358
+            }
+          }
+        }
+      },
+      {
+        "width": 96,
+        "old_mesh": true,
+        "new_mesh": true,
+        "detector_valid": true,
+        "tracker": {
+          "mode": "roi",
+          "reason": "Tracking accepted mesh",
+          "roi_px": [
+            602,
+            231,
+            125,
+            157
+          ],
+          "tracking": true,
+          "unfiltered": {
+            "left": {
+              "x": -0.09378768373605154,
+              "y": -0.3347854694787868
+            },
+            "right": {
+              "x": 0.1472817724934563,
+              "y": -0.4568918366090464
+            }
+          }
+        }
+      }
+    ],
+    "blank_loss_no_stale": true,
+    "reacquired": true,
+    "mapping": {
+      "unfiltered": {
+        "left": {
+          "x": -0.09099816110691186,
+          "y": -0.32168908889919395
+        },
+        "right": {
+          "x": 0.12087554558213506,
+          "y": -0.42286709795049404
+        }
+      },
+      "raw_ema": [
+        {
+          "name": "eye_33_133",
+          "x": -0.09099816110691186,
+          "y": -0.32168908889919395,
+          "raw_h": -0.09099816110691186,
+          "raw_v": -0.32168908889919395,
+          "contour": [
+            [
+              618,
+              292
+            ],
+            [
+              619,
+              293
+            ],
+            [
+              621,
+              293
+            ],
+            [
+              622,
+              293
+            ],
+            [
+              625,
+              293
+            ],
+            [
+              628,
+              293
+            ],
+            [
+              630,
+              293
+            ],
+            [
+              632,
+              293
+            ],
+            [
+              632,
+              293
+            ],
+            [
+              631,
+              292
+            ],
+            [
+              629,
+              291
+            ],
+            [
+              627,
+              290
+            ],
+            [
+              624,
+              290
+            ],
+            [
+              621,
+              291
+            ],
+            [
+              620,
+              291
+            ],
+            [
+              619,
+              292
+            ]
+          ],
+          "eye_center": [
+            625.6842832565308,
+            292.8849021047354
+          ],
+          "iris_center": [
+            625.0530301705003,
+            291.89667035639286
+          ],
+          "iris_radius": 2.9334458741385694,
+          "eye_width": 14.422912789021478,
+          "eyelid_aperture": 6.0420196975400176,
+          "iris_inside_lid": 0.4036170923122376,
+          "lid_overflow": 0.3746320909336123,
+          "axis_x": [
+            0.9996753062054448,
+            0.025481015738198137
+          ],
+          "axis_y": [
+            -0.025481015738198137,
+            0.9996753062054448
+          ]
+        },
+        {
+          "name": "eye_362_263",
+          "x": 0.12087554558213506,
+          "y": -0.42286709795049404,
+          "raw_h": 0.12087554558213506,
+          "raw_v": -0.42286709795049404,
+          "contour": [
+            [
+              651,
+              292
+            ],
+            [
+              652,
+              292
+            ],
+            [
+              654,
+              292
+            ],
+            [
+              656,
+              292
+            ],
+            [
+              659,
+              292
+            ],
+            [
+              662,
+              292
+            ],
+            [
+              664,
+              292
+            ],
+            [
+              665,
+              292
+            ],
+            [
+              666,
+              292
+            ],
+            [
+              665,
+              291
+            ],
+            [
+              665,
+              291
+            ],
+            [
+              663,
+              290
+            ],
+            [
+              660,
+              289
+            ],
+            [
+              657,
+              289
+            ],
+            [
+              654,
+              290
+            ],
+            [
+              652,
+              291
+            ]
+          ],
+          "eye_center": [
+            659.1364641785622,
+            292.45926570892334
+          ],
+          "iris_center": [
+            660.0144727826118,
+            291.24962386488914
+          ],
+          "iris_radius": 3.047049906635489,
+          "eye_width": 15.145392902576186,
+          "eyelid_aperture": 5.588679855350716,
+          "iris_inside_lid": 0.6059316738222416,
+          "lid_overflow": 0.6963680507487818,
+          "axis_x": [
+            0.9995123205947775,
+            -0.03122692715018136
+          ],
+          "axis_y": [
+            0.03122692715018136,
+            0.9995123205947775
+          ]
+        }
+      ],
+      "output": [
+        {
+          "name": "eye_33_133",
+          "x": -0.8463742620475879,
+          "y": -0.07778652723829983
+        },
+        {
+          "name": "eye_362_263",
+          "x": 0.5142542322669956,
+          "y": -0.7259756885736678
+        }
+      ]
+    },
+    "aperture_counterfactual": {
+      "original_aperture": 6.312166324927984,
+      "half_aperture": 3.156083162463992,
+      "original_v": -0.24805702829880266,
+      "half_aperture_v": -0.4961140565976053,
+      "kind": "mathematical-counterfactual-not-visitor-truth"
+    },
+    "empty_cold_ms_median_after_first_pi": 7.521092,
+    "actual_pi_captures": [
+      {
+        "capture": "raw-baseline",
+        "frames": 178,
+        "old_mesh": 0,
+        "new_mesh": 0,
+        "new_detector_valid": 3,
+        "new_mesh_without_detector": 0
+      },
+      {
+        "capture": "raw-face-before",
+        "frames": 91,
+        "old_mesh": 0,
+        "new_mesh": 0,
+        "new_detector_valid": 0,
+        "new_mesh_without_detector": 0
+      }
+    ],
+    "actual_capture_limit": "269 pre-render JPEGs had no usable face; not positive-face/distance validation"
+  },
+  "live_monitor": {
+    "samples": 150,
+    "duration_s": 30.410203392999392,
+    "frame_delta": 457,
+    "measured_fps": 15.02785082013638,
+    "camera_modes": {
+      "roi": 137,
+      "full_frame": 13
+    },
+    "mesh_samples": 133,
+    "sender_sources": {
+      "PUPIL_BOTH_MEAN": 84,
+      "PUPIL_LEFT": 25,
+      "PUPIL_RIGHT": 11,
+      "NONE": 29,
+      "FACE_POSITION": 1
+    }
+  },
+  "browser": {
+    "actual_pi": true,
+    "desktop_width": 1440,
+    "mobile_width": 390,
+    "decoded_jpeg": [
+      1280,
+      720
+    ],
+    "horizontal_overflow": false,
+    "browser_errors": 0,
+    "observed": [
+      "ROI acquisition",
+      "pre-EMA",
+      "raw-after-EMA",
+      "tuned output",
+      "per-slot geometry"
+    ]
+  },
+  "sender": {
+    "source_changed": false,
+    "policy_changed": false,
+    "completed_session": {
+      "look_sent": 360,
+      "echo_verified": 360,
+      "counters": {
+        "discarded_startup_diagnostic": 1,
+        "ik": 1,
+        "look": 360,
+        "robot_diagnostics": 1,
+        "master_move_rejections": 1,
+        "echo": 360,
+        "source_PUPIL_BOTH_MEAN": 247,
+        "clear_sent": 1,
+        "clear_ack": 1,
+        "source_PUPIL_RIGHT": 27,
+        "source_PUPIL_LEFT": 85,
+        "deadband_skips": 43,
+        "source_FACE_POSITION": 1
+      }
+    },
+    "final_observed_session": {
+      "look_sent": 307,
+      "echo_verified": 307,
+      "counters": {
+        "ik": 1,
+        "look": 307,
+        "echo": 307,
+        "source_PUPIL_BOTH_MEAN": 288,
+        "source_PUPIL_RIGHT": 10,
+        "source_PUPIL_LEFT": 9,
+        "deadband_skips": 74
+      }
+    },
+    "caution": "Echo counters are not motor MOVE ACK. One startup FAULT rejection and existing-policy acknowledged CLEAR occurred; no HOME/reset/flash.",
+    "post_motion_node_status": [
+      "STAT n1 ON  IDLE     err=NONE           homed=1 sw=0 pos=  11.539 target=  11.534",
+      "STAT n2 ON  IDLE     err=NONE           homed=1 sw=0 pos=  14.577 target=  14.578",
+      "STAT n3 ON  IDLE     err=NONE           homed=1 sw=0 pos=  19.045 target=  19.050",
+      "STAT n4 ON  IDLE     err=NONE           homed=1 sw=0 pos=  11.539 target=  11.534",
+      "STAT n5 ON  IDLE     err=NONE           homed=1 sw=0 pos=  14.577 target=  14.578",
+      "STAT n6 ON  IDLE     err=NONE           homed=1 sw=0 pos=  19.045 target=  19.050"
+    ],
+    "node_feedback_is_not_independent_mechanical_direction_proof": true,
+    "initial_outage": "all six offline/unhomed before algorithm deployment; later clean online/homed query after a BOOT-merged header retained as failed evidence"
+  },
+  "final_runtime": {
+    "camera_pid": 136647,
+    "sender_pid": 146887,
+    "health_http": 200,
+    "active_enabled": true,
+    "unique_device_owners": true,
+    "no_dropin": true,
+    "calibration_sha256": "2f797a4c4ab2f1f43bd50b50352075b8bf4911c5de87441287af90e3b28c4749",
+    "calibration_dirty": false,
+    "calibration_changed": false,
+    "validation_start_http": 400,
+    "internal_emission": false,
+    "body_selection": false
+  },
+  "artifacts": {
+    "local_audit": "archive/roi-acquisition-20261017T114130Z",
+    "pi_audit": "/home/pi5/track-eye-research/roi-acquisition-20261017T114130Z",
+    "capture_jpegs": "deleted deliberately after analysis; JSON metadata retained",
+    "temporary_scripts_and_staging": "removed after smoke"
+  },
+  "unvalidated": [
+    "labeled 2m cold/reacquisition success rate",
+    "pupil direction accuracy",
+    "vertical head/lid robustness",
+    "multi-person identity",
+    "low-light installation acceptance",
+    "reboot/lifecycle/24-7 motor safety"
+  ]
+}

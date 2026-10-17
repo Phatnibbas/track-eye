@@ -1,0 +1,24 @@
+{
+  "samples": 150,
+  "measured_fps": 14.219528768026215,
+  "states": {
+    "detector/mesh": 142,
+    "no-detector/mesh": 1,
+    "detector/no-mesh": 7
+  },
+  "sender_phases": {
+    "SENDING_TEST": 125,
+    "HOLD_DEADBAND": 23,
+    "WAIT_SOURCE": 2
+  },
+  "sender_sources": {
+    "PUPIL_BOTH_MEAN": 139,
+    "PUPIL_LEFT": 2,
+    "NONE": 2,
+    "FACE_POSITION": 5,
+    "PUPIL_RIGHT": 2
+  },
+  "look_start": 44,
+  "look_end": 171,
+  "errors": []
+}

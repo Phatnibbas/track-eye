@@ -89,6 +89,17 @@ def _candidate_view(candidates: dict) -> dict:
     return view
 
 
+def _pupil_view(pupil) -> dict | None:
+    if pupil is None:
+        return None
+    return {
+        "target": (pupil.x, pupil.y),
+        "valid": pupil.valid,
+        "latency_ms": pupil.latency_ms,
+        "quality": pupil.quality,
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     stop = threading.Event()
@@ -126,6 +137,7 @@ def main(argv: list[str] | None = None) -> int:
         "head": {"enabled": False},
         "face": {"enabled": False},
         "body": {"enabled": False},
+        "tracker": {"mode": "full_frame", "reason": "no frame yet", "roi_px": None, "tracking": False},
     }
     state = {
         "started_at": time.time(),
@@ -158,6 +170,7 @@ def main(argv: list[str] | None = None) -> int:
             "fps": state_view["fps"],
             "face_detected": bool(result and result.face_detected),
             "inference_ms": None if result is None else result.inference_ms,
+            "tracker": shadow_view["tracker"],
             "raw_left": None if raw_eyes is None else {"x": raw_eyes[0].x, "y": raw_eyes[0].y},
             "raw_right": None if raw_eyes is None else {"x": raw_eyes[1].x, "y": raw_eyes[1].y},
             "output_left": None if output_eyes is None else {"x": output_eyes[0].x, "y": output_eyes[0].y},
@@ -182,18 +195,8 @@ def main(argv: list[str] | None = None) -> int:
                 "source_age_s": decision.source_age_s if decision else 0.0,
                 "held_age_s": decision.held_age_s if decision else None,
                 "candidates": _candidate_view(shadow_view["candidates"]),
-                "pupil_left": None if pupils is None else {
-                    "target": (pupils[0].x, pupils[0].y),
-                    "valid": pupils[0].valid,
-                    "latency_ms": pupils[0].latency_ms,
-                    "quality": pupils[0].quality,
-                },
-                "pupil_right": None if pupils is None else {
-                    "target": (pupils[1].x, pupils[1].y),
-                    "valid": pupils[1].valid,
-                    "latency_ms": pupils[1].latency_ms,
-                    "quality": pupils[1].quality,
-                },
+                "pupil_left": _pupil_view(None if pupils is None else pupils[0]),
+                "pupil_right": _pupil_view(None if pupils is None else pupils[1]),
                 "head": shadow_view["head"],
                 "face": shadow_view["face"],
                 "body": shadow_view["body"],
@@ -277,23 +280,27 @@ def main(argv: list[str] | None = None) -> int:
                 frame = cv2.flip(frame, 1)
             # Raw pre-render validation frame: mirrored, before any overlay.
             pre_render = frame.copy() if validation.active else None
-            result = tracker.process(frame)
+            reference_box = tracker.reference_box()
+            face_cand = face_shadow.process(
+                frame, fallback_config, fallback_config.face_score_min, reference_box=reference_box,
+            ) if face_shadow is not None else None
+            face_box = face_cand.quality.get("box") if face_cand is not None and face_cand.valid else None
+            result = tracker.process(frame, face_box=face_box)
+            tracker_diagnostics = tracker.diagnostics()
             output = output_tuner.process(result)
             tracker_ms = result.inference_ms
             mono_now = time.monotonic()
             pupils = pupil_monitor.update(result.eyes, mono_now, tracker_ms, output.eyes)
             candidates: dict[SourceKind, Candidate] = {}
             stages_ms: dict[str, float] = {"tracker": tracker_ms}
+            if face_cand is not None:
+                candidates[SourceKind.FACE_POSITION] = face_cand
+                stages_ms["face"] = face_cand.latency_ms
             if head_shadow is not None and head_shadow._landmarker is not None:
                 head_cand = head_shadow.process(frame, int(mono_now * 1000), fallback_config)
                 if head_cand is not None:
                     candidates[SourceKind.HEAD_POSE] = head_cand
                     stages_ms["head"] = head_cand.latency_ms
-            if face_shadow is not None and face_shadow._detector is not None:
-                face_cand = face_shadow.process(frame, fallback_config, fallback_config.face_score_min)
-                if face_cand is not None:
-                    candidates[SourceKind.FACE_POSITION] = face_cand
-                    stages_ms["face"] = face_cand.latency_ms
             if body_worker is not None:
                 body_worker.submit(frame)
                 body_cand = body_worker.latest()
@@ -346,6 +353,11 @@ def main(argv: list[str] | None = None) -> int:
                 "shadow_source": decision.active_source.name,
                 "shadow_states": [decision.left_state.name, decision.right_state.name],
                 "emission": "disabled-shadow-only",
+                "face": face_shadow.diagnostics() if face_shadow else {"enabled": False},
+                "tracker": tracker_diagnostics,
+                "candidates": _candidate_view(candidates),
+                "pupil_left": _pupil_view(None if pupils is None else pupils[0]),
+                "pupil_right": _pupil_view(None if pupils is None else pupils[1]),
             }
             if not baseline.process(frame, result, fps, time.perf_counter() - loop_started):
                 rendered = render_frame(frame, result, output, fps, render_shadow)
@@ -360,8 +372,9 @@ def main(argv: list[str] | None = None) -> int:
                     "stages_ms": dict(stages_ms),
                     "sample_id": frames + 1,
                     "head": head_shadow.diagnostics() if head_shadow else {"enabled": False},
-                    "face": face_shadow.diagnostics() if face_shadow else {"enabled": False},
+                    "face": render_shadow["face"],
                     "body": body_worker.diagnostics() if body_worker else {"enabled": False},
+                    "tracker": tracker_diagnostics,
                 })
                 state.update({
                     "last_frame_at": time.time(),

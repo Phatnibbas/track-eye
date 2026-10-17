@@ -28,8 +28,10 @@ import numpy as np
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 
 from track_eye.camera import DEFAULT_DEVICE, Camera, CameraConfig  # noqa: E402
+from track_eye.fallback import load_config_file  # noqa: E402
 from track_eye.output import OutputGain  # noqa: E402
 from track_eye.rendering import draw_face_marker  # noqa: E402
+from track_eye.shadow import FacePositionShadow  # noqa: E402
 from track_eye.tracker import EYE_DEFINITIONS, EMA_ALPHA, EyeTracker  # noqa: E402
 from track_eye.web import FrameHub, WebUIServer  # noqa: E402
 
@@ -456,6 +458,8 @@ def main(argv: list[str] | None = None) -> int:
 
     camera = Camera(CameraConfig(args.device, args.width, args.height, 30.0, args.fourcc))
     tracker: EyeTracker | None = None
+    face_detector: FacePositionShadow | None = None
+    fallback_config, fallback_error, fallback_checksum = load_config_file(_REPO_ROOT / "fallback-config.json")
     server = None
     frame_hub = FrameHub() if args.web_ui_host else None
     raw_phases = {phase.name: empty_phase() for phase in phases}
@@ -478,6 +482,9 @@ def main(argv: list[str] | None = None) -> int:
     try:
         camera.open()
         tracker = EyeTracker()
+        face_detector = FacePositionShadow()
+        if fallback_error:
+            print(f"[BASELINE] fallback config: {fallback_error}; using safe defaults", flush=True)
         if frame_hub is not None:
             server = WebUIServer(
                 frame_hub,
@@ -508,7 +515,12 @@ def main(argv: list[str] | None = None) -> int:
                     continue
                 if not args.no_mirror:
                     frame = cv2.flip(frame, 1)
-                result = tracker.process(frame)
+                candidate = face_detector.process(
+                    frame, fallback_config, fallback_config.face_score_min,
+                    reference_box=tracker.reference_box(),
+                )
+                face_box = candidate.quality.get("box") if candidate is not None and candidate.valid else None
+                result = tracker.process(frame, face_box=face_box)
                 if result.face_detected:
                     face_ready_since = face_ready_since or time.perf_counter()
                 else:
@@ -561,6 +573,9 @@ def main(argv: list[str] | None = None) -> int:
             "fourcc": info.fourcc,
             "mirror": not args.no_mirror,
             "ema_alpha": EMA_ALPHA,
+            "acquisition": "full-range-roi",
+            "fallback_config_checksum": fallback_checksum,
+            "fallback_config_error": fallback_error,
             "duration_seconds": args.duration,
             "countdown_seconds": args.countdown,
             "min_tracking_rate": args.min_tracking_rate,
@@ -600,6 +615,8 @@ def main(argv: list[str] | None = None) -> int:
             server.close()
         if tracker is not None:
             tracker.close()
+        if face_detector is not None:
+            face_detector.close()
         camera.close()
 
 

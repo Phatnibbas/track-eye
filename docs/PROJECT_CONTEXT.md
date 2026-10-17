@@ -1,18 +1,23 @@
 # Track Eye — context hiện hành
 
-## Current authority override — 2026-10-17 preservation sync
+## Current native-ROI acquisition — 2026-10-17
 
-Read `PI5_DEPLOYED_STATE.md` for the current dated two-service identity,
-calibration RAM/disk divergence and snapshot references. Local source now includes
-canonical tracker and external Delta bundle. Sender PID30339 is active with
-5 Hz maximum, tilt×10 capped15°, 1° scaled-direction deadband and bounded
-robot-error CLEAR (5 s/max3); policy remains `observe-only-owner-test`.
-Mean/single-eye/face is external output; head gate remains false; internal
-fallback is shadow-only. “Final”, left-only, no-sender, 15 Hz and no-clear
-statements below describe earlier checkpoints, not this current state.
-No new motion/recovery authorization, restart, upgrade, calibration save or push
-is implied. Disk calibration and dirty RAM calibration must both be preserved.
-Historical counts below are not tests of the October17 source sync.
+Production is`b8387c0` plus diagnostic UI and native-ROI acquisition/reacquisition.
+The existing full-range detector now seeds the selected cold/lost FaceMesh ROI;
+one mesh call per frame, original-pixel mapping, unchanged aperture-v1 math.
+Healthy ROI follows accepted mesh bounds; a0.6s geometric reference rejects
+nonoverlapping visitors but is not identity. FACE fallback remains independent.
+No models/thresholds, calibration units/values, body/head gates, sender policy
+or visitor/YOLOX upgrade. Web exposes pre-EMA/raw-after-EMA/tuned stages.
+
+Local175 tests, Pi34 focused tests and actual-model cold/warm/loss replay pass.
+Controlled small-photo acquisition improved; no labeled2m/pupil-quality acceptance.
+Vertical mapping still depends inversely on lid aperture. Camera/sender active,
+saved gain3.9/3/3.45/3.7, limit1.0, two neutrals and pin2f797a4c… unchanged.
+One startup FAULT rejection triggered one existing-policy bounded CLEAR/OK CLEAR;
+subsequent final session307/307 echoes, no rejection/CLEAR; no HOME/reset/flash.
+Read `PI5_DEPLOYED_STATE.md` for source identity, real node-position feedback,
+capture cleanup, evidence and still-open RAM/owner-test/reboot limitations.
 
 Cập nhật 2026-10-14. Đây là tài liệu cấp **project**, checkpoint không tự cấp
 phép chạy lại chuyển động hoặc bật sender production.

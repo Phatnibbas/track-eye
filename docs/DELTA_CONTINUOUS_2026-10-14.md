@@ -7,6 +7,18 @@ display-left-only and finite-trial restrictions for this adapter, not robot gate
 > bounded owner-approved robot CLEAR. See `DELTA_OUTPUT_SCALE_2026-10-14.md`;
 > earlier15Hz/no-clear policies here are retained historical evidence.
 
+> **2026-10-17 ROI acquisition cutover:** sender/selector source and policy
+> unchanged. Camera now uses selected full-range native ROI acquisition; FACE
+> fallback remains independent. Saved gain3.9/3/3.45/3.7, limit1.0, two neutrals,
+> calibration/pin2f797a4c… preserved clean. Initial six-node outage preceded
+> rollout; resumed only after a NEW complete clean status following a BOOT-merged
+> header. Completed360 LOOK/360 echoes, one startup FAULT rejection and one
+> existing-policy CLEAR/OK CLEAR. Fresh subsequent six-node IDLE feedback showed
+> positions changed from1.993° to11.539/14.577/19.045° for both eyes.
+> Final resumed session307/307 echoes, no rejection/CLEAR. Both services running;
+> no HOME/reset/flash. Host echoes are not MOVE ACK or mechanical-direction proof.
+> Detailed source/evidence and RAM/owner-test/reboot limits: `PI5_DEPLOYED_STATE.md`.
+
 ## Latest owner override — 22:31 onward, Pi↔master test
 
 Owner explicitly approved LOOK transmission despite node OFFLINE/FAULT/unhomed

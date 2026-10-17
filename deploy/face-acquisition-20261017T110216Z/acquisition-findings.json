@@ -1,0 +1,71 @@
+{
+  "user_report": {
+    "cold_or_reacquisition_around_2m": "roughly half succeeds, owner observation accepted",
+    "warm_retreat_2_5_to_3m": "tracking retained after closer acquisition, owner observation accepted"
+  },
+  "live_window": {
+    "samples": 150,
+    "counts": {
+      "no-detector/no-mesh": 137,
+      "detector/no-mesh": 5,
+      "detector/mesh": 8
+    },
+    "distance_measured": false,
+    "exact_status_jpeg_sequences": [
+      37241,
+      37254
+    ]
+  },
+  "actual_mesh_frame": {
+    "sequence": 37254,
+    "native_face_box_width_px": 135.3961944580078,
+    "existing_production_landmarks": true,
+    "local_fresh_full_frame_repeats": [
+      false,
+      false,
+      false
+    ],
+    "local_fresh_detector_box_crop_repeats": [
+      true,
+      true,
+      true
+    ],
+    "internal_graph_full_frame": {
+      "detection_scores": [
+        0.6009874939918518
+      ],
+      "detector_rois": 1,
+      "mesh_faces": 0,
+      "repeated_same_frame": 3
+    },
+    "internal_graph_crop": {
+      "first_call_detection_score": 0.7298535108566284,
+      "first_call_mesh_faces": 1,
+      "subsequent_two_calls": {
+        "detections": 0,
+        "mesh_faces": 1,
+        "landmark_rois": 1
+      }
+    }
+  },
+  "partial_face_counterexample": {
+    "sequence": 37241,
+    "raw_box_y": -0.05126407742500305,
+    "full_and_crop_acquisition_failed": true,
+    "not_used_as_full_face_reacquisition_proof": true
+  },
+  "mechanism": {
+    "face_mesh_internal": "short-range acquisition followed by landmark acceptance; prior landmark ROIs suppress unnecessary detector calls",
+    "independent_full_range_detector": "does not provide ROI or initialize EyeTracker in deployed app",
+    "legacy_face_detected": "FaceMesh multi_face_landmarks exists; not independent face detector result",
+    "pupil_valid": "geometry extracted; unconditional True in existing monitor, not calibrated quality/confidence"
+  },
+  "conclusion": "Acquisition/ROI/landmark acceptance is implicated; internal detector is not the sole demonstrated bottleneck because one full-frame detector succeeded but landmarks failed. No physical2m boundary or success rate measured.",
+  "production_algorithm_changed": false,
+  "limits": [
+    "Offline replays were on local Mac, using rendered compressed JPEGs; not raw Pi frames",
+    "Three repeats on one frame are not three independent participant trials",
+    "ROI crop proof is diagnostic, not deployed or installation validation",
+    "Detector and FaceMesh run independently and may refer to different people in a multi-person frame"
+  ]
+}

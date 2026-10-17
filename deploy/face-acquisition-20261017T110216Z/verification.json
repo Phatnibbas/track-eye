@@ -1,0 +1,447 @@
+{
+  "request": "Validate cold/reacquisition pipeline and clarify face/pupil on actual web UI",
+  "findings": {
+    "user_report": {
+      "cold_or_reacquisition_around_2m": "roughly half succeeds, owner observation accepted",
+      "warm_retreat_2_5_to_3m": "tracking retained after closer acquisition, owner observation accepted"
+    },
+    "live_window": {
+      "samples": 150,
+      "counts": {
+        "no-detector/no-mesh": 137,
+        "detector/no-mesh": 5,
+        "detector/mesh": 8
+      },
+      "distance_measured": false,
+      "exact_status_jpeg_sequences": [
+        37241,
+        37254
+      ]
+    },
+    "actual_mesh_frame": {
+      "sequence": 37254,
+      "native_face_box_width_px": 135.3961944580078,
+      "existing_production_landmarks": true,
+      "local_fresh_full_frame_repeats": [
+        false,
+        false,
+        false
+      ],
+      "local_fresh_detector_box_crop_repeats": [
+        true,
+        true,
+        true
+      ],
+      "internal_graph_full_frame": {
+        "detection_scores": [
+          0.6009874939918518
+        ],
+        "detector_rois": 1,
+        "mesh_faces": 0,
+        "repeated_same_frame": 3
+      },
+      "internal_graph_crop": {
+        "first_call_detection_score": 0.7298535108566284,
+        "first_call_mesh_faces": 1,
+        "subsequent_two_calls": {
+          "detections": 0,
+          "mesh_faces": 1,
+          "landmark_rois": 1
+        }
+      }
+    },
+    "partial_face_counterexample": {
+      "sequence": 37241,
+      "raw_box_y": -0.05126407742500305,
+      "full_and_crop_acquisition_failed": true,
+      "not_used_as_full_face_reacquisition_proof": true
+    },
+    "mechanism": {
+      "face_mesh_internal": "short-range acquisition followed by landmark acceptance; prior landmark ROIs suppress unnecessary detector calls",
+      "independent_full_range_detector": "does not provide ROI or initialize EyeTracker in deployed app",
+      "legacy_face_detected": "FaceMesh multi_face_landmarks exists; not independent face detector result",
+      "pupil_valid": "geometry extracted; unconditional True in existing monitor, not calibrated quality/confidence"
+    },
+    "conclusion": "Acquisition/ROI/landmark acceptance is implicated; internal detector is not the sole demonstrated bottleneck because one full-frame detector succeeded but landmarks failed. No physical2m boundary or success rate measured.",
+    "production_algorithm_changed": false,
+    "limits": [
+      "Offline replays were on local Mac, using rendered compressed JPEGs; not raw Pi frames",
+      "Three repeats on one frame are not three independent participant trials",
+      "ROI crop proof is diagnostic, not deployed or installation validation",
+      "Detector and FaceMesh run independently and may refer to different people in a multi-person frame"
+    ]
+  },
+  "deployed_runtime_files": [
+    "track_eye/app.py",
+    "track_eye/web.py",
+    "track_eye/rendering.py"
+  ],
+  "algorithm_models_thresholds_selection_changed": false,
+  "public_face_detected_semantics_changed": false,
+  "render_diagnostics_from_same_frame": true,
+  "tests": {
+    "pi_final_integrated_count": 153,
+    "pi_result": "OK",
+    "local_count": 153,
+    "local_limit": "Local suite preceded final presentation refinements; final Pi suite and actual desktop/mobile smoke cover integrated cutover."
+  },
+  "browser": {
+    "fixture_states": [
+      {
+        "case": "detector-only",
+        "detector": "Detection available",
+        "mesh": "Landmarks unavailable",
+        "left": "Measurement unavailable",
+        "right": "Measurement unavailable",
+        "detectorDetail": "Score 0.703 (detector score, not pupil confidence)\nBBox x, y, w, h: 553, 0, 101, 64 px\nNative camera: 1280 × 720\nSample age 0.07 s",
+        "note": "Detector returned a face box, but FaceMesh has no landmarks: acquisition/landmark gap, not an empty scene. The independent detector does not feed FaceMesh.",
+        "outputLeft": "--",
+        "width": 1440,
+        "scrollWidth": 1440,
+        "pageHeight": 980,
+        "hudHeight": 944
+      },
+      {
+        "case": "both",
+        "detector": "Detection available",
+        "mesh": "Landmarks available",
+        "left": "Geometry available",
+        "right": "Geometry available",
+        "detectorDetail": "Score 0.756 (detector score, not pupil confidence)\nBBox x, y, w, h: 755, 39, 135, 135 px\nNative camera: 1280 × 720\nSample age 0.07 s",
+        "note": "Detector and FaceMesh run independently. Missing detector output or landmarks does not prove no visitor is present.",
+        "outputLeft": "-0.707, 0.499",
+        "width": 1440,
+        "scrollWidth": 1440,
+        "pageHeight": 980,
+        "hudHeight": 944
+      },
+      {
+        "case": "neither",
+        "detector": "No current detection",
+        "mesh": "Landmarks unavailable",
+        "left": "Measurement unavailable",
+        "right": "Measurement unavailable",
+        "detectorDetail": "no detection\nSample age 0.07 s",
+        "note": "Detector and FaceMesh run independently. Missing detector output or landmarks does not prove no visitor is present.",
+        "outputLeft": "--",
+        "width": 1440,
+        "scrollWidth": 1440,
+        "pageHeight": 980,
+        "hudHeight": 944
+      },
+      {
+        "case": "error",
+        "detector": "Sample unavailable / error",
+        "mesh": "Landmarks unavailable",
+        "left": "Measurement unavailable",
+        "right": "Measurement unavailable",
+        "detectorDetail": "RuntimeError: local fixture detector failure\nSample age 0.01 s",
+        "note": "Detector and FaceMesh run independently. Missing detector output or landmarks does not prove no visitor is present.",
+        "outputLeft": "--",
+        "width": 1440,
+        "scrollWidth": 1440,
+        "pageHeight": 980,
+        "hudHeight": 944
+      },
+      {
+        "case": "disabled",
+        "detector": "Disabled",
+        "mesh": "Landmarks unavailable",
+        "left": "Measurement unavailable",
+        "right": "Measurement unavailable",
+        "detectorDetail": "disabled by config\nSample age 0.07 s",
+        "note": "Detector and FaceMesh run independently. Missing detector output or landmarks does not prove no visitor is present.",
+        "outputLeft": "--",
+        "width": 1440,
+        "scrollWidth": 1440,
+        "pageHeight": 980,
+        "hudHeight": 944
+      },
+      {
+        "case": "stale",
+        "detector": "Status unavailable",
+        "mesh": "Status unavailable",
+        "left": "Status unavailable",
+        "right": "Status unavailable",
+        "detectorDetail": "No current status; previous sample not shown",
+        "note": "Capture is not fresh; last frame age 3.50 s. Previous face/pupil samples are not shown.",
+        "outputLeft": "--",
+        "width": 1440,
+        "scrollWidth": 1440,
+        "pageHeight": 980,
+        "hudHeight": 944
+      }
+    ],
+    "fixture_mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "stageHeight": 208.125
+    },
+    "live_desktop": {
+      "detector": "Detection available",
+      "mesh": "Landmarks unavailable",
+      "left": "Measurement unavailable",
+      "right": "Measurement unavailable",
+      "detectorDetail": "Score 0.789 (detector score, not pupil confidence)\nBBox x, y, w, h: 541, 195, 77, 77 px\nNative camera: 1280 × 720\nSample age 0.04 s",
+      "note": "Detector returned a face box, but FaceMesh has no landmarks: acquisition/landmark gap, not an empty scene. The independent detector does not feed FaceMesh.",
+      "saved": "Saved",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "pageHeight": 980
+    },
+    "live_mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "detector": "Detection available",
+      "mesh": "Landmarks available",
+      "pupilLeft": "Geometry available",
+      "imageWidth": 1280,
+      "imageHeight": 720
+    },
+    "live_jpeg_loaded": [
+      1280,
+      720
+    ],
+    "live_errors": [],
+    "note": "Earlier fixture server restart produced connection errors in that old tab; final live tab had no errors."
+  },
+  "live_smoke": {
+    "samples": 150,
+    "measured_fps": 14.219528768026215,
+    "states": {
+      "detector/mesh": 142,
+      "no-detector/mesh": 1,
+      "detector/no-mesh": 7
+    },
+    "sender_phases": {
+      "SENDING_TEST": 125,
+      "HOLD_DEADBAND": 23,
+      "WAIT_SOURCE": 2
+    },
+    "sender_sources": {
+      "PUPIL_BOTH_MEAN": 139,
+      "PUPIL_LEFT": 2,
+      "NONE": 2,
+      "FACE_POSITION": 5,
+      "PUPIL_RIGHT": 2
+    },
+    "look_start": 44,
+    "look_end": 171,
+    "errors": []
+  },
+  "cutover": {
+    "saved_ram_before_restart": true,
+    "before_tuning": {
+      "calibration": {
+        "schema_version": 1,
+        "gain": {
+          "left": 3.9,
+          "right": 3.0,
+          "up": 3.45,
+          "down": 3.7,
+          "soft_limit": 1.0
+        },
+        "neutrals": [
+          {
+            "name": "eye_33_133",
+            "x": 0.1325237328925585,
+            "y": -0.2991422694098317
+          },
+          {
+            "name": "eye_362_263",
+            "x": -0.05054253184019682,
+            "y": -0.21243936213203962
+          }
+        ]
+      },
+      "dirty": true,
+      "load_error": null,
+      "neutral_state": "idle",
+      "neutral_remaining_seconds": null,
+      "path": "output-calibration.json"
+    },
+    "saved_tuning": {
+      "calibration": {
+        "schema_version": 1,
+        "gain": {
+          "left": 3.9,
+          "right": 3.0,
+          "up": 3.45,
+          "down": 3.7,
+          "soft_limit": 1.0
+        },
+        "neutrals": [
+          {
+            "name": "eye_33_133",
+            "x": 0.1325237328925585,
+            "y": -0.2991422694098317
+          },
+          {
+            "name": "eye_362_263",
+            "x": -0.05054253184019682,
+            "y": -0.21243936213203962
+          }
+        ]
+      },
+      "dirty": false,
+      "load_error": null,
+      "neutral_state": "idle",
+      "neutral_remaining_seconds": null,
+      "path": "output-calibration.json"
+    },
+    "saved_calibration_sha256": "2f797a4c4ab2f1f43bd50b50352075b8bf4911c5de87441287af90e3b28c4749",
+    "sender_config_changed_fields": [
+      "calibration_sha256"
+    ],
+    "sender_config_sha256": "d9926e011375ae8344207caaf633d416b16718b59a3b80945f4cbb3028dfcc9f",
+    "new_clear_home_reset_flash": false,
+    "camera_pid": 91620,
+    "sender_pid": 91756,
+    "unique_camera_owner": true,
+    "unique_serial_owner": true,
+    "services": "MainPID=91620\nNRestarts=0\nId=track-eye.service\nActiveState=active\nSubState=running\n\nMainPID=91756\nNRestarts=0\nId=track-eye-delta.service\nActiveState=active\nSubState=running\nenabled\nenabled\n",
+    "last_observed_sender": {
+      "phase": "SENDING_TEST",
+      "source": "PUPIL_BOTH_MEAN",
+      "emit_enabled": true,
+      "look_sent": 928,
+      "echo_verified": 928,
+      "node_state_policy": "observe-only-owner-test",
+      "target_rate_hz": 5.0,
+      "max_tilt_deg": 15.0,
+      "tilt_multiplier": 10.0,
+      "deadband_deg": 1.0,
+      "auto_clear_policy": {
+        "enabled": true,
+        "cooldown_s": 5.0,
+        "max_consecutive": 3
+      },
+      "motor_delivery_claim": false,
+      "head_axis_gate": "requires production head_sign_validated=true",
+      "loss_policy": "no new movement; last command may finish/hold; no firmware Pi watchdog",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth",
+      "monotonic_s": 4288.512293541,
+      "ik_verified": 1,
+      "counters": {
+        "ik": 1,
+        "look": 928,
+        "echo": 928,
+        "source_FACE_POSITION": 75,
+        "deadband_skips": 742,
+        "source_PUPIL_BOTH_MEAN": 811,
+        "source_PUPIL_LEFT": 18,
+        "source_PUPIL_RIGHT": 24
+      },
+      "last_command_echo_verified": true,
+      "desired_xy": [
+        0.030803065778725713,
+        -0.20348249633952709
+      ],
+      "command_xy": [
+        0.030803065778725713,
+        -0.20348249633952709
+      ],
+      "polar": [
+        81.392,
+        4.116,
+        0.0
+      ],
+      "frame_sequence": 5279,
+      "head_sign_validated": false,
+      "desired_polar": [
+        145.37549561779193,
+        4.726046677384037,
+        0.0
+      ],
+      "direction_delta_deg": 0.9973609604344014
+    },
+    "pre_resume_nodes": {
+      "1": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 14.641,
+        "target": 14.638
+      },
+      "2": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 9.884,
+        "target": 9.889
+      },
+      "3": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 20.796,
+        "target": 20.797
+      },
+      "4": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 14.641,
+        "target": 14.638
+      },
+      "5": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 9.884,
+        "target": 9.889
+      },
+      "6": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 20.796,
+        "target": 20.797
+      }
+    },
+    "pre_resume_master_fault": false
+  },
+  "preserved_operational_failure": "First sender-state tar was taken while logger was writing and returned file-changed; that copy is labeled inconsistent. Sender then stopped before taking the successful consistent backup.",
+  "source_sha256": {
+    "track_eye/app.py": "d1e98ce7ee9935bab7e2afc13623e1961179e05815df988924c03ba8bbe7eb48",
+    "track_eye/web.py": "6574956d1d7edd610793b679a890439a6b7cd197dbe4b1855164fd1736484f9a",
+    "track_eye/rendering.py": "b590356db0d6a4baf1b2fdf4adf484a73b3521db57c0e6a784d48c8240c17c8d",
+    "config/delta-v3-stream-current-pi5.json": "d9926e011375ae8344207caaf633d416b16718b59a3b80945f4cbb3028dfcc9f"
+  },
+  "raw_metadata": "archive/face-acquisition-20261017T110216Z",
+  "remote_audit": "/home/pi5/track-eye-research/face-acquisition-20261017T110216Z",
+  "retention": {
+    "captured_rendered_jpegs_deleted": [
+      "no-detector-no-mesh.jpg",
+      "detector-no-mesh.jpg",
+      "detector-mesh.jpg"
+    ],
+    "input_sha256": {
+      "no-detector-no-mesh.jpg": "d6ee587be4db96a52d9ef0590b0e6ad1cd6753fc21a8fd816740c2f4eb3f2f1d",
+      "detector-no-mesh.jpg": "481cd1773a00e4df83ffd2846c849a03328770622d704a7b4a4d104524074ade",
+      "detector-mesh.jpg": "36fed80ebb7c878b6244a08b60e93a1c17715686b2c77e8e00771fdc0b9c95cb"
+    },
+    "temporary_probe_and_preview_scripts_removed": true
+  },
+  "not_claimed": [
+    "Measured2m success rate or optical distance threshold",
+    "Full-range detector alone is the sole bottleneck",
+    "Reliable3m pupil mirroring",
+    "Crop acquisition deployed",
+    "Face detector and FaceMesh associated to same visitor in groups",
+    "Unattended/reboot/24x7 safety of inherited owner-test master/sender policy"
+  ],
+  "new_commit_or_push": false
+}

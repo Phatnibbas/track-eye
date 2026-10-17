@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import time
 from dataclasses import dataclass
 
@@ -26,6 +27,8 @@ EYE_DEFINITIONS = (
 )
 IRIS_GROUPS = ((469, 470, 471, 472), (474, 475, 476, 477))
 EMA_ALPHA = 0.45
+ROI_PADDING = 1.8
+REFERENCE_SECONDS = 0.6
 
 
 @dataclass(frozen=True)
@@ -119,7 +122,11 @@ def measure_eye(px: np.ndarray, eyedef: dict, iris_group: tuple[int, ...]) -> di
 
 
 class EyeTracker:
-    """Own one MediaPipe FaceMesh instance and deterministic eye EMA state."""
+    """One FaceMesh graph, with native-pixel ROI acquisition and warm tracking.
+
+    The short-lived reference is geometric association only. A failed mesh
+    always clears pupil output and EMA, even while that reference remains.
+    """
 
     def __init__(
         self,
@@ -136,26 +143,168 @@ class EyeTracker:
             min_tracking_confidence=min_tracking_confidence,
         )
         self._smoothers = {definition["name"]: EyeSmoother(ema_alpha) for definition in EYE_DEFINITIONS}
+        self._tracking = False
+        self._mode = "full_frame"
+        self._reason = "Awaiting acquisition"
+        self._roi_px: tuple[int, int, int, int] | None = None
+        self._frame_size: tuple[int, int] | None = None
+        self._reference: tuple[float, float, float, float] | None = None
+        self._last_success_s: float | None = None
+        self._mesh_dirty = False
+        self._unfiltered: dict | None = None
 
-    def reset(self) -> None:
+    def _clear_temporal(self, *, reset_graph: bool = True) -> None:
+        if reset_graph and self._mesh_dirty:
+            self._mesh.reset()
+            self._mesh_dirty = False
+        self._tracking = False
+        self._unfiltered = None
         for smoother in self._smoothers.values():
             smoother.reset()
 
-    def process(self, frame: np.ndarray) -> TrackingResult:
+    def reset(self) -> None:
+        """Forget both graph coordinates and pupil history, including any ROI."""
+        self._clear_temporal()
+        self._reference = None
+        self._last_success_s = None
+        self._frame_size = None
+        self._mode = "full_frame"
+        self._roi_px = None
+        self._reason = "Explicit reset"
+
+    @staticmethod
+    def _valid_box(box) -> tuple[float, float, float, float] | None:
+        if box is None:
+            return None
+        try:
+            x, y, width, height = (float(value) for value in box)
+        except (TypeError, ValueError, OverflowError):
+            return None
+        if not all(math.isfinite(value) for value in (x, y, width, height)):
+            return None
+        if width <= 0.0 or height <= 0.0:
+            return None
+        left, top = max(0.0, x), max(0.0, y)
+        right, bottom = min(1.0, x + width), min(1.0, y + height)
+        if right <= left or bottom <= top:
+            return None
+        return left, top, right - left, bottom - top
+
+    @staticmethod
+    def _overlaps(first, second) -> bool:
+        return (
+            min(first[0] + first[2], second[0] + second[2]) > max(first[0], second[0])
+            and min(first[1] + first[3], second[1] + second[3]) > max(first[1], second[1])
+        )
+
+    @staticmethod
+    def _crop_box(box, width: int, height: int) -> tuple[int, int, int, int]:
+        x, y, box_width, box_height = box
+        pad_x = box_width * (ROI_PADDING - 1.0) * 0.5
+        pad_y = box_height * (ROI_PADDING - 1.0) * 0.5
+        left = max(0, math.floor((x - pad_x) * width))
+        top = max(0, math.floor((y - pad_y) * height))
+        right = min(width, math.ceil((x + box_width + pad_x) * width))
+        bottom = min(height, math.ceil((y + box_height + pad_y) * height))
+        return left, top, right - left, bottom - top
+
+    def reference_box(self, now_s: float | None = None) -> tuple[float, float, float, float] | None:
+        now = time.monotonic() if now_s is None else now_s
+        if self._last_success_s is not None and now - self._last_success_s > REFERENCE_SECONDS:
+            self._reference = None
+            self._last_success_s = None
+        return self._reference
+
+    def diagnostics(self) -> dict:
+        return {
+            "mode": self._mode,
+            "reason": self._reason,
+            "roi_px": list(self._roi_px) if self._roi_px is not None else None,
+            "tracking": self._tracking,
+            "unfiltered": self._unfiltered,
+        }
+
+    def process(
+        self, frame: np.ndarray, face_box=None, *, now_s: float | None = None
+    ) -> TrackingResult:
         started = time.perf_counter_ns()
+        now = time.monotonic() if now_s is None else now_s
         height, width = frame.shape[:2]
-        result = self._mesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        if self._frame_size is not None and self._frame_size != (width, height):
+            self.reset()
+        self._frame_size = (width, height)
+        reference = self.reference_box(now)
+        if self._tracking and reference is None:
+            self._clear_temporal()
+        proposal = self._valid_box(face_box)
+
+        def lost(reason: str, *, reset_graph: bool = True) -> TrackingResult:
+            self._clear_temporal(reset_graph=reset_graph)
+            self._reason = reason
+            return TrackingResult(
+                time.time_ns(), False, None, (time.perf_counter_ns() - started) / 1_000_000.0
+            )
+
+        if proposal is not None and reference is not None and not self._overlaps(proposal, reference):
+            return lost("Detector proposal does not overlap the active face")
+
+        # A healthy full-frame track remains full-frame. A healthy ROI track
+        # follows accepted mesh bounds even when the current detector misses.
+        crop_source = reference if self._tracking and self._mode == "roi" else None
+        if not self._tracking:
+            crop_source = proposal
+        mode = "roi" if crop_source is not None else "full_frame"
+        if mode != self._mode:
+            self._clear_temporal()
+        self._mode = mode
+        self._roi_px = self._crop_box(crop_source, width, height) if crop_source is not None else None
+        if self._roi_px is None:
+            left, top, crop_width, crop_height = 0, 0, width, height
+            sample = frame
+        else:
+            left, top, crop_width, crop_height = self._roi_px
+            sample = frame[top:top + crop_height, left:left + crop_width]
+        if crop_width <= 0 or crop_height <= 0:
+            return lost("Empty image region")
+
+        was_tracking = self._tracking
+        self._mesh_dirty = True
+        result = self._mesh.process(cv2.cvtColor(sample, cv2.COLOR_BGR2RGB))
         inference_ms = (time.perf_counter_ns() - started) / 1_000_000.0
         if not result.multi_face_landmarks:
-            return TrackingResult(time.time_ns(), False, None, inference_ms)
+            return lost("No mesh in the current image region", reset_graph=was_tracking)
 
         landmarks = result.multi_face_landmarks[0].landmark
-        pixels = np.asarray([[point.x * width, point.y * height] for point in landmarks], dtype=np.float64)
+        if len(landmarks) < 478:
+            return lost("Mesh has no refined iris landmarks")
+        # Convert crop-normalized coordinates directly to ORIGINAL pixels.
+        # Never resize/prewarp: eye widths, apertures and overlay geometry all
+        # use the same full-image pixel metric before measure_eye is called.
+        pixels = np.asarray(
+            [[left + point.x * crop_width, top + point.y * crop_height] for point in landmarks],
+            dtype=np.float64,
+        )
+        if not np.isfinite(pixels).all():
+            return lost("Nonfinite mesh geometry")
+        bounds_min = pixels.min(axis=0)
+        bounds_max = pixels.max(axis=0)
+        accepted_box = self._valid_box((
+            bounds_min[0] / width, bounds_min[1] / height,
+            (bounds_max[0] - bounds_min[0]) / width, (bounds_max[1] - bounds_min[1]) / height,
+        ))
+        if accepted_box is None:
+            return lost("Mesh has no visible face bounds")
+        if reference is not None and not self._overlaps(accepted_box, reference):
+            return lost("Mesh does not overlap the active face")
+        if proposal is not None and not self._overlaps(accepted_box, proposal):
+            return lost("Mesh does not overlap the selected detector face")
         signals = []
-        for definition, iris_group in zip(EYE_DEFINITIONS, IRIS_GROUPS):
+        unfiltered = {}
+        for side, definition, iris_group in zip(("left", "right"), EYE_DEFINITIONS, IRIS_GROUPS):
             measured = measure_eye(pixels, definition, iris_group)
-            smooth_h, smooth_v = self._smoothers[measured["name"]].update(measured["h"], measured["v"])
             orientation = 1.0 if measured["u"][0] >= 0.0 else -1.0
+            unfiltered[side] = {"x": measured["h"] * orientation, "y": measured["v"] * orientation}
+            smooth_h, smooth_v = self._smoothers[measured["name"]].update(measured["h"], measured["v"])
             signals.append(
                 EyeSignal(
                     name=measured["name"],
@@ -175,6 +324,11 @@ class EyeTracker:
                     axis_y=measured["axis_y"],
                 )
             )
+        self._tracking = True
+        self._unfiltered = unfiltered
+        self._reference = accepted_box
+        self._last_success_s = time.monotonic() if now_s is None else now
+        self._reason = "Tracking accepted mesh" if reference is not None else "Acquired mesh"
         return TrackingResult(time.time_ns(), True, (signals[0], signals[1]), inference_ms)
 
     def close(self) -> None:

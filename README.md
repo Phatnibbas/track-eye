@@ -6,38 +6,39 @@ The canonical `track_eye/` app also measures fallback candidates in shadow mode;
 its binary codec is not connected to production output or hardware.
 
 A separate `delta_bridge/` adapter consumes the camera app's HTTP data and sends
-text-protocol targets to Delta hardware. On the Pi, `track-eye.service` alone
-owns the camera and `track-eye-delta.service` alone owns Delta serial. The active
-external sender uses binocular mean, single-eye or valid face; head is sign-gated.
-This external output does not enable the internal shadow fallback pipeline.
+text-protocol targets to Delta hardware. Camera and serial have separate unique
+service owners; the old sender has been restored under explicit owner approval.
 
-## Current preservation checkpoint — 2026-10-17
+## Current native-ROI acquisition and diagnostics — 2026-10-17
 
-The local repository now preserves the canonical tracker and Delta bundle from
-the Pi, including tests/fixtures, historical config profiles and reference
-firmware. Read `docs/PI5_DEPLOYED_STATE.md` for dated service identities, current
-policy and baseline evidence; `docs/PROJECT_CONTEXT.md` and
-`docs/HANDOFF_CURRENT.md` have newest-override pointers above historical reports.
+Production is **`b8387c0` plus diagnostic UI and native-ROI acquisition**.
+The existing full-range detector guides cold/reacquisition through a selected,
+1.8× padded native crop. One FaceMesh call per frame; crop landmarks map back
+to original pixels before unchanged aperture-v1 measurement. Healthy tracking
+retains its full-frame/ROI path. FACE fallback remains independent of pupil
+availability; the0.6s retained box is geometric association, not person identity.
 
-Current external policy is `observe-only-owner-test`, maximum 5 Hz, tilt×10
-capped15°, 1° scaled-direction deadband and bounded robot-error auto-CLEAR
-(5 s cooldown/max3). Recording this policy does **not** authorize redeployment,
-recovery, motion or bypassing readiness. Hardware accuracy is not certified.
+Web separates detector, FaceMesh landmarks and per-display-slot pupil geometry,
+then **pre-EMA → raw-after-EMA → tuned output**. Geometry availability and detector
+score are not calibrated pupil confidence; internal shadow is not hardware
+source. No models/thresholds, calibration units or visitor pipeline changed.
+Controlled small-photo replay improves acquisition, not measured2m acceptance.
+Vertical mapping remains sensitive to lid aperture.
 
-**Do not save calibration or restart during source synchronization.** Saved
-gains are3/3/2.5/3.75 with no neutrals; live RAM is10/3/2.5/6.2 with two neutrals
-and dirty=true. Both must survive as distinct evidence. See
-`deploy/pi5-snapshot-2026-10-17/manifest.json` and
-`deploy/pi5-snapshot-2026-10-17/runtime-observation.json`.
+Saved gain3.9/3/3.45/3.7, limit1.0, two neutrals and sender pin2f797a4c… are
+preserved. Both services are running; old sender remains `observe-only-owner-test`,
+not unattended fail-closed readiness control. Its existing policy issued one
+acknowledged bounded CLEAR after a startup FAULT rejection; final resumed session
+was clean. No HOME/reset/flash. Read
+[`docs/PI5_DEPLOYED_STATE.md`](docs/PI5_DEPLOYED_STATE.md) for exact identity,
+verification, backups and RAM/reboot limitations.
 
-Sync/recovery guidance: compare exact source content against the live Pi,
-preserve Pi-owned calibration, benchmarks, config and runtime state, and copy
-only new/different source files. Do not run installer/start/restart commands,
-open a second camera/serial owner, clear faults, home, replay targets, save RAM
-calibration or flash reference firmware. Any later recovery requires fresh
-state inspection and separate authorization; this checkpoint is not recovery.
-This sync makes no service or hardware change, performs no upgrade, and commits
-locally only—no push. Historical passing test counts are not sync verification.
+The simplified installation design is in
+[`docs/PROJECT_FRAMEWORK.md`](docs/PROJECT_FRAMEWORK.md#installation-redesign--design-only).
+It is not the deployed algorithm: the restored app still renders pupil output
+and measures internal fallback in shadow mode. Deployment changes must preserve
+Pi-owned calibration/data and unique device ownership. Inspect fresh sender
+and robot state before any later motion work; stopping a sender is not motor STOP.
 
 ## Camera application reference (not a sync/recovery procedure)
 
@@ -87,8 +88,8 @@ one second of steady forward gaze per eye. **Save** writes
 `TrackingResult` remains raw. Neutral offsets, directional gains, and soft
 saturation exist only in `OutputTrackingResult`.
 The production page at `http://<pi-ip>:8080` has a **Start baseline** button.
-Press it while `FACE OK` is visible, then follow the on-screen target for all
-phases. The production camera/tracker stays in one process; results are written
+Press it while FaceMesh shows `Landmarks available`, then follow the on-screen
+target for all phases. The production camera/tracker stays in one process; results are written
 to `benchmark_data/` and the normal tracker resumes after completion.
 
 For a standalone baseline process, run with the camera free:

@@ -1,0 +1,21 @@
+{
+  "duration_s": 300.04075987500005,
+  "samples": 300,
+  "errors": [],
+  "look_start": 779,
+  "look_end": 1325,
+  "measured_fps": 14.329326021035016,
+  "fps_median": 14.35438170058429,
+  "phase_counts": {
+    "HOLD_DEADBAND": 92,
+    "SENDING_TEST": 95,
+    "WAIT_SOURCE": 113
+  },
+  "source_counts": {
+    "PUPIL_BOTH_MEAN": 115,
+    "PUPIL_LEFT": 10,
+    "NONE": 113,
+    "PUPIL_RIGHT": 1,
+    "FACE_POSITION": 61
+  }
+}

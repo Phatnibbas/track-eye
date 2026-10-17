@@ -1,0 +1,1372 @@
+{
+  "samples": 150,
+  "errors": [],
+  "duration_s": 30.037693913999988,
+  "fps_sequence": 14.352604719294208,
+  "fps_ema_median": 14.36995103022819,
+  "age_p50_ms": 34.73532199859619,
+  "age_p95_ms": 64.55326080322266,
+  "face_samples": 150,
+  "offline_selector_sources": {
+    "PUPIL_BOTH_MEAN": 150
+  },
+  "http_jpeg_shape": [
+    720,
+    1280,
+    3
+  ],
+  "jpeg_sequence": "1090",
+  "health_code": 200,
+  "rows": [
+    {
+      "monotonic_s": 716.893209882,
+      "sequence": 659,
+      "age_s": 0.06851840019226074,
+      "fps_ema": 14.298877294020897,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 717.097202832,
+      "sequence": 662,
+      "age_s": 0.05054211616516113,
+      "fps_ema": 14.224436887061499,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 717.289647607,
+      "sequence": 665,
+      "age_s": 0.051035404205322266,
+      "fps_ema": 14.447980006708285,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 717.490581164,
+      "sequence": 668,
+      "age_s": 0.04065442085266113,
+      "fps_ema": 14.378017420528264,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 717.690821055,
+      "sequence": 671,
+      "age_s": 0.029285430908203125,
+      "fps_ema": 14.3868769437913,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 717.890757075,
+      "sequence": 674,
+      "age_s": 0.024411678314208984,
+      "fps_ema": 14.43267036215848,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 718.089966983,
+      "sequence": 677,
+      "age_s": 0.010511398315429688,
+      "fps_ema": 14.351631272108813,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 718.290281982,
+      "sequence": 680,
+      "age_s": 0.002107858657836914,
+      "fps_ema": 14.342402616453057,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 718.490372926,
+      "sequence": 682,
+      "age_s": 0.06365537643432617,
+      "fps_ema": 14.365428783248412,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 718.690995092,
+      "sequence": 685,
+      "age_s": 0.05641937255859375,
+      "fps_ema": 14.397460235767733,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 718.891348462,
+      "sequence": 688,
+      "age_s": 0.04447650909423828,
+      "fps_ema": 14.320459883628637,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 719.090866997,
+      "sequence": 691,
+      "age_s": 0.0359189510345459,
+      "fps_ema": 14.351389083663392,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 719.290986772,
+      "sequence": 694,
+      "age_s": 0.028865814208984375,
+      "fps_ema": 14.385308199922846,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 719.490745046,
+      "sequence": 697,
+      "age_s": 0.016071081161499023,
+      "fps_ema": 14.325611079676852,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 719.690681431,
+      "sequence": 700,
+      "age_s": 0.008929252624511719,
+      "fps_ema": 14.36996988570989,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 719.894319912,
+      "sequence": 703,
+      "age_s": 0.0004966259002685547,
+      "fps_ema": 14.37807528100009,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 720.093824408,
+      "sequence": 705,
+      "age_s": 0.06316828727722168,
+      "fps_ema": 14.372930146102584,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 720.294094458,
+      "sequence": 708,
+      "age_s": 0.05158185958862305,
+      "fps_ema": 14.31967063276408,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 720.495067434,
+      "sequence": 711,
+      "age_s": 0.04080629348754883,
+      "fps_ema": 14.35183360203498,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 720.696880967,
+      "sequence": 714,
+      "age_s": 0.037282466888427734,
+      "fps_ema": 14.390650538191672,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 720.893992866,
+      "sequence": 717,
+      "age_s": 0.023075580596923828,
+      "fps_ema": 14.324188310257087,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 721.094001879,
+      "sequence": 720,
+      "age_s": 0.010934114456176758,
+      "fps_ema": 14.260540068166057,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 721.293992463,
+      "sequence": 723,
+      "age_s": 0.0077207088470458984,
+      "fps_ema": 14.404927804872528,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 721.494169066,
+      "sequence": 725,
+      "age_s": 0.0677642822265625,
+      "fps_ema": 14.392043284892404,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 721.694387169,
+      "sequence": 728,
+      "age_s": 0.0530545711517334,
+      "fps_ema": 14.281039043684808,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 721.894530643,
+      "sequence": 731,
+      "age_s": 0.04678153991699219,
+      "fps_ema": 14.347967215308909,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 722.097802729,
+      "sequence": 734,
+      "age_s": 0.04174089431762695,
+      "fps_ema": 14.384356173989412,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 722.294997661,
+      "sequence": 737,
+      "age_s": 0.02586841583251953,
+      "fps_ema": 14.478160875891774,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 722.495758151,
+      "sequence": 740,
+      "age_s": 0.021139860153198242,
+      "fps_ema": 14.504084857663784,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 722.697757586,
+      "sequence": 743,
+      "age_s": 0.011908769607543945,
+      "fps_ema": 14.482138003745261,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 722.894708333,
+      "sequence": 746,
+      "age_s": 0.0006213188171386719,
+      "fps_ema": 14.399626529121523,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 723.095391008,
+      "sequence": 748,
+      "age_s": 0.06455326080322266,
+      "fps_ema": 14.444387759964048,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 723.295614699,
+      "sequence": 751,
+      "age_s": 0.04998898506164551,
+      "fps_ema": 14.375806320768124,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 723.495141537,
+      "sequence": 754,
+      "age_s": 0.044676780700683594,
+      "fps_ema": 14.418717614456817,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 723.697220266,
+      "sequence": 757,
+      "age_s": 0.03835892677307129,
+      "fps_ema": 14.42980956758386,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 723.895569586,
+      "sequence": 760,
+      "age_s": 0.022729158401489258,
+      "fps_ema": 14.326634792325926,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 724.095074443,
+      "sequence": 763,
+      "age_s": 0.016110897064208984,
+      "fps_ema": 14.387791929045356,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 724.295189353,
+      "sequence": 766,
+      "age_s": 0.0044977664947509766,
+      "fps_ema": 14.325449215383077,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 724.495339986,
+      "sequence": 768,
+      "age_s": 0.06341767311096191,
+      "fps_ema": 14.28584765025317,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 724.695946453,
+      "sequence": 771,
+      "age_s": 0.05677008628845215,
+      "fps_ema": 14.340815917321159,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 724.896237753,
+      "sequence": 774,
+      "age_s": 0.04917550086975098,
+      "fps_ema": 14.365600005395477,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 725.095685348,
+      "sequence": 777,
+      "age_s": 0.04037332534790039,
+      "fps_ema": 14.424406751592176,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 725.296418905,
+      "sequence": 780,
+      "age_s": 0.030098438262939453,
+      "fps_ema": 14.368806582828055,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 725.496512887,
+      "sequence": 783,
+      "age_s": 0.018877744674682617,
+      "fps_ema": 14.376726468427178,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 725.696360074,
+      "sequence": 786,
+      "age_s": 0.013710737228393555,
+      "fps_ema": 14.409534684859095,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 725.89631226,
+      "sequence": 789,
+      "age_s": 0.001348257064819336,
+      "fps_ema": 14.341197381175412,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 726.09700852,
+      "sequence": 791,
+      "age_s": 0.05923771858215332,
+      "fps_ema": 14.332211081204349,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 726.296954648,
+      "sequence": 794,
+      "age_s": 0.05454707145690918,
+      "fps_ema": 14.366026911541631,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 726.497007443,
+      "sequence": 797,
+      "age_s": 0.04616570472717285,
+      "fps_ema": 14.388225373953265,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 726.69788922,
+      "sequence": 800,
+      "age_s": 0.034668922424316406,
+      "fps_ema": 14.31946383813505,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 726.897842737,
+      "sequence": 803,
+      "age_s": 0.02596139907836914,
+      "fps_ema": 14.346749128155615,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 727.096725216,
+      "sequence": 806,
+      "age_s": 0.017490625381469727,
+      "fps_ema": 14.37610925118334,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 727.296894231,
+      "sequence": 809,
+      "age_s": 0.0021729469299316406,
+      "fps_ema": 14.324845082262296,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 727.497079969,
+      "sequence": 811,
+      "age_s": 0.06525588035583496,
+      "fps_ema": 14.378805431909097,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 727.702658672,
+      "sequence": 814,
+      "age_s": 0.06339621543884277,
+      "fps_ema": 14.395686448705565,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 727.897800443,
+      "sequence": 817,
+      "age_s": 0.05059218406677246,
+      "fps_ema": 14.40114180001344,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 728.09827955,
+      "sequence": 820,
+      "age_s": 0.03937578201293945,
+      "fps_ema": 14.346901650115349,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 728.298442267,
+      "sequence": 823,
+      "age_s": 0.027680635452270508,
+      "fps_ema": 14.361682716289428,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 728.497872002,
+      "sequence": 826,
+      "age_s": 0.022483110427856445,
+      "fps_ema": 14.397074180095425,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 728.69765357,
+      "sequence": 829,
+      "age_s": 0.010290384292602539,
+      "fps_ema": 14.336477407766962,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 728.89788362,
+      "sequence": 831,
+      "age_s": 0.0620121955871582,
+      "fps_ema": 14.327227819053268,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 729.09790865,
+      "sequence": 834,
+      "age_s": 0.0632481575012207,
+      "fps_ema": 14.370432987219077,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 729.298304235,
+      "sequence": 837,
+      "age_s": 0.05549192428588867,
+      "fps_ema": 14.386539868555058,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 729.498922783,
+      "sequence": 840,
+      "age_s": 0.041593074798583984,
+      "fps_ema": 14.289514471421656,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 729.698452941,
+      "sequence": 843,
+      "age_s": 0.03538918495178223,
+      "fps_ema": 14.355457368776086,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 729.898359748,
+      "sequence": 846,
+      "age_s": 0.027774572372436523,
+      "fps_ema": 14.374776939034328,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 730.098277665,
+      "sequence": 849,
+      "age_s": 0.015465021133422852,
+      "fps_ema": 14.332032498964448,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 730.298311395,
+      "sequence": 852,
+      "age_s": 0.008100032806396484,
+      "fps_ema": 14.357183026210084,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 730.50532487,
+      "sequence": 854,
+      "age_s": 0.07162642478942871,
+      "fps_ema": 14.34125962836666,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 730.698634153,
+      "sequence": 857,
+      "age_s": 0.05995535850524902,
+      "fps_ema": 14.382002245492362,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 730.898839735,
+      "sequence": 860,
+      "age_s": 0.05149507522583008,
+      "fps_ema": 14.385813122858176,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 731.098963761,
+      "sequence": 863,
+      "age_s": 0.03410077095031738,
+      "fps_ema": 14.324385641855596,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 731.299338804,
+      "sequence": 866,
+      "age_s": 0.03232121467590332,
+      "fps_ema": 14.36995701914331,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 731.499517718,
+      "sequence": 869,
+      "age_s": 0.024537324905395508,
+      "fps_ema": 14.403778327808453,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 731.698855409,
+      "sequence": 872,
+      "age_s": 0.0091094970703125,
+      "fps_ema": 14.28778373637823,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 731.8989581,
+      "sequence": 875,
+      "age_s": 0.003571033477783203,
+      "fps_ema": 14.379655578338157,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 732.099357717,
+      "sequence": 877,
+      "age_s": 0.06368780136108398,
+      "fps_ema": 14.360890858230766,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 732.300085461,
+      "sequence": 880,
+      "age_s": 0.053540706634521484,
+      "fps_ema": 14.32524011492508,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 732.500232891,
+      "sequence": 883,
+      "age_s": 0.03480172157287598,
+      "fps_ema": 14.244971545937391,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 732.702115655,
+      "sequence": 886,
+      "age_s": 0.03947901725769043,
+      "fps_ema": 14.435855901296401,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 732.90172027,
+      "sequence": 889,
+      "age_s": 0.029522180557250977,
+      "fps_ema": 14.45307058456791,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 733.100593199,
+      "sequence": 892,
+      "age_s": 0.01714801788330078,
+      "fps_ema": 14.378704479158545,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 733.304491906,
+      "sequence": 895,
+      "age_s": 0.007759571075439453,
+      "fps_ema": 14.383952879952002,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 733.500907294,
+      "sequence": 898,
+      "age_s": 0.0020661354064941406,
+      "fps_ema": 14.423163993186728,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 733.701506056,
+      "sequence": 900,
+      "age_s": 0.062155723571777344,
+      "fps_ema": 14.396635253442753,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 733.90185902,
+      "sequence": 903,
+      "age_s": 0.04676508903503418,
+      "fps_ema": 14.319958694912124,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 734.101889299,
+      "sequence": 906,
+      "age_s": 0.04299283027648926,
+      "fps_ema": 14.386605481862128,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 734.301677595,
+      "sequence": 909,
+      "age_s": 0.034459590911865234,
+      "fps_ema": 14.39523444567695,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 734.502469298,
+      "sequence": 912,
+      "age_s": 0.021017789840698242,
+      "fps_ema": 14.286702340099493,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 734.70173576,
+      "sequence": 915,
+      "age_s": 0.014480352401733398,
+      "fps_ema": 14.372182990465713,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 734.901967741,
+      "sequence": 918,
+      "age_s": 0.006999969482421875,
+      "fps_ema": 14.387690300896113,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 735.10218274,
+      "sequence": 920,
+      "age_s": 0.06513261795043945,
+      "fps_ema": 14.332032665376714,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 735.302485404,
+      "sequence": 923,
+      "age_s": 0.05466866493225098,
+      "fps_ema": 14.314193210079058,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 735.502680754,
+      "sequence": 926,
+      "age_s": 0.047957658767700195,
+      "fps_ema": 14.350928885769335,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 735.702669677,
+      "sequence": 929,
+      "age_s": 0.039016008377075195,
+      "fps_ema": 14.3677322701445,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 735.902887804,
+      "sequence": 932,
+      "age_s": 0.02756500244140625,
+      "fps_ema": 14.31721974030107,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 736.107170414,
+      "sequence": 935,
+      "age_s": 0.01930713653564453,
+      "fps_ema": 14.346911867253894,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 736.30244137,
+      "sequence": 938,
+      "age_s": 0.011687040328979492,
+      "fps_ema": 14.37824191645499,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 736.502700272,
+      "sequence": 940,
+      "age_s": 0.07208037376403809,
+      "fps_ema": 14.374414116241235,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 736.702967305,
+      "sequence": 943,
+      "age_s": 0.056276798248291016,
+      "fps_ema": 14.300131078082979,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 736.903188374,
+      "sequence": 946,
+      "age_s": 0.05202364921569824,
+      "fps_ema": 14.365358180222163,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 737.103489665,
+      "sequence": 949,
+      "age_s": 0.04346275329589844,
+      "fps_ema": 14.369133554020046,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 737.306504122,
+      "sequence": 952,
+      "age_s": 0.034293174743652344,
+      "fps_ema": 14.309766411478396,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 737.503107262,
+      "sequence": 955,
+      "age_s": 0.02350759506225586,
+      "fps_ema": 14.349496769934111,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 737.703016755,
+      "sequence": 958,
+      "age_s": 0.011577367782592773,
+      "fps_ema": 14.330288174715175,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 737.903074859,
+      "sequence": 961,
+      "age_s": 0.0031697750091552734,
+      "fps_ema": 14.371329107627854,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 738.103318111,
+      "sequence": 963,
+      "age_s": 0.06793403625488281,
+      "fps_ema": 14.446228382004634,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 738.312560495,
+      "sequence": 966,
+      "age_s": 0.06066584587097168,
+      "fps_ema": 14.372338763880858,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 738.506218039,
+      "sequence": 969,
+      "age_s": 0.050524234771728516,
+      "fps_ema": 14.39423333384951,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 738.706643511,
+      "sequence": 972,
+      "age_s": 0.043215274810791016,
+      "fps_ema": 14.424515873438308,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 738.906380354,
+      "sequence": 975,
+      "age_s": 0.027628660202026367,
+      "fps_ema": 14.352700933532956,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 739.10621503,
+      "sequence": 978,
+      "age_s": 0.022217273712158203,
+      "fps_ema": 14.373214813880427,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 739.306062592,
+      "sequence": 981,
+      "age_s": 0.014713525772094727,
+      "fps_ema": 14.40661244591149,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 739.506144674,
+      "sequence": 984,
+      "age_s": 0.000972747802734375,
+      "fps_ema": 14.309272201230362,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 739.706302348,
+      "sequence": 986,
+      "age_s": 0.06304335594177246,
+      "fps_ema": 14.340465096981863,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 739.906669226,
+      "sequence": 989,
+      "age_s": 0.05471491813659668,
+      "fps_ema": 14.356658099871495,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 740.107243789,
+      "sequence": 992,
+      "age_s": 0.04465651512145996,
+      "fps_ema": 14.32259855003523,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 740.306759312,
+      "sequence": 995,
+      "age_s": 0.03534340858459473,
+      "fps_ema": 14.335379967485189,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 740.507078466,
+      "sequence": 998,
+      "age_s": 0.02826547622680664,
+      "fps_ema": 14.36822801837197,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 740.706660619,
+      "sequence": 1001,
+      "age_s": 0.019135236740112305,
+      "fps_ema": 14.400435378402761,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 740.906641069,
+      "sequence": 1004,
+      "age_s": 0.007394313812255859,
+      "fps_ema": 14.335221730680942,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 741.110003205,
+      "sequence": 1006,
+      "age_s": 0.0698387622833252,
+      "fps_ema": 14.311553038355154,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 741.307213318,
+      "sequence": 1009,
+      "age_s": 0.05964040756225586,
+      "fps_ema": 14.364907288126837,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 741.507198303,
+      "sequence": 1012,
+      "age_s": 0.051816701889038086,
+      "fps_ema": 14.376287571701528,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 741.708862251,
+      "sequence": 1015,
+      "age_s": 0.018724679946899414,
+      "fps_ema": 14.323179195130887,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 741.910053088,
+      "sequence": 1018,
+      "age_s": 0.03454399108886719,
+      "fps_ema": 14.378964022834701,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 742.10782122,
+      "sequence": 1021,
+      "age_s": 0.023456335067749023,
+      "fps_ema": 14.38218359073579,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 742.307160647,
+      "sequence": 1024,
+      "age_s": 0.008944988250732422,
+      "fps_ema": 14.278163028740313,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 742.507215074,
+      "sequence": 1027,
+      "age_s": 0.0036554336547851562,
+      "fps_ema": 14.373609898266507,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 742.707695057,
+      "sequence": 1029,
+      "age_s": 0.06415891647338867,
+      "fps_ema": 14.358889184115137,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 742.908460558,
+      "sequence": 1032,
+      "age_s": 0.030019521713256836,
+      "fps_ema": 13.93756979755595,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 743.108434189,
+      "sequence": 1035,
+      "age_s": 0.044209957122802734,
+      "fps_ema": 14.554955837986885,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 743.307902558,
+      "sequence": 1038,
+      "age_s": 0.0366976261138916,
+      "fps_ema": 14.521113237723778,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 743.50809902,
+      "sequence": 1041,
+      "age_s": 0.028377294540405273,
+      "fps_ema": 14.520428644491027,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 743.707835871,
+      "sequence": 1044,
+      "age_s": 0.0166475772857666,
+      "fps_ema": 14.421434844633854,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 743.908554149,
+      "sequence": 1047,
+      "age_s": 0.006246805191040039,
+      "fps_ema": 14.419895657284044,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 744.107949258,
+      "sequence": 1050,
+      "age_s": 0.0006124973297119141,
+      "fps_ema": 14.42057550774469,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 744.308347367,
+      "sequence": 1052,
+      "age_s": 0.06111931800842285,
+      "fps_ema": 14.411578629914526,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 744.508895086,
+      "sequence": 1055,
+      "age_s": 0.04594850540161133,
+      "fps_ema": 14.331400008407746,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 744.708709658,
+      "sequence": 1058,
+      "age_s": 0.04087662696838379,
+      "fps_ema": 14.369945041313068,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 744.908845618,
+      "sequence": 1061,
+      "age_s": 0.032439231872558594,
+      "fps_ema": 14.374610459047346,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 745.109839911,
+      "sequence": 1064,
+      "age_s": 0.018719196319580078,
+      "fps_ema": 14.28071755454984,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 745.308412424,
+      "sequence": 1067,
+      "age_s": 0.012841939926147461,
+      "fps_ema": 14.359698244313638,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 745.508474586,
+      "sequence": 1070,
+      "age_s": 0.005016326904296875,
+      "fps_ema": 14.377032641274301,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 745.709161619,
+      "sequence": 1072,
+      "age_s": 0.059651851654052734,
+      "fps_ema": 14.250413077509437,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 745.910032633,
+      "sequence": 1075,
+      "age_s": 0.05811357498168945,
+      "fps_ema": 14.409006815162833,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 746.110451905,
+      "sequence": 1078,
+      "age_s": 0.04685211181640625,
+      "fps_ema": 14.34425114404183,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 746.31081588,
+      "sequence": 1081,
+      "age_s": 0.039067983627319336,
+      "fps_ema": 14.373988381272653,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 746.510820744,
+      "sequence": 1084,
+      "age_s": 0.03101205825805664,
+      "fps_ema": 14.402528295408233,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    },
+    {
+      "monotonic_s": 746.713581053,
+      "sequence": 1087,
+      "age_s": 0.01890730857849121,
+      "fps_ema": 14.33507063892906,
+      "face": true,
+      "source": "PUPIL_BOTH_MEAN",
+      "reason": "50/50 normalized XY; published geometry validity, not labeled tracking truth"
+    }
+  ]
+}

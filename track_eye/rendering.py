@@ -92,20 +92,57 @@ def render_frame(
     baseline_y = height - margin - radius
     centers = [(width - margin - gap - size - radius, baseline_y), (width - margin - radius, baseline_y)]
     eyes = output.eyes or (None, None)
-    for center, eye, label in zip(centers, eyes, ("LEFT EYE", "RIGHT EYE")):
+    for center, eye, label in zip(centers, eyes, ("LEFT DISPLAY", "RIGHT DISPLAY")):
         draw_gauge(frame, center, size, eye, label)
-    overlay = frame.copy()
-    cv2.rectangle(overlay, (0, 0), (width, 34), (18, 18, 28), -1)
-    cv2.addWeighted(overlay, 0.55, frame, 0.45, 0.0, frame)
-    status = "BOTH PUPILS TRACKED" if result.face_detected else "NO FACE"
-    cv2.putText(frame, f"PUPIL TRACKING  |  FPS {fps:4.1f}  |  {status}", (8, 23), FONT, 0.6, GREEN if result.face_detected else RED, 2, cv2.LINE_AA)
-    if shadow is not None:
-        source = str(shadow.get("shadow_source", "NONE"))
-        states = shadow.get("shadow_states", ["?", "?"])
-        cv2.putText(
-            frame,
-            f"SHADOW {source} L:{states[0]} R:{states[1]} emission={shadow.get('emission', 'disabled-shadow-only')}",
-            (8, 52),
-            FONT, 0.5, YELLOW, 1, cv2.LINE_AA,
-        )
+    diagnostics = shadow or {}
+    face = diagnostics.get("face") or {}
+    candidate = (diagnostics.get("candidates") or {}).get("FACE_POSITION") or {}
+    quality = candidate.get("quality") or {}
+    reason = quality.get("reason", "")
+    current_detection = (
+        face.get("enabled") and face.get("available") and not face.get("error")
+        and (candidate.get("valid") or reason == "below score_min")
+    )
+    box = quality.get("box") if current_detection else None
+    pixels = None
+    if box is not None and len(box) == 4 and all(np.isfinite(value) for value in box):
+        pixels = tuple(int(round(value * (width if index % 2 == 0 else height))) for index, value in enumerate(box))
+        x, y, box_width, box_height = pixels
+        cv2.rectangle(frame, (x, y), (x + box_width, y + box_height), YELLOW, 1, cv2.LINE_AA)
+
+    if not face:
+        detector_text = "waiting"
+    elif not face.get("enabled"):
+        detector_text = "disabled"
+    elif face.get("error") or not face.get("available"):
+        detector_text = "unavailable (see web)"
+    elif not candidate:
+        detector_text = "waiting for sample"
+    elif current_detection:
+        score = quality.get("score")
+        detector_text = f"score {score:.3f}" if score is not None else "box available"
+        if pixels is not None:
+            detector_text += f" | box {pixels[2]}x{pixels[3]}px"
+        if not candidate.get("valid"):
+            detector_text += " | below gate"
+    else:
+        detector_text = "no matching visitor" if reason == "no matching detection" else "no current detection" if reason == "no detection" else "sample error (see web)"
+
+    mesh_text = "available" if result.face_detected else "unavailable"
+    pupil_text = " / ".join(
+        f"{slot}:{'geometry' if (diagnostics.get(key) or {}).get('valid') else 'unavailable'}"
+        for slot, key in (("L", "pupil_left"), ("R", "pupil_right"))
+    )
+    source = str(diagnostics.get("shadow_source", "unavailable"))
+    lines = (
+        f"FPS {fps:4.1f} | FACEMESH landmarks: {mesh_text} | FULL-RANGE yellow box: {detector_text}",
+        f"PUPIL display {pupil_text} | quality UNCALIBRATED | SHADOW {source} (not hardware)",
+    )
+    for index, text in enumerate(lines):
+        text_width = cv2.getTextSize(text, FONT, 0.5, 1)[0][0]
+        scale = 0.5 * min(1.0, max(1, width - 16) / max(1, text_width))
+        (text_width, text_height), text_baseline = cv2.getTextSize(text, FONT, scale, 1)
+        y = 18 + index * 20
+        cv2.rectangle(frame, (5, y - text_height - 2), (min(width - 1, text_width + 11), y + text_baseline + 1), (18, 18, 28), -1)
+        cv2.putText(frame, text, (8, y), FONT, scale, YELLOW if index == 0 else WHITE, 1, cv2.LINE_AA)
     return frame

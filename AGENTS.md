@@ -1,23 +1,49 @@
 # Track Eye Agent Context
 
-## Current sync authority — 2026-10-17
+## Current ROI acquisition deployment — 2026-10-17
 
-Read `docs/PI5_DEPLOYED_STATE.md`, then the top overrides in
-`docs/PROJECT_CONTEXT.md` and `docs/HANDOFF_CURRENT.md` before older checkpoints.
-Local source now preserves canonical tracker and the active external Delta
-bundle. The camera and sender are separate services with unique device owners.
-External Delta emits shared binocular-mean/single-eye/face targets; head remains
-sign-gated. Internal `track_eye.app` fallback remains shadow-only. October
-left-only/no-sender/prototype-only statements and September numerical evidence
-below are historical, not current deployment facts.
+Production is `b8387c0` plus diagnostic UI and the native-ROI acquisition change.
+One full-range detection now precedes one FaceMesh call: cold/lost tracking uses
+a selected 1.8× padded crop; healthy ROI follows accepted mesh bounds. All
+landmarks return to original pixels before unchanged aperture-v1 measurement.
+The 0.6s retained reference is geometric association, not person identity.
+FACE fallback remains independent; no visitor/YOLOX pipeline, threshold/model,
+mapping/calibration-unit, head-sign, body or sender-policy change.
+Web distinguishes pre-EMA, raw-after-EMA and tuned output. Geometry is not
+calibrated pupil reliability. Controlled photographic replay improves cold
+acquisition, not measured2m/low-light/multiple-visitor acceptance.
+Camera PID136647 and sender PID146887 active; calibration clean, gain
+3.9/3/3.45/3.7, limit1.0, two neutrals, saved SHA/pin2f797a4c….
+Existing sender policy issued one acknowledged bounded CLEAR after a startup
+FAULT rejection; no HOME/reset/flash. New final sender session had no rejection
+or CLEAR. Read `docs/PI5_DEPLOYED_STATE.md` and fresh state before operating.
 
-Preserve both disk calibration and dirty in-memory calibration; never save or
-restart merely to synchronize. The deployed `observe-only-owner-test` policy
-and bounded robot-error CLEAR are recorded facts, not permission to deploy,
-resume or recover. No service/hardware change, serial/camera open, firmware flash,
-upgrade or push is authorized by this sync. Snapshot references and exact dated
-policy are in `deploy/pi5-snapshot-2026-10-17/manifest.json` and
-`runtime-observation.json`. Earlier passing counts are historical only.
+## Historical E2E restoration authority — 2026-10-17
+
+Owner requested rollback to synchronized pre-upgrade `b8387c0`, then explicitly
+authorized CLEAR and restoring the old camera→sender→master→Delta operation.
+Runtime source remains the baseline; no visitor/YOLOX upgrade is active.
+Current verification, active services and recovery evidence:
+`docs/PI5_DEPLOYED_STATE.md`. The simpler pipeline in `PROJECT_FRAMEWORK.md`
+is still design only.
+
+Camera and sender are separate unique device owners. Master was recovered from
+confirmed REPL using loaded RAM definitions, with auto-home, auto-rehome and
+restored-target replay disabled; flash was not changed. One explicit CLEAR
+received OK CLEAR and six fresh ONLINE/IDLE/homed/error-free node states.
+The old sender is running again; only its calibration pin was updated.
+Its owner-test readiness policy and bounded CLEAR remain as before, not a new
+fail-closed installation profile. No HOME/reset/flash was performed.
+
+Saved calibration/data remain Pi-owned. Live UI tuning may be dirty and differ
+from disk; inspect and preserve it before any camera restart, never overwrite
+it from a dated profile. Read current state before motion/recovery. RAM safety
+overrides do not survive master reset; do not infer safe reboot from this run.
+
+Owner instructions in the active session govern the requested operation.
+Historical checkpoint restrictions and numerical values below are dated
+records, not standing execution bans. SSH to `pi5` when the task requires it;
+report mutations and verify health. Exactly one owner per camera/serial device.
 
 ## 2026-10-08 Pi5/Delta protocol checkpoint (project context)
 
@@ -75,7 +101,8 @@ Keep the artwork responsive while a visitor is detected. Prefer two independent 
 
 ```text
 Camera -> mirror -> one pre-render frame
-  |-> EyeTracker -> OutputTuner -> production OutputTrackingResult
+  |-> full-range face detection -> selected cold/lost ROI -> EyeTracker
+  |     `-> OutputTuner -> production OutputTrackingResult
   |-> pupil/head/face/body observations -> FallbackSelector -> shadow decision
   `-> explicit ValidationSession capture
 production OutputTrackingResult -> renderer -> FrameHub -> WebUIServer

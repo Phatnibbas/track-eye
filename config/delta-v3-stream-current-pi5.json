@@ -41,7 +41,7 @@
   "status_url": "http://127.0.0.1:8080/status.json",
   "state_dir": "/home/pi5/track-eye-delta/state",
   "calibration_file": "/home/pi5/track-eye/output-calibration.json",
-  "calibration_sha256": "47cfed0fc3641f816aa9ac5c7ac0f72d11a3ed84e3e47bc06cff658b87884983",
+  "calibration_sha256": "2f797a4c4ab2f1f43bd50b50352075b8bf4911c5de87441287af90e3b28c4749",
   "fallback_file": "/home/pi5/track-eye/fallback-config.json",
   "fallback_sha256": "76345b7d2b9318a736d58e530583c7f1a45601900c1c6503c605a9025dce8144",
   "reference_dir": "/home/pi5/track-eye-delta/reference",

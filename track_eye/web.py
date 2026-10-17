@@ -18,13 +18,14 @@ INDEX_HTML = """<!doctype html>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#060708;color:#f4efe4;font-family:system-ui,sans-serif}
 main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;padding:18px;min-height:100vh}
-.stage{border:1px solid #2d2a26;border-radius:18px;overflow:hidden;background:#000;min-height:360px}
+.stage{border:1px solid #2d2a26;border-radius:18px;overflow:hidden;background:#000;min-height:360px;height:calc(100vh - 36px)}
 .stage img{width:100%;height:100%;object-fit:contain;display:block}
-.hud{background:#101317;border:1px solid #302c24;border-radius:18px;padding:18px;overflow:auto}
+.hud{background:#101317;border:1px solid #302c24;border-radius:18px;padding:18px;overflow:auto;min-width:0;max-height:calc(100vh - 36px)}
 h1{margin:0 0 4px;font-size:24px;letter-spacing:.08em}.tag{color:#9ca3af;margin-bottom:16px}
 h2{font-size:13px;letter-spacing:.12em;color:#d8cab8;margin:22px 0 8px}
-.metric{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #27231e}
-.metric b,.value{color:#ff8062;font-family:monospace}
+.metric{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #27231e;align-items:flex-start}
+.metric span{flex-shrink:0}.metric b,.value{color:#ff8062;font-family:monospace}.metric b{min-width:0;text-align:right;overflow-wrap:anywhere}
+.diagnostic{white-space:pre-line;overflow-wrap:anywhere}.note{color:#aeb5bf;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
 .control{display:grid;grid-template-columns:64px 1fr 48px;gap:8px;align-items:center;margin:10px 0}
 input[type=range]{width:100%;accent-color:#ff6b4a}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
@@ -32,13 +33,31 @@ button{padding:10px;border:1px solid #ff6b4a;border-radius:8px;background:#21171
 button.secondary{border-color:#4a4f57;background:#171a1f;color:#c4cad2}button:disabled{cursor:default;opacity:.5}
 #baseline{width:100%;margin-top:10px}.state{margin-top:10px;color:#aeb5bf;font:12px/1.4 monospace}
 .dirty{color:#ffd166}.saved{color:#77d49b}
-@media(max-width:900px){main{grid-template-columns:1fr}.stage{min-height:52vh}}
+@media(max-width:900px){main{grid-template-columns:1fr}.stage{min-height:0;height:auto;aspect-ratio:16/9}.hud{max-height:none}}
+@media(max-width:400px){main{padding:10px;gap:10px}.hud{padding:12px}.metric{flex-direction:column;gap:4px}.metric b{text-align:left}.control{grid-template-columns:52px minmax(0,1fr) 42px}}
 </style></head>
 <body><main><section class="stage"><img id="camera" alt="camera stream"></section>
 <aside class="hud"><h1>Track Eye</h1><div class="tag">natural-motion output tuner</div>
-<div class="metric"><span>face</span><b id="face">--</b></div>
-<div class="metric"><span>left eye</span><b id="left-eye">--</b></div>
-<div class="metric"><span>right eye</span><b id="right-eye">--</b></div>
+<h2>ACQUISITION DIAGNOSTICS</h2>
+<div class="metric"><span>Full-range detector</span><b id="detector">Waiting for status</b></div>
+<div id="detector-detail" class="state diagnostic">No current detector sample</div>
+<div class="metric"><span>FaceMesh landmarks</span><b id="face">Waiting for status</b></div>
+<div class="metric"><span>Acquisition path</span><b id="acquisition-path">Waiting for status</b></div>
+<div id="acquisition-detail" class="state diagnostic">No current acquisition sample</div>
+<div id="acquisition-note" class="note">The detector can guide FaceMesh acquisition. Landmarks or an ROI acquisition sample do not certify pupil mapping or reliable tracking.</div>
+<h2>PUPIL MEASUREMENTS</h2>
+<div class="note">Left/right identify processed display slots, not anatomical eyes. Geometry availability is not reliable tracking: quality gates are uncalibrated.</div>
+<div class="metric"><span>Left display slot</span><b id="pupil-left">Waiting for status</b></div>
+<div id="pupil-left-detail" class="state diagnostic"></div>
+<div class="metric"><span>Right display slot</span><b id="pupil-right">Waiting for status</b></div>
+<div id="pupil-right-detail" class="state diagnostic"></div>
+<div class="note">Inside-lid is a normalized center-distance ratio, not a confidence or pass/fail flag. Lid overflow is normalized geometry.</div>
+<div class="metric"><span>Internal shadow</span><b id="shadow-source">Waiting for status</b></div>
+<div id="shadow-detail" class="state diagnostic"></div>
+<div class="note">Shadow selection is diagnostic only, not the hardware source.</div>
+<h2>TUNED OUTPUT</h2>
+<div class="metric"><span>Left display x, y</span><b id="left-eye">--</b></div>
+<div class="metric"><span>Right display x, y</span><b id="right-eye">--</b></div>
 <h2>DIRECTIONAL GAIN</h2>
 <label class="control"><span>Left</span><input data-gain="left" type="range" min=".1" max="10" step=".05"><output></output></label>
 <label class="control"><span>Right</span><input data-gain="right" type="range" min=".1" max="10" step=".05"><output></output></label>
@@ -54,12 +73,74 @@ button.secondary{border-color:#4a4f57;background:#171a1f;color:#c4cad2}button:di
 <script>
 const camera=document.getElementById('camera'),gainInputs=[...document.querySelectorAll('[data-gain]')];
 const face=document.getElementById('face'),leftEye=document.getElementById('left-eye'),rightEye=document.getElementById('right-eye');
+const detector=document.getElementById('detector'),detectorDetail=document.getElementById('detector-detail'),acquisitionNote=document.getElementById('acquisition-note');
+const acquisitionPath=document.getElementById('acquisition-path'),acquisitionDetail=document.getElementById('acquisition-detail');
+const pupilLeft=document.getElementById('pupil-left'),pupilRight=document.getElementById('pupil-right'),pupilLeftDetail=document.getElementById('pupil-left-detail'),pupilRightDetail=document.getElementById('pupil-right-detail');
+const shadowSource=document.getElementById('shadow-source'),shadowDetail=document.getElementById('shadow-detail');
 const neutral=document.getElementById('neutral'),save=document.getElementById('save'),reset=document.getElementById('reset'),baseline=document.getElementById('baseline');
 const neutralState=document.getElementById('neutral-state'),saveState=document.getElementById('save-state'),baselineState=document.getElementById('baseline-state');
 let initialized=false,timer=null;
 async function post(path,body={}){const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const value=await response.json();if(!response.ok)throw new Error(value.error||response.statusText);return value}
 function values(){return Object.fromEntries(gainInputs.map(input=>[input.dataset.gain,Number(input.value)]))}
 function showValue(input){input.nextElementSibling.textContent=Number(input.value).toFixed(2)}
+function number(value,digits=1){return typeof value==='number'&&Number.isFinite(value)?value.toFixed(digits):'--'}
+function pupilDiagnostic(pupil,label,detail,raw,unfiltered){
+ label.textContent=pupil?.valid?'Geometry available':'Measurement unavailable';
+ const q=pupil?.quality||{};
+ detail.textContent=pupil?.valid?`Eye width ${number(q.eye_width_px)} px; iris radius ${number(q.iris_radius_px)} px\nLid aperture ${number(q.eyelid_aperture_px)} px\nInside-lid ratio ${number(q.iris_inside_lid,2)}; overflow ${number(q.lid_overflow,2)}\nQuality gate: uncalibrated (not confidence)`:'No current pupil geometry; quality gate uncalibrated';
+ if(unfiltered)detail.textContent+=`\nPre-EMA x, y: ${number(unfiltered.x,3)}, ${number(unfiltered.y,3)}`;
+ if(raw)detail.textContent+=`\nRaw (EMA, before tuning) x, y: ${number(raw.x,3)}, ${number(raw.y,3)}`;
+}
+function diagnostics(s){
+ if(s.healthy!==true||s.capture_alive!==true){
+  diagnosticsUnavailable();
+  acquisitionNote.textContent=`Capture is not fresh; last frame age ${number(s.last_frame_age_seconds,2)} s. Previous face/pupil samples are not shown.`;
+  return false;
+ }
+ const f=s.fallback||{},d=f.face,c=f.candidates?.FACE_POSITION,q=c?.quality||{};
+ const current=!!(d?.enabled&&d.available&&!d.error&&c&&(c.valid||q.reason==='below score_min'));
+ if(!d)detector.textContent='Waiting for detector status';
+ else if(!d.enabled)detector.textContent='Disabled';
+ else if(d.error)detector.textContent='Error / unavailable';
+ else if(!d.available)detector.textContent='Unavailable';
+ else if(!c)detector.textContent='Waiting for detector sample';
+ else if(c.valid)detector.textContent='Detection available';
+ else if(q.reason==='below score_min')detector.textContent='Detection below configured gate';
+ else detector.textContent=q.reason==='no detection'?'No current detection':q.reason==='no matching detection'?'No detection matching retained visitor':'Sample unavailable / error';
+ let detail=d?.error||(!d?.enabled&&d?'Disabled by configuration':q.reason||'');
+ if(current){
+  detail=`Score ${number(q.score,3)} (detector score, not pupil confidence)`;
+  const box=q.box,cam=s.camera;
+  if(Array.isArray(box)&&box.length===4&&box.every(Number.isFinite)&&cam?.width>0&&cam?.height>0){
+   const pixels=box.map((value,index)=>Math.round(value*(index%2===0?cam.width:cam.height)));
+   detail+=`\nBBox x, y, w, h: ${pixels.join(', ')} px\nNative camera: ${cam.width} × ${cam.height}`;
+  }else detail+=`\nBBox/native camera dimensions unavailable`;
+  if(!c.valid)detail+=`\n${q.reason}`;
+ }
+ if(c)detail+=`\nSample age ${number(c.age_s,2)} s`;
+ detectorDetail.textContent=detail||'No current detector sample';
+ face.textContent=s.frame_sequence?s.face_detected?'Landmarks available':'Landmarks unavailable':'Waiting for first frame';
+ const tracker=s.tracker;
+ acquisitionPath.textContent=tracker?.mode==='roi'?'ROI / native crop':tracker?.mode==='full_frame'?'Full frame':'Unavailable';
+ let acquisitionText=tracker?.reason||'No current acquisition sample';
+ const roi=tracker?.roi_px;
+ if(Array.isArray(roi)&&roi.length===4&&roi.every(Number.isFinite))acquisitionText+=`\nROI ${roi[2]} × ${roi[3]} px; origin ${roi[0]}, ${roi[1]} px`;
+ if(tracker)acquisitionText+=`\nCurrent mesh track: ${tracker.tracking?'available':'unavailable'}`;
+ acquisitionDetail.textContent=acquisitionText;
+ acquisitionNote.textContent=current&&!s.face_detected?'A detector box is available but FaceMesh has no landmarks. FACE fallback remains independent of ROI success for the selected visitor.':'The detector guides cold/reacquisition; warm tracking preserves its acquisition path. Missing detections or landmarks do not prove an empty scene.';
+ acquisitionNote.textContent+=' Landmarks or an ROI acquisition sample do not certify pupil mapping or reliable tracking.';
+ pupilDiagnostic(f.pupil_left,pupilLeft,pupilLeftDetail,s.raw_left,tracker?.unfiltered?.left);
+ pupilDiagnostic(f.pupil_right,pupilRight,pupilRightDetail,s.raw_right,tracker?.unfiltered?.right);
+ shadowSource.textContent=f.shadow_source||'Unavailable';
+ shadowDetail.textContent=`${f.shadow_reason||'No current selector sample'}\nInternal shadow only; not hardware source`;
+ return true;
+}
+function diagnosticsUnavailable(){
+ [detector,face,acquisitionPath,pupilLeft,pupilRight,shadowSource].forEach(label=>{label.textContent='Status unavailable'});
+ [detectorDetail,acquisitionDetail,pupilLeftDetail,pupilRightDetail,shadowDetail].forEach(detail=>{detail.textContent='No current status; previous sample not shown'});
+ acquisitionNote.textContent='Status connection unavailable; camera imagery alone does not establish landmark or pupil measurement availability.';
+ leftEye.textContent='--';rightEye.textContent='--';
+}
 gainInputs.forEach(input=>{input.oninput=()=>{showValue(input);clearTimeout(timer);timer=setTimeout(()=>post('/output/gain',values()).catch(showError),80)}})
 function showError(error){saveState.textContent=error.message;saveState.className='state dirty'}
 neutral.onclick=()=>post('/output/neutral').catch(showError);
@@ -68,19 +149,19 @@ reset.onclick=async()=>{try{await post('/output/reset');initialized=false;await 
 baseline.onclick=()=>post('/baseline/start').catch(showError);
 async function poll(){try{
  const s=await (await fetch('/status.json',{cache:'no-store'})).json(),t=s.output_tuning,b=s.baseline||{},g=t.calibration.gain;
- face.textContent=s.face_detected?'OK':'NO FACE';
- leftEye.textContent=s.output_left?s.output_left.x.toFixed(3)+', '+s.output_left.y.toFixed(3):'--';
- rightEye.textContent=s.output_right?s.output_right.x.toFixed(3)+', '+s.output_right.y.toFixed(3):'--';
+ const current=diagnostics(s);
+ leftEye.textContent=current&&s.output_left?s.output_left.x.toFixed(3)+', '+s.output_left.y.toFixed(3):'--';
+ rightEye.textContent=current&&s.output_right?s.output_right.x.toFixed(3)+', '+s.output_right.y.toFixed(3):'--';
  if(!initialized){gainInputs.forEach(input=>{input.value=g[input.dataset.gain];showValue(input)});initialized=true}
  saveState.textContent=t.dirty?'Unsaved':'Saved';saveState.className=t.dirty?'state dirty':'state saved';
  const neutralCount=t.calibration.neutrals.length;
- neutralState.textContent=t.neutral_state==='collecting'?'Neutral: hold still '+(t.neutral_remaining_seconds||0).toFixed(1)+'s':t.neutral_state==='waiting_for_face'?'Neutral: waiting for FACE OK':'Neutral: '+(neutralCount?'set':'not set');
+ neutralState.textContent=t.neutral_state==='collecting'?'Neutral: hold still '+(t.neutral_remaining_seconds||0).toFixed(1)+'s':t.neutral_state==='waiting_for_face'?'Neutral: waiting for FaceMesh landmarks':'Neutral: '+(neutralCount?'set':'not set');
  neutral.disabled=t.neutral_state!=='idle'||b.state==='countdown'||b.state==='recording';
  baseline.disabled=!['idle','completed','error'].includes(b.state);
  baseline.textContent=b.state==='completed'?'Run baseline again':b.state==='recording'?'Baseline recording...':'Start baseline';
  baselineState.textContent=b.state==='countdown'||b.state==='recording'?`${b.phase_index}/${b.phase_total} ${b.instruction} ${Number(b.remaining_seconds||0).toFixed(1)}s`:`Baseline ${b.state}`;
  if(t.load_error)showError(new Error('Config: '+t.load_error));
- }catch(error){showError(error)}}
+ }catch(error){diagnosticsUnavailable();showError(error)}}
 poll();setInterval(poll,250);
 let frameSequence=0,frameUrl=null;
 async function nextFrame(){try{

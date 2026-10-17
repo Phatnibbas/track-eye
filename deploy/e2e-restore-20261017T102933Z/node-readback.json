@@ -1,0 +1,123 @@
+{
+  "before_output": {
+    "fault": false,
+    "nodes": {
+      "1": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 1.993,
+        "target": 0.0
+      },
+      "2": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 1.993,
+        "target": 0.0
+      },
+      "3": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 1.993,
+        "target": 0.0
+      },
+      "4": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 1.993,
+        "target": 0.0
+      },
+      "5": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 1.993,
+        "target": 0.0
+      },
+      "6": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 1.993,
+        "target": 0.0
+      }
+    },
+    "ready": true
+  },
+  "after_completed_session": {
+    "fault": false,
+    "nodes": {
+      "1": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 16.457,
+        "target": 16.461
+      },
+      "2": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 20.555,
+        "target": 20.549
+      },
+      "3": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 8.389,
+        "target": 8.384
+      },
+      "4": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 16.457,
+        "target": 16.461
+      },
+      "5": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 20.555,
+        "target": 20.549
+      },
+      "6": {
+        "online": true,
+        "state": "IDLE",
+        "error": "NONE",
+        "homed": true,
+        "switch": false,
+        "pos": 8.389,
+        "target": 8.384
+      }
+    },
+    "ready_at_snapshot": true
+  },
+  "before_final_sender_restart_utc": "2026-10-17T10:44:33.292894+00:00"
+}
